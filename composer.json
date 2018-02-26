@@ -1,0 +1,41 @@
+{
+	"name" : "aliyun/aliyun-ots-sdk-php",
+	"homepage" : "http://www.aliyun.com/product/ots",
+	"description" : "Aliyun OTS SDK for PHP",
+	"authors" : [{
+			"name" : "Aliyun OTS Team",
+			"homepage" : "http://www.aliyun.com/product/ots"
+		}
+	],
+	"support" : {
+		"forum" : "http://bbs.aliyun.com/thread/226.html"
+	},
+	"require" : {
+		"php" : ">=5.5",
+		"guzzlehttp/guzzle" : "3.8.1|~6.0.1|~6.1"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "4.0.*"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Aliyun\\OTS\\" : "src/OTS",
+			"Aliyun\\OTS\\Handlers\\" : "src/OTS/Handlers",
+			"Aliyun\\OTS\\Retry\\" : "src/OTS/Retry"
+		},
+		"files" : [
+			"src/OTS/ProtoBuffer/pb_message.php",
+			"src/OTS/ProtoBuffer/pb_proto_ots.php",
+			"src/functions.php"
+		]
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"Aliyun\\OTS\\Tests\\" : "src/OTS/Tests/"
+		},
+		"files" : [
+			"src/OTS/Tests/TestConfig.php",
+			"src/OTS/Tests/TestBase.php"
+		]
+	}
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>阿里云 OTS SDK for PHP 文档</title>
+  <parser>
+    <target>docs</target>
+    <encoding>utf8</encoding>
+    <extensions>
+        <extension>php</extension>
+        <extension>php3</extension>
+        <extension>phtml</extension>
+    </extensions>
+    <visibility>public</visibility>
+  </parser>
+  <transformer>
+    <target>docs</target>
+  </transformer>
+  <files>
+    <file>src/*.php</file>
+    <file>src/OTS/*.php</file>
+    <file>src/OTS/Retry/*.php</file>
+  </files>
+</phpdoc>
