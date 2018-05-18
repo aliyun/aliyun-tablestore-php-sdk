@@ -5,6 +5,8 @@ use Aliyun\OTS;
 
 class ErrorHandler
 {
+    const OTS_REQUEST_ID = 'x-ots-requestid';
+
     private function logOTSServerException(RequestContext $context, \Aliyun\OTS\OTSServerException $exception)
     {
         $errorLogger = $context->clientConfig->errorLogHandler;
@@ -25,14 +27,14 @@ class ErrorHandler
             return;
         }
 
-        $error = new \Error();
+        $error = new \Aliyun\OTS\ProtoBuffer\Protocol\Error();
         $errorCode = null;
         $errorMessage = null;
 
         try {
-            $error->ParseFromString($context->responseBody);
-            $errorCode = $error->code();
-            $errorMessage = $error->message();
+            $error->mergeFromString($context->responseBody);
+            $errorCode = $error->getCode();
+            $errorMessage = $error->getMessage();
         } catch (\Exception $e) {
 
             // Sometimes the response body is not a valid Error PB Message,
@@ -44,8 +46,8 @@ class ErrorHandler
         }
 
         $requestId = null;
-        if (isset($context->responseHeaders['x-ots-requestid'])) {
-            $requestId = $context->responseHeaders['x-ots-requestid'];
+        if (isset($context->responseHeaders[self::OTS_REQUEST_ID])) {
+            $requestId = $context->responseHeaders[self::OTS_REQUEST_ID];
         }
 
         $exception = new \Aliyun\OTS\OTSServerException(

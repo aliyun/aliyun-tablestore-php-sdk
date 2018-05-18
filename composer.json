@@ -1,32 +1,43 @@
 {
-	"name" : "aliyun/aliyun-ots-sdk-php",
+	"name" : "aliyun/aliyun-tablestore-sdk-php",
 	"homepage" : "http://www.aliyun.com/product/ots",
-	"description" : "Aliyun OTS SDK for PHP",
+	"description" : "Aliyun Tablestore SDK for PHP",
 	"authors" : [{
-			"name" : "Aliyun OTS Team",
+			"name" : "Aliyun Tablestore Team",
 			"homepage" : "http://www.aliyun.com/product/ots"
 		}
 	],
+	"repositories": {
+		"packagist": {
+			"type": "composer",
+			"url": "https://packagist.phpcomposer.com"
+		}
+	},
 	"support" : {
 		"forum" : "http://bbs.aliyun.com/thread/226.html"
 	},
 	"require" : {
 		"php" : ">=5.5",
-		"guzzlehttp/guzzle" : "3.8.1|~6.0.1|~6.1"
+		"guzzlehttp/guzzle" : "3.8.1|~6.0.1|~6.1",
+		"google/protobuf": "^3.5"
 	},
 	"require-dev" : {
-		"phpunit/phpunit" : "4.0.*"
+		"phpunit/phpunit" : "4.0.*",
+		"satooshi/php-coveralls": "~1.0"
 	},
+	"minimum-stability": "stable",
 	"autoload" : {
 		"psr-4" : {
 			"Aliyun\\OTS\\" : "src/OTS",
+			"Aliyun\\OTS\\ProtoBuffer\\Protocol\\" : "src/OTS/ProtoBuffer/Protocol",
 			"Aliyun\\OTS\\Handlers\\" : "src/OTS/Handlers",
+			"Aliyun\\OTS\\Consts\\" : "src/OTS/Consts",
 			"Aliyun\\OTS\\Retry\\" : "src/OTS/Retry"
 		},
 		"files" : [
-			"src/OTS/ProtoBuffer/pb_message.php",
-			"src/OTS/ProtoBuffer/pb_proto_ots.php",
-			"src/functions.php"
+			"src/functions.php",
+			"src/OTS/ProtoBuffer/GPBMetadata/TableStore.php",
+			"src/OTS/ProtoBuffer/GPBMetadata/TableStoreFilter.php"
 		]
 	},
 	"autoload-dev" : {

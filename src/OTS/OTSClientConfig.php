@@ -14,6 +14,7 @@ class OTSClientConfig
     public $accessKeyID;
     public $accessKeySecret;
     public $instanceName;
+    public $stsToken;
     public $connectionTimeout = 2.0;
     public $socketTimeout = 2.0;
 
@@ -58,6 +59,9 @@ class OTSClientConfig
         $this->endPoint = $args['EndPoint'];
         $this->accessKeyID = $args['AccessKeyID'];
         $this->accessKeySecret = $args['AccessKeySecret'];
+        if (isset($args['StsToken'])) {
+            $this->stsToken = $args['StsToken'];
+        }
         $this->instanceName = $args['InstanceName'];
 
         if (isset($args['ConnectionTimeout'])) {
@@ -101,6 +105,11 @@ class OTSClientConfig
     public function getAccessKeySecret()
     {
         return $this->accessKeySecret;
+    }
+
+    public function getStsToken()
+    {
+        return $this->stsToken;
     }
 
     public function getInstanceName()

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<phpunit>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">./src</directory>
+		</whitelist>
+	</filter>
+	<logging>
+		<log type="coverage-clover" target="coverage.xml" />
+	</logging>
+	<testsuites>
+		<testsuite name="TableTest">
+			<file>tests/OTS/CreateTableTest.php</file>
+			<file>tests/OTS/DeleteTableTest.php</file>
+			<file>tests/OTS/DescribeTableTest.php</file>
+			<file>tests/OTS/ListTableTest.php</file>
+			<file>tests/OTS/UpdateCapacityTableTest.php</file>
+		</testsuite>
+		<testsuite name="RowTest">
+			<file>tests/OTS/PutRowTest.php</file>
+			<file>tests/OTS/UpdateRowTest.php</file>
+			<file>tests/OTS/DeleteRowTest.php</file>
+			<file>tests/OTS/GetRowTest.php</file>
+			<file>tests/OTS/PKAutoIncrTest.php</file>
+			<file>tests/OTS/WideRowTest.php</file>
+		</testsuite>
+		<testsuite name="BatchTest">
+			<file>tests/OTS/BatchGetRowTest.php</file>
+			<file>tests/OTS/BatchWriteRowTest.php</file>
+			<file>tests/OTS/GetRangeTest.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

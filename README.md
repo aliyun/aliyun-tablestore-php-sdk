@@ -1,17 +1,17 @@
-Aliyun TableStore SDK for PHP
+Aliyun TableStore SDK for PHP - Version 4
 ==================================
 
 # 说明
 
 Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
 
-适用于PHP 5.3 以及以上版本。
+适用于PHP 5.5 及以上版本，包括7.0、7.1。
 
 当前仅支持Linux，其他系统需要用户自己改造代码支持
 
 # 使用步骤
 
-1. 请确认你的PHP版本为 5.3 或更高。你可以通过运行 php --version 获知你当前使用的PHP版本。
+1. 请确认你的PHP版本为 5.5 或更高。你可以通过运行 php --version 获知你当前使用的PHP版本。
 
 2. 设置PHP的时区，在 php.ini（要知道你正在使用的php.ini文件的位置，请执行命令 php --ini）中添加一行：
    
@@ -52,6 +52,24 @@ Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
 5. 服务端返回的错误：docs/classes/Aliyun.OTS.OTSServerException.html
 
 6. 客户端返回的错误：docs/classes/Aliyun.OTS.OTSClientException.html
+
+### 运行Sample程序
+
+1. 修改 `examples/ExampleConfig.php`， 补充配置信息
+2. 执行 `cd examples/`
+3. 选择需要的样例运行，例如 `php PKAutoIncrment.php`, 表格列自增功能的示例。
+
+### 运行单元测试
+
+1. 执行`composer install`下载依赖的库
+2. 设置环境变量
+
+        export SDK_TEST_ACCESS_KEY_ID=access-key-id
+        export SDK_TEST_ACCESS_KEY_SECRET=access-key-secret
+        export SDK_TEST_END_POINT=endpoint
+        export SDK_TEST_INSTANCE_NAME=instance-name
+
+3. 执行 `php vendor/bin/phpunit`
 
 # 帮助和支持 FAQ
 

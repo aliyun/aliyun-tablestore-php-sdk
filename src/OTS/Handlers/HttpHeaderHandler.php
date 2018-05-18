@@ -4,6 +4,7 @@ namespace Aliyun\OTS\Handlers;
 use Aliyun\OTS;
 use Aliyun\OTS\OTSClientException as OTSClientException;
 
+// refer: https://help.aliyun.com/document_detail/27299.html
 class HttpHeaderHandler
 {
 
@@ -11,13 +12,23 @@ class HttpHeaderHandler
     {
         $headerArray = array();
         foreach ($headers as $key => $value) {
-            if (substr($key, 0, 5) == 'x-ots' && $key != 'x-ots-signature') {
+            if (substr($key, 0, 5) == self::OTS_PREFIX && $key != self::OTS_SIGNATURE) {
                 array_push($headerArray, "{$key}:{$value}");
             }
         }
         sort($headerArray);
 
         return implode("\n", $headerArray);
+    }
+
+    /**
+     * Generates UserAgent
+     *
+     * @return string
+     */
+    private function generateUserAgent()
+    {
+        return self::OTS_NAME . "/" . self::OTS_VERSION . " (" . php_uname('s') . "/" . php_uname('r') . "/" . php_uname('m') . ";" . PHP_VERSION . ")";
     }
 
     private function computeRequestSignature($context, $headers)
@@ -43,19 +54,23 @@ class HttpHeaderHandler
         // but we will still get the warning:
         // "date(): It is not safe to rely on the system's timezone settings."
         // it's up to the user to decide the timezone.
-        $timestamp = gmdate('D, d M Y H:i:s \G\M\T');
+        $timestamp = gmdate('Y-m-d\TH:i:s.000\Z');
 
         $headers = array(
-            "x-ots-accesskeyid" => $context->clientConfig->getAccessKeyID(),
-            "x-ots-apiversion" => "2014-08-08",
-            "x-ots-contentmd5" => base64_encode(md5($context->requestBody, TRUE)),
-            "x-ots-date" => $timestamp,
-            "x-ots-instancename" => $context->clientConfig->getInstanceName(),
-            "User-Agent" => "aliyun-sdk-php 1.0.0",
+            self::OTS_ACCESS_KEY_ID => $context->clientConfig->getAccessKeyID(),
+            self::OTS_API_VERSION => self::OTS_BUILD,
+            self::OTS_CONTENT_MD5 => base64_encode(md5($context->requestBody, TRUE)),
+            self::OTS_DATE => $timestamp,
+            self::OTS_INSTANCE_NAME => $context->clientConfig->getInstanceName()
         );
 
+        if ($context->clientConfig->getStsToken() != null) {
+            $headers[self::OTS_STSTOKEN] = $context->clientConfig->getStsToken();
+        }
+
         $signature = $this->computeRequestSignature($context, $headers);
-        $headers["x-ots-signature"] = $signature;
+        $headers[self::OTS_SIGNATURE] = $signature;
+        $headers[self::USER_AGENT] = self::generateUserAgent();
         $context->requestHeaders = $headers;
     }
 
@@ -63,10 +78,10 @@ class HttpHeaderHandler
     {
         // Step 1, make sure we have all headers
         $headerNames = array(
-            "x-ots-contentmd5",
-            "x-ots-requestid",
-            "x-ots-date",
-            "x-ots-contenttype",
+            self::OTS_CONTENT_MD5,
+            self::OTS_REQUEST_ID,
+            self::OTS_DATE,
+            self::OTS_CONTENT_TYPE,
         );
 
         if ($context->responseHttpStatus >= 200 && $context->responseHttpStatus < 300) {
@@ -78,16 +93,16 @@ class HttpHeaderHandler
         }
 
         // Step 2, check md5
-        if (isset($context->responseHeaders['x-ots-contentmd5'])) {
+        if (isset($context->responseHeaders[self::OTS_CONTENT_MD5])) {
             $expectMD5 = base64_encode(md5($context->responseBody, TRUE));
-            if ($expectMD5 != $context->responseHeaders['x-ots-contentmd5']) {
+            if ($expectMD5 != $context->responseHeaders[self::OTS_CONTENT_MD5]) {
                 throw new OTSClientException("MD5 mismatch in response.");
             }
         }
 
         // Step 3, check date
-        if (isset($context->responseHeaders['x-ots-date'])) {
-            $serverTimeStr = $context->responseHeaders['x-ots-date'];
+        if (isset($context->responseHeaders[self::OTS_DATE])) {
+            $serverTimeStr = $context->responseHeaders[self::OTS_DATE];
             $serverTime = strtotime($serverTimeStr);
             if ($serverTime == false) {
                 throw new OTSClientException("Invalid date format in response: $serverTimeStr");
@@ -104,12 +119,12 @@ class HttpHeaderHandler
     private function checkAuthorization($context)
     {
         // Step 1, Check if authorization header is there
-        if (!isset($context->responseHeaders['Authorization'])) {
+        if (!isset($context->responseHeaders[self::OTS_AUTHORIZATION])) {
             if ($context->responseHttpStatus >= 200 && $context->responseHttpStatus < 300) {
                 throw new OTSClientException("\"Authorization\" is missing in response header.");
             }
         }
-        $authorization = $context->responseHeaders['Authorization'];
+        $authorization = $context->responseHeaders[self::OTS_AUTHORIZATION];
 
         // Step 2, check if authorization is valid
         if (substr($authorization, 0, 4) != "OTS ") {
@@ -155,5 +170,27 @@ class HttpHeaderHandler
             throw new OTSClientException((string)$e . " Http Status: " . $context->responseHttpStatus);
         }
     }
+
+    // OTSClient version information
+    const OTS_NAME = "aliyun-tablestore-sdk-php";
+    const OTS_VERSION = "4.0.0";
+    const OTS_BUILD = "2015-12-31";
+
+    // OTS Internal constants
+    const OTS_PREFIX = 'x-ots';
+    const OTS_ACCESS_KEY_ID = "x-ots-accesskeyid";
+    const OTS_API_VERSION = "x-ots-apiversion";
+    const OTS_CONTENT_MD5 = "x-ots-contentmd5";
+    const OTS_DATE = "x-ots-date";
+    const OTS_INSTANCE_NAME = "x-ots-instancename";
+    const OTS_STSTOKEN = 'x-ots-ststoken';
+    const OTS_SIGNATURE = "x-ots-signature";
+    const OTS_REQUEST_ID = "x-ots-requestid";
+    const OTS_CONTENT_TYPE = "x-ots-contenttype";
+
+    // other const
+    const USER_AGENT = "User-Agent";
+    const OTS_AUTHORIZATION = 'Authorization';
+
 }
 

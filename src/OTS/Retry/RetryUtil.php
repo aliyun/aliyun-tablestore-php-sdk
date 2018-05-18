@@ -3,7 +3,8 @@
 namespace Aliyun\OTS\Retry;
 
 use Aliyun\OTS\Handlers\RequestContext as RequestConext;
- 
+
+// refer: https://help.aliyun.com/document_detail/27300.html
 class RetryUtil
 {
     public static function shouldRetryNoMatterWhichAPI(RequestConext $context)
@@ -40,7 +41,7 @@ class RetryUtil
             $apiName == "GetRow" ||
             $apiName == "BatchGetRow" ||
             $apiName == "GetRange" || 
-            $apiName == "DescrieStream" ||
+            $apiName == "DescribeStream" ||
             $apiName == "GetShardIterator" ||
             $apiName == "GetStreamRecord" ||
             $apiName == "ListStream") {

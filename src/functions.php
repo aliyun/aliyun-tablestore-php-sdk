@@ -18,3 +18,7 @@ function defaultOTSDebugLogHandler($message)
     print "OTS DEBUG $dateStr $message\n";
 }
 
+function getMicroTime()
+{
+    return ceil(microtime(true) * 1000);
+}

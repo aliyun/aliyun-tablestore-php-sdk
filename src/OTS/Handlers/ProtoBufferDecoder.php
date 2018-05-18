@@ -1,20 +1,25 @@
 <?php
 namespace Aliyun\OTS\Handlers;
 
-use CreateTableResponse;
-use ListTableResponse;
-use DeleteTableResponse;
-use DescribeTableResponse;
-use UpdateTableResponse;
-use GetRowResponse;
-use PutRowResponse;
-use UpdateRowResponse;
-use DeleteRowResponse;
-use BatchGetRowResponse;
-use BatchWriteRowResponse;
-use GetRangeResponse;
+use Aliyun\OTS\Consts\PrimaryKeyOptionConst;
+use Aliyun\OTS\PlainBuffer\PlainBufferCodedInputStream;
+use Aliyun\OTS\PlainBuffer\PlainBufferInputStream;
+use Aliyun\OTS\ProtoBuffer\Protocol\BatchGetRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\BatchWriteRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\DeleteRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\DescribeTableResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\GetRangeResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\GetRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\ListTableResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeyOption;
+use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeyType;
+use Aliyun\OTS\ProtoBuffer\Protocol\PutRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\RowInBatchWriteRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\UpdateRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\UpdateTableResponse;
 
-use ColumnType; 
+//use CreateTableResponse;
+//use DeleteTableResponse;
 
 
 class ProtoBufferDecoder
@@ -24,24 +29,25 @@ class ProtoBufferDecoder
         // empty
     }
 
-    public function decodeListTableResponse($body) 
+    public function decodeListTableResponse($body)
     {
         $pbMessage = new ListTableResponse();
-        $pbMessage->ParseFromString($body);
+        $pbMessage->mergeFromString($body);
         $response = array();
-        for ($i = 0; $i < $pbMessage->table_names_size(); $i++)
+        $tableNames = $pbMessage->getTableNames();
+        for ($i = 0; $i < count($tableNames); $i++)
         {
-            array_push($response, $pbMessage->table_names($i));
+            array_push($response, $tableNames[$i]);
         }
         return $response;
     }
 
-    public function decodeCreateTableResponse($body) 
+    public function decodeCreateTableResponse($body)
     {
         return array();
     }
 
-    public function decodeDeleteTableResponse($body) 
+    public function decodeDeleteTableResponse($body)
     {
         return array();
     }
@@ -50,153 +56,134 @@ class ProtoBufferDecoder
     {
         return array(
             "capacity_unit" => array(
-                "read" => $pbMessage->read(),
-                "write" => $pbMessage->write()
+                "read" => $pbMessage->getRead(),
+                "write" => $pbMessage->getWrite()
             ),
         );
     }
 
     private function parseReservedThroughputDetails($pbMessage)
     {
-        $capacityUnit = $this->parseCapacityUnit($pbMessage->capacity_unit());
+        $capacityUnit = $this->parseCapacityUnit($pbMessage->getCapacityUnit());
 
         return array(
             "capacity_unit" => $capacityUnit['capacity_unit'],
-            "last_increase_time" => $pbMessage->last_increase_time(),
-            "last_decrease_time" => $pbMessage->last_decrease_time(),
-            "number_of_decreases_today" => $pbMessage->number_of_decreases_today()
+            "last_increase_time" => $pbMessage->getLastIncreaseTime(),
+            "last_decrease_time" => $pbMessage->getLastDecreaseTime()
         );
     }
 
-    public function decodeDescribeTableResponse($body) 
-    {
-        $pbMessage = new DescribeTableResponse();
-        $pbMessage->ParseFromString($body);
-         
-        $tableMeta = $pbMessage->table_meta();
-         
-        $pkSchema = array();
-        for ($i = 0; $i < $tableMeta->primary_key_size(); $i++) {
-            $pkColumn = $tableMeta->primary_key($i);
-            switch ($pkColumn->type())
-            {
-                case ColumnType::INTEGER:
-                    $columnValueString = "INTEGER";
-                    break;  
-                case ColumnType::STRING:
-                    $columnValueString = "STRING";
-                    break;
-                case ColumnType::BOOLEAN:
-                    $columnValueString = "BOOLEAN";
-                    break;  
-                case ColumnType::DOUBLE:
-                    $columnValueString = "DOUBLE";
-                    break;
-                case ColumnType::BINARY:
-                    $columnValueString = "BINARY";
-                    break;
-                default:
-                    throw new OTSClientException("Invalid column type in response.");
-            }
-             
-            $pkSchema["{$pkColumn->name()}"] = $columnValueString;
-        }
-       
-        $response = array(
-            "table_meta" => array(
-                "table_name" => $tableMeta->table_name(),
-                "primary_key_schema" => $pkSchema,
-            ),
-            "capacity_unit_details" => $this->parseReservedThroughputDetails($pbMessage->reserved_throughput_details()),
-        );
-        return $response;
-    }
-
-    public function decodeUpdateTableResponse($body) 
-    {
-        $pbMessage = new UpdateTableResponse();
-        $pbMessage->ParseFromString($body);
-        $response = array(
-            "capacity_unit_details" => $this->parseReservedThroughputDetails($pbMessage->reserved_throughput_details()),
-        );
-        return $response;
-    }
-
-    private function parseColumns($pbMessage, $type)
-    {
-        $ret = array();
-        $methodName = $type . "_size";
-        $size = $pbMessage->$methodName();
-
-        for ($i = 0; $i < $size; $i++)
-        {   
-            $pkColumn = $pbMessage->$type($i);
-            $pkColumnValue= $pkColumn->value();
-            switch ($pkColumnValue->type())
-            {
-                case ColumnType::INTEGER:
-                    $realValue = $pkColumnValue->v_int();
-                    break;  
-                case ColumnType::STRING:
-                    $realValue = $pkColumnValue->v_string();
-                    break;
-                case ColumnType::BOOLEAN:
-                    // PB library converts a bool into int, 
-                    // we need to convert it back to bool
-
-                    $realValue = $pkColumnValue->v_bool();
-                    if ($realValue) {
-                        $realValue = true;
-                    } else {
-                        $realValue = false;
-                    }
-                    break;  
-                case ColumnType::DOUBLE:
-                    $realValue = $pkColumnValue->v_double();
-                    break;
-                case ColumnType::BINARY:
-                    $realValue = array('type' => 'BINARY', 'value' => $pkColumnValue->v_binary());
-                    break;
-                default:
-                    throw new OTSClientException("Invalid column type in response.");
-            }
-            $ret["{$pkColumn->name()}"] = $realValue;
-        }
-        return $ret;
-    }
-
-    private function parseRow($pbMessage)
+    private function parseTableOptions($pbMessage)
     {
         return array(
-            "primary_key_columns" => $this->parseColumns($pbMessage, "primary_key_columns"),
-            "attribute_columns" => $this->parseColumns($pbMessage, "attribute_columns"),
+            "time_to_live" => $pbMessage->getTimeToLive(),
+            "max_versions" => $pbMessage->getMaxVersions(),
+            "deviation_cell_version_in_sec" => $pbMessage->getDeviationCellVersionInSec()
         );
+    }
+
+    public function decodeDescribeTableResponse($body)
+    {
+        $pbMessage = new DescribeTableResponse();
+        $pbMessage->mergeFromString($body);
+        $tableMeta = $pbMessage->getTableMeta();
+         
+        $pkSchema = array();
+        $primaryKeys = $tableMeta->getPrimaryKey();
+        for ($i = 0; $i < count($primaryKeys); $i++) {
+            $pkColumn = $primaryKeys[$i];
+            $column = array();
+            $type = null;
+            $pkSchema[$i] = array();
+            $pkSchema[$i][] = $pkColumn->getName();
+            switch ($pkColumn->getType())
+            {
+                case PrimaryKeyType::INTEGER:
+                    $type = "INTEGER";
+                    break;
+                case PrimaryKeyType::STRING:
+                    $type = "STRING";
+                    break;
+                case PrimaryKeyType::BINARY:
+                    $type = "BINARY";
+                    break;
+                default:
+                    throw new OTSClientException("Invalid column type in response.");
+            }
+            $pkSchema[$i][] = $type;
+            if($pkColumn->hasOption()) {
+                $column['type'] = $type;
+                switch($pkColumn->getOption()) {
+                    case PrimaryKeyOption::AUTO_INCREMENT:
+                        $column['option'] = PrimaryKeyOptionConst::CONST_PK_AUTO_INCR;
+                        break;
+                    default:
+                        throw new OTSClientException("Invalid column option in response.");
+                }
+                $pkSchema[$i][] = $column['option'];
+            }
+        }
+
+        $response = array(
+            "table_meta" => array(
+                "table_name" => $tableMeta->getTableName(),
+                "primary_key_schema" => $pkSchema,
+            ),
+            "capacity_unit_details" => $this->parseReservedThroughputDetails($pbMessage->getReservedThroughputDetails()),
+            "table_options" => $this->parseTableOptions($pbMessage->getTableOptions())
+        );
+        return $response;
+    }
+
+    public function decodeUpdateTableResponse($body)
+    {
+        $pbMessage = new UpdateTableResponse();
+        $pbMessage->mergeFromString($body);
+        $response = array(
+            "capacity_unit_details" => $this->parseReservedThroughputDetails($pbMessage->getReservedThroughputDetails()),
+            "table_options" => $this->parseTableOptions($pbMessage->getTableOptions())
+        );
+        return $response;
+    }
+
+    private function parseRow($row)
+    {
+        if(strlen($row) != 0) {
+            $inputStream = new PlainBufferInputStream($row);
+            $codedInputStream = new PlainBufferCodedInputStream($inputStream);
+            return $codedInputStream->readRow();
+        }
     }
 
     private function parseConsumed($pbMessage)
     {
-        return $this->parseCapacityUnit($pbMessage->capacity_unit());
+        return $this->parseCapacityUnit($pbMessage->getCapacityUnit());
     }
 
-    public function decodeGetRowResponse($body) 
+    public function decodeGetRowResponse($body)
     {
         $pbMessage = new GetRowResponse();
-        $pbMessage->ParseFromString($body);
-        $row = $pbMessage->row();
+        $pbMessage->mergeFromString($body);
+        $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->consumed()),
-            "row" => $this->parseRow($row),
+            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
+            "primary_key" => $rawRow["primary_key"],
+            "attribute_columns" => $rawRow["attribute_columns"],
+            "token" => $pbMessage->getNextToken()
         );
-         
+
         return $response;
     }
 
-    public function decodePutRowResponse($body) 
+    public function decodePutRowResponse($body)
     {
         $pbMessage = new PutRowResponse();
-        $pbMessage->ParseFromString($body);
+        $pbMessage->mergeFromString($body);
+        $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->consumed()),
+            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
+            "primary_key" => $rawRow["primary_key"],
+            "attribute_columns" => $rawRow["attribute_columns"]
         );
         return $response;
     }
@@ -204,9 +191,12 @@ class ProtoBufferDecoder
     public function decodeUpdateRowResponse($body)
     {
         $pbMessage = new UpdateRowResponse();
-        $pbMessage->ParseFromString($body);
+        $pbMessage->mergeFromString($body);
+        $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->consumed()),
+            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
+            "primary_key" => $rawRow["primary_key"],
+            "attribute_columns" => $rawRow["attribute_columns"]
         );
         return $response;
     }
@@ -214,9 +204,12 @@ class ProtoBufferDecoder
     public function decodeDeleteRowResponse($body)
     {
         $pbMessage = new DeleteRowResponse();
-        $pbMessage->ParseFromString($body);
+        $pbMessage->mergeFromString($body);
+        $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->consumed()),
+            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
+            "primary_key" => $rawRow["primary_key"],
+            "attribute_columns" => $rawRow["attribute_columns"]
         );
         return $response;
     }
@@ -232,27 +225,31 @@ class ProtoBufferDecoder
         }
     }
 
-    public function decodeBatchGetRowResponse($body) 
+    public function decodeBatchGetRowResponse($body)
     {
         $pbMessage = new BatchGetRowResponse();
-        $pbMessage->ParseFromString($body);
- 
+        $pbMessage->mergeFromString($body);
+
         $tables = array();
-        for ($i = 0; $i < $pbMessage->tables_size(); $i++) {
-            $tableInBatchGetRow = $pbMessage->tables($i);
+        $inTable = $pbMessage->getTables();
+        for ($i = 0; $i < count($inTable); $i++) {
+            $tableInBatchGetRow = $inTable[$i];
             $rowList = array();
-            for ($j = 0; $j < $tableInBatchGetRow->rows_size(); $j++) {
-                $rowInBatchGetRow = $tableInBatchGetRow->rows($j);
-                $consumed = $rowInBatchGetRow->consumed();
-                $error = $rowInBatchGetRow->error();
-                $isOK = $this->parseIsOK($rowInBatchGetRow->is_ok());
+            $inRows = $tableInBatchGetRow->getRows();
+            for ($j = 0; $j < count($inRows);$j++) {
+                $rowInBatchGetRow = $inRows[$j];
+                $consumed = $rowInBatchGetRow->getConsumed();
+                $error = $rowInBatchGetRow->getError();
+                $isOK = $this->parseIsOK($rowInBatchGetRow->getIsOk());
 
                 if($isOK)
                 {
+                    $rawRow = $this->parseRow($rowInBatchGetRow->getRow());
                     $rowData = array(
                         "is_ok" => $isOK,
                         "consumed" => $this->parseConsumed($consumed),
-                        "row" => $this->parseRow($rowInBatchGetRow->row()),
+                        "primary_key" => $rawRow["primary_key"],
+                        "attribute_columns" => $rawRow["attribute_columns"]
                     );
                 }
                 else
@@ -260,8 +257,8 @@ class ProtoBufferDecoder
                     $rowData = array(
                         "is_ok" => $isOK,
                         "error" => array(
-                            "code" => $error->code(),
-                            "message" =>$error->message()
+                            "code" => $error->getCode(),
+                            "message" =>$error->getMessage()
                         ),
                     );
                 }
@@ -269,7 +266,7 @@ class ProtoBufferDecoder
             }
 
             array_push($tables, array(
-                "table_name" => $tableInBatchGetRow->table_name(),
+                "table_name" => $tableInBatchGetRow->getTableName(),
                 "rows" => $rowList,
             ));
         }
@@ -277,78 +274,87 @@ class ProtoBufferDecoder
         return array("tables" => $tables);
     }
 
-    private function parseRowsInBatchWriteRow($tableItem, $type)
+
+    private function decodeWriteRowItem(RowInBatchWriteRowResponse $rowItem)
     {
+        $consumed = $rowItem->getConsumed();
+        $error = $rowItem->getError();
+        $isOK = $this->parseIsOK($rowItem->getIsOk());
+
+        if ($isOK) {
+            $rawRow = $this->parseRow($rowItem->getRow());
+            $row = array(
+                "is_ok" => $isOK,
+                "consumed" => $this->parseConsumed($consumed),
+                "primary_key" => $rawRow["primary_key"],
+                "attribute_columns" => $rawRow["attribute_columns"]
+            );
+        } else {
+            $row = array(
+                "is_ok" => $isOK,
+                "error" => array(
+                    "code" => $error->getCode(),
+                    "message" => $error->getMessage()
+                ),
+            );
+        }
+        return $row;
+    }
+
+    public function decodeBatchWriteRowResponse($body)
+    {
+        $pbMessage = new BatchWriteRowResponse();
+        $pbMessage->mergeFromString($body);
         $ret = array();
-
-        $methodName = $type . "_size";
-        $size = $tableItem->$methodName();
-
-        for ($i = 0; $i < $size; $i++) {
-            $rowInBatchWriteRow = $tableItem->$type($i);
-            $consumed = $rowInBatchWriteRow->consumed();
-            $error = $rowInBatchWriteRow->error();
-            $isOK = $rowInBatchWriteRow->is_ok();
-            $isOK = $this->parseIsOK($rowInBatchWriteRow->is_ok());
-
-            if ($isOK) {
-                $row = array(
-                    "is_ok" => $isOK,
-                    "consumed" => $this->parseConsumed($consumed),
-                );
-            } else {
-                $row = array(
-                    "is_ok" => $isOK,
-                    "error" => array(
-                        "code" => $error->code(),
-                        "message" => $error->message()
-                    ),
-                );
+        $ret['tables'] = array();
+        $tables = $pbMessage->getTables();
+        for($i = 0; $i < count($tables); $i++) {
+            $table = array();
+            $table['rows'] = array();
+            $tableItem = $tables[$i];
+            $tableName = $tableItem->getTableName();
+            $table['table_name'] = $tableName;
+            $rows = $tableItem->getRows();
+            for($j = 0; $j < count($rows); $j++) {
+                $rowItem = $rows[$j];
+                $row = self::decodeWriteRowItem($rowItem);
+                $table['rows'][] = $row;
             }
-            array_push($ret, $row);
+            $ret['tables'][] = $table;
         }
         return $ret;
     }
 
-    public function decodeBatchWriteRowResponse($body) 
-    {
-        $pbMessage = new BatchWriteRowResponse();
-        $pbMessage->ParseFromString($body);
-        $tables = array();
-        for ($i = 0; $i < $pbMessage->tables_size(); $i++) {
-            $tableItem = $pbMessage->tables($i);
-            $table = array(
-                "table_name" => $tableItem->table_name(),
-                "put_rows" => $this->parseRowsInBatchWriteRow($tableItem, 'put_rows'),
-                "update_rows" => $this->parseRowsInBatchWriteRow($tableItem, 'update_rows'),
-                "delete_rows" => $this->parseRowsInBatchWriteRow($tableItem, 'delete_rows'),
-            );
-
-            array_push($tables, $table);
-        }
-        return array("tables" => $tables);
-    }
-
-    public function decodeGetRangeResponse($body) 
+    //TODO:
+    public function decodeGetRangeResponse($body)
     {
         $pbMessage = new GetRangeResponse();
-        $pbMessage->ParseFromString($body);
-        $consumed = $pbMessage->consumed();
-         
+        $pbMessage->mergeFromString($body);
+        $consumed = $pbMessage->getConsumed();
+
         $rowList = array();
-        for ($i = 0; $i < $pbMessage->rows_size(); $i++)
-        {
-            $row = $pbMessage->rows($i);
-            array_push($rowList, $this->parseRow($row));
+        $row = $pbMessage->getRows();
+        if(strlen($row) != 0) {
+            $inputStream = new PlainBufferInputStream($row);
+            $codedInputStream = new PlainBufferCodedInputStream($inputStream);
+            $rowList = $codedInputStream->readRows();
         }
-        
-        $nextStartPrimaryKey = $this->parseColumns($pbMessage, "next_start_primary_key");
+
+        $nextStartPrimaryKey = null;
+        $nextPK = $pbMessage->getNextStartPrimaryKey();
+        if(strlen($nextPK) != 0) {
+            $inputStream = new PlainBufferInputStream($nextPK);
+            $codedInputStream = new PlainBufferCodedInputStream($inputStream);
+            $row = $codedInputStream->readRow();
+            $nextStartPrimaryKey = $row['primary_key'];
+        }
+
         return array(
             "consumed" => $this->parseConsumed($consumed),
             "next_start_primary_key" => $nextStartPrimaryKey,
             "rows" => $rowList,
+            "next_token" => $pbMessage->getNextToken()
         );
-        return $getrow;
     }
 
     public function handleAfter($context)
