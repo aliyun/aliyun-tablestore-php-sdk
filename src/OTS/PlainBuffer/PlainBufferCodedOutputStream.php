@@ -140,12 +140,11 @@ class PlainBufferCodedOutputStream
             $cellCheckSum = PlainBufferCrc8::crcString($cellCheckSum, $value);
         }
         else if ($columnValue['type'] == ColumnTypeConst::CONST_DOUBLE) {
-            $doubleInLong = unpack("P", pack("d", $value))[1];
             $this->output->writeRawLittleEndian32(1 + PlainBufferConsts::LITTLE_ENDIAN_64_SIZE);
             $this->output->writeRawByte(PlainBufferConsts::VT_DOUBLE);
             $this->output->writeDouble($value);
             $cellCheckSum = PlainBufferCrc8::crcInt8($cellCheckSum, PlainBufferConsts::VT_DOUBLE);
-            $cellCheckSum = PlainBufferCrc8::crcInt64($cellCheckSum, $doubleInLong);
+            $cellCheckSum = PlainBufferCrc8::crcDouble($cellCheckSum, $value);
         } else {
             throw new \Aliyun\OTS\OTSClientException("Unsupported column type:" . gettype($value));
         }
@@ -223,7 +222,7 @@ class PlainBufferCodedOutputStream
         // cell_value
         if($columnValue != null) {
             if(is_array($columnValue)) {
-                if($columnValue['value'] != null) {
+                if(!is_null($columnValue['value'])) {
                     $cellCheckSum = self::writeColumnValueWithChecksum($columnValue, $cellCheckSum);
                 }
                 if($columnValue['timestamp'] != null) {

@@ -46,10 +46,20 @@ class PlainBufferCrc8
         return $crc;
     }
 
-    public static function crcInt64($crc, $byte)
+    public static function crcInt64($crc, $value)
     {
+        $low = $value & 0xFFFFFFFF;
+        $high = ($value >> 32) & 0xFFFFFFFF;
+        $crc = self::crcInt32($crc, $low);
+        $crc = self::crcInt32($crc, $high);
+        return $crc;
+    }
+
+    public static function crcDouble($crc, $value)
+    {
+        $data = pack("d", $value);
         for($i = 0; $i < 8; $i++) {
-            $crc = self::crcInt8($crc, ($byte >> ($i * 8)) & 0xff);
+            $crc = self::crcInt8($crc, ord($data[$i]));
         }
         return $crc;
     }

@@ -88,8 +88,8 @@ print json_encode ($response);
 			"write": 0
 		}
 	},
-	"primary_key": null,
-	"attribute_columns": null,
+	"primary_key": [],
+	"attribute_columns": [],
 	"token": ""
 }
 

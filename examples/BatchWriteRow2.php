@@ -101,8 +101,8 @@ print json_encode ($response);
 					"write": 1
 				}
 			},
-			"primary_key": null,
-			"attribute_columns": null
+			"primary_key": [],
+			"attribute_columns": []
 		}, {
 			"is_ok": true,
 			"consumed": {
@@ -111,8 +111,8 @@ print json_encode ($response);
 					"write": 1
 				}
 			},
-			"primary_key": null,
-			"attribute_columns": null
+			"primary_key": [],
+			"attribute_columns": []
 		}]
 	}]
 }*/

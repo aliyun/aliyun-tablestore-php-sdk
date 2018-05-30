@@ -173,7 +173,7 @@ class ProtoBufferEncoder
             }
         }
 
-        if ($pkValue === null) {
+        if (is_null($pkValue)) {
             if ($pkType != 'INF_MIN' && $pkType != 'INF_MAX' && $pkType != 'PK_AUTO_INCR') {
                 throw new \Aliyun\OTS\OTSClientException("A primarykey value wth type INTEGER, STRING, or BINARY must has 'value' field.");
             }

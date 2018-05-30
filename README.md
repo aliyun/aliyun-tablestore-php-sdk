@@ -5,9 +5,9 @@ Aliyun TableStore SDK for PHP - Version 4
 
 Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
 
-适用于PHP 5.5 及以上版本，包括7.0、7.1。
+适用于PHP 5.5 及以上版本，包括7.0、7.1、7.2。只支持64位的PHP系统。推荐使用PHP7，以得到最好的性能。
 
-当前仅支持Linux，其他系统需要用户自己改造代码支持
+当前仅支持Linux，其他系统需要用户自己改造代码支持。
 
 # 使用步骤
 
@@ -25,7 +25,7 @@ Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
 
 5. 安装依赖。在解压后的目录中执行命令： 
 
-   php tools/composer.phar install
+   php tools/composer.phar install --no-dev
 
 6. 生成 autoload。 在解压后的目录中执行命令：
 
@@ -62,14 +62,15 @@ Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
 ### 运行单元测试
 
 1. 执行`composer install`下载依赖的库
-2. 设置环境变量
+2. 如果是php 7.2，还需要 `composer require --dev phpunit/phpunit "^5.7.11"`，升级下phpunit的版本，才能支持。
+3. 设置环境变量
 
         export SDK_TEST_ACCESS_KEY_ID=access-key-id
         export SDK_TEST_ACCESS_KEY_SECRET=access-key-secret
         export SDK_TEST_END_POINT=endpoint
         export SDK_TEST_INSTANCE_NAME=instance-name
 
-3. 执行 `php vendor/bin/phpunit`
+4. 执行 `php vendor/bin/phpunit`
 
 # 帮助和支持 FAQ
 

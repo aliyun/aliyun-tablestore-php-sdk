@@ -152,6 +152,11 @@ class ProtoBufferDecoder
             $inputStream = new PlainBufferInputStream($row);
             $codedInputStream = new PlainBufferCodedInputStream($inputStream);
             return $codedInputStream->readRow();
+        } else {
+            return array(
+                "primary_key" => array(),
+                "attribute_columns" => array()
+            );
         }
     }
 
@@ -325,7 +330,6 @@ class ProtoBufferDecoder
         return $ret;
     }
 
-    //TODO:
     public function decodeGetRangeResponse($body)
     {
         $pbMessage = new GetRangeResponse();

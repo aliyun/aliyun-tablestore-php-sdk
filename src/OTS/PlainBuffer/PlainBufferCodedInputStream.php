@@ -94,11 +94,10 @@ class PlainBufferCodedInputStream
             return array("value" => $boolValue, "cell_check_sum" => $cellCheckSum, 'type' => ColumnTypeConst::CONST_BOOLEAN);
         }
         else if ($columnType == PlainBufferConsts::VT_DOUBLE) {
-            $doubleInt = $this->input->readDouble();
+            $doubleValue = $this->input->readDouble();
             $cellCheckSum = PlainBufferCrc8::crcInt8($cellCheckSum, PlainBufferConsts::VT_DOUBLE);
-            $cellCheckSum = PlainBufferCrc8::crcInt64($cellCheckSum, $doubleInt);
+            $cellCheckSum = PlainBufferCrc8::crcDouble($cellCheckSum, $doubleValue);
             self::readTag();
-            $doubleValue = unpack('d', pack('P', $doubleInt))[1];
             return array("value" => $doubleValue, "cell_check_sum" => $cellCheckSum, 'type' => ColumnTypeConst::CONST_DOUBLE);
         }
         else {

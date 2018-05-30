@@ -69,12 +69,14 @@ class PlainBufferInputStream
 
     public function readDouble()
     {
-        return unpack('P', $this->readBytes(8))[1];
+        return unpack('d', $this->readBytes(8))[1];
     }
 
     public function readInt64()
     {
-        return unpack('P', $this->readBytes(8))[1];
+        $low = unpack('V', $this->readBytes(4))[1];
+        $high = unpack('V', $this->readBytes(4))[1];
+        return  ($high << 32) | $low;
     }
 
     public function readInt32()

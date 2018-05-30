@@ -170,6 +170,7 @@ class UpdateRowTest extends SDKTestBase {
     /*
      * 4PutAnd4DeleteInUpdateRow
      * UpdateRow中包含4个put操作和4个delete操作的情况。
+     * 同时测试空值的情形。
      */
     public function testPutAndDelete4InUpdateRow() {
 
@@ -184,8 +185,8 @@ class UpdateRowTest extends SDKTestBase {
                 "PUT" => array (
                     array("att5", "cc"),
                     array("att6", "Zhon"),
-                    array("att7", 1),
-                    array("att8", 123)
+                    array("att7", 0.00),
+                    array("att8", "")
                 ),
                 "DELETE_ALL" => array(
                     "att1",

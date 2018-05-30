@@ -130,8 +130,8 @@ print json_encode ($response);
 			"write": 1          // 本次操作消耗了1个写CU
 		}
 	},
-	"primary_key": null,                //主键列自增会有主键返回
-	"attribute_columns": null
+	"primary_key": [],                //主键列自增会有主键返回
+	"attribute_columns": []
 }
 */
 

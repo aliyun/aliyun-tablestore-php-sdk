@@ -9,7 +9,7 @@ use Aliyun\OTS;
 date_default_timezone_set ('Asia/Shanghai');
 
 // require(__DIR__ . "/../../../vendor/autoload.php");
-class SDKTestBase extends \PHPUnit_Framework_TestCase {
+abstract class SDKTestBase extends \PHPUnit_Framework_TestCase {
     protected $otsClient;
     public function __construct() {
         parent::__construct ();

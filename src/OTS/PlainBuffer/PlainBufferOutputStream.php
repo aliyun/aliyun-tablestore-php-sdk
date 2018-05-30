@@ -2,7 +2,6 @@
 
 namespace Aliyun\OTS\PlainBuffer;
 
-
 class PlainBufferOutputStream
 {
     var $curPos;
@@ -56,7 +55,11 @@ class PlainBufferOutputStream
 
     public function writeRawLittleEndian64($value)
     {
-        $this->writeBytes(pack("P", $value));
+        $low = $value & 0xFFFFFFFF;
+        $high = ($value >> 32) & 0xFFFFFFFF;
+
+        $this->writeBytes(pack("V", $low));
+        $this->writeBytes(pack("V", $high));
     }
 
     public function writeDouble($value)
