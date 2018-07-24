@@ -1,20 +1,32 @@
 <?php
 namespace Aliyun\OTS\Handlers;
 
+use Aliyun\OTS\Consts\OperationTypeConst;
 use Aliyun\OTS\Consts\PrimaryKeyOptionConst;
+use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
+use Aliyun\OTS\Consts\StreamStatusConst;
+use Aliyun\OTS\OTSClientException;
 use Aliyun\OTS\PlainBuffer\PlainBufferCodedInputStream;
 use Aliyun\OTS\PlainBuffer\PlainBufferInputStream;
+use Aliyun\OTS\ProtoBuffer\Protocol\ActionType;
 use Aliyun\OTS\ProtoBuffer\Protocol\BatchGetRowResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\BatchWriteRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\ComputeSplitPointsBySizeResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\DeleteRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\DescribeStreamResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\DescribeTableResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetRangeResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\GetShardIteratorResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\GetStreamRecordResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\ListStreamResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\ListTableResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeyOption;
 use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeyType;
 use Aliyun\OTS\ProtoBuffer\Protocol\PutRowResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\RowInBatchWriteRowResponse;
+use Aliyun\OTS\ProtoBuffer\Protocol\StreamDetails;
+use Aliyun\OTS\ProtoBuffer\Protocol\StreamStatus;
 use Aliyun\OTS\ProtoBuffer\Protocol\UpdateRowResponse;
 use Aliyun\OTS\ProtoBuffer\Protocol\UpdateTableResponse;
 
@@ -55,9 +67,9 @@ class ProtoBufferDecoder
     private function parseCapacityUnit($pbMessage)
     {
         return array(
-            "capacity_unit" => array(
-                "read" => $pbMessage->getRead(),
-                "write" => $pbMessage->getWrite()
+            'capacity_unit' => array(
+                'read' => $pbMessage->getRead(),
+                'write' => $pbMessage->getWrite()
             ),
         );
     }
@@ -67,29 +79,40 @@ class ProtoBufferDecoder
         $capacityUnit = $this->parseCapacityUnit($pbMessage->getCapacityUnit());
 
         return array(
-            "capacity_unit" => $capacityUnit['capacity_unit'],
-            "last_increase_time" => $pbMessage->getLastIncreaseTime(),
-            "last_decrease_time" => $pbMessage->getLastDecreaseTime()
+            'capacity_unit' => $capacityUnit['capacity_unit'],
+            'last_increase_time' => $pbMessage->getLastIncreaseTime(),
+            'last_decrease_time' => $pbMessage->getLastDecreaseTime()
         );
     }
 
     private function parseTableOptions($pbMessage)
     {
         return array(
-            "time_to_live" => $pbMessage->getTimeToLive(),
-            "max_versions" => $pbMessage->getMaxVersions(),
-            "deviation_cell_version_in_sec" => $pbMessage->getDeviationCellVersionInSec()
+            'time_to_live' => $pbMessage->getTimeToLive(),
+            'max_versions' => $pbMessage->getMaxVersions(),
+            'deviation_cell_version_in_sec' => $pbMessage->getDeviationCellVersionInSec()
         );
     }
 
-    public function decodeDescribeTableResponse($body)
+    private function parseStreamDetails(StreamDetails $pbMessage)
     {
-        $pbMessage = new DescribeTableResponse();
-        $pbMessage->mergeFromString($body);
-        $tableMeta = $pbMessage->getTableMeta();
-         
+        if($pbMessage->getEnableStream()) {
+            return array(
+                'enable_stream' => true,
+                'stream_id' => $pbMessage->getStreamId(),
+                'expiration_time' => $pbMessage->getExpirationTime(),
+                'last_enable_time' => $pbMessage->getLastEnableTime()
+            );
+        }else {
+            return array(
+                'enable_stream' => false
+            );
+        }
+    }
+
+    private function parserPrimaryKeySchema($primaryKeys)
+    {
         $pkSchema = array();
-        $primaryKeys = $tableMeta->getPrimaryKey();
         for ($i = 0; $i < count($primaryKeys); $i++) {
             $pkColumn = $primaryKeys[$i];
             $column = array();
@@ -99,16 +122,16 @@ class ProtoBufferDecoder
             switch ($pkColumn->getType())
             {
                 case PrimaryKeyType::INTEGER:
-                    $type = "INTEGER";
+                    $type = PrimaryKeyTypeConst::CONST_INTEGER;
                     break;
                 case PrimaryKeyType::STRING:
-                    $type = "STRING";
+                    $type = PrimaryKeyTypeConst::CONST_STRING;
                     break;
                 case PrimaryKeyType::BINARY:
-                    $type = "BINARY";
+                    $type = PrimaryKeyTypeConst::CONST_BINARY;
                     break;
                 default:
-                    throw new OTSClientException("Invalid column type in response.");
+                    throw new OTSClientException('Invalid column type in response.');
             }
             $pkSchema[$i][] = $type;
             if($pkColumn->hasOption()) {
@@ -118,20 +141,34 @@ class ProtoBufferDecoder
                         $column['option'] = PrimaryKeyOptionConst::CONST_PK_AUTO_INCR;
                         break;
                     default:
-                        throw new OTSClientException("Invalid column option in response.");
+                        throw new OTSClientException('Invalid column option in response.');
                 }
                 $pkSchema[$i][] = $column['option'];
             }
         }
+        return $pkSchema;
+    }
+
+    public function decodeDescribeTableResponse($body)
+    {
+        $pbMessage = new DescribeTableResponse();
+        $pbMessage->mergeFromString($body);
+        $tableMeta = $pbMessage->getTableMeta();
 
         $response = array(
-            "table_meta" => array(
-                "table_name" => $tableMeta->getTableName(),
-                "primary_key_schema" => $pkSchema,
+            'table_meta' => array(
+                'table_name' => $tableMeta->getTableName(),
+                'primary_key_schema' => $this->parserPrimaryKeySchema($tableMeta->getPrimaryKey()),
             ),
-            "capacity_unit_details" => $this->parseReservedThroughputDetails($pbMessage->getReservedThroughputDetails()),
-            "table_options" => $this->parseTableOptions($pbMessage->getTableOptions())
+            'capacity_unit_details' => $this->parseReservedThroughputDetails($pbMessage->getReservedThroughputDetails()),
+            'table_options' => $this->parseTableOptions($pbMessage->getTableOptions()),
+            'stream_details' => array(
+                'enable_stream' => false
+            )
         );
+        if($pbMessage->hasStreamDetails()) {
+            $response['stream_details'] = $this->parseStreamDetails($pbMessage->getStreamDetails());
+        }
         return $response;
     }
 
@@ -140,8 +177,69 @@ class ProtoBufferDecoder
         $pbMessage = new UpdateTableResponse();
         $pbMessage->mergeFromString($body);
         $response = array(
-            "capacity_unit_details" => $this->parseReservedThroughputDetails($pbMessage->getReservedThroughputDetails()),
-            "table_options" => $this->parseTableOptions($pbMessage->getTableOptions())
+            'capacity_unit_details' => $this->parseReservedThroughputDetails($pbMessage->getReservedThroughputDetails()),
+            'table_options' => $this->parseTableOptions($pbMessage->getTableOptions()),
+            'stream_details' => array(
+                'enable_stream' => false
+            )
+        );
+        if($pbMessage->hasStreamDetails()) {
+            $response['stream_details'] = $this->parseStreamDetails($pbMessage->getStreamDetails());
+        }
+        return $response;
+    }
+
+    public function decodeComputeSplitPointsBySizeResponse($body)
+    {
+        $pbMessage = new ComputeSplitPointsBySizeResponse();
+        $pbMessage->mergeFromString($body);
+
+        $pks = $this->parserPrimaryKeySchema($pbMessage->getSchema());
+
+        $infStart = array();
+        $infEnd = array();
+        foreach ($pks as $pk) {
+            $infStart[] = array($pk[0], null, PrimaryKeyTypeConst::CONST_INF_MIN);
+            $infEnd[] = array($pk[0], null, PrimaryKeyTypeConst::CONST_INF_MAX);
+        }
+
+        $splits = array();
+        $splitPoints = $pbMessage->getSplitPoints();
+
+        $lastPk = $infStart;
+        $nowPk = $infEnd;
+
+        foreach($splitPoints as $split) {
+            $pk = $this->parseRow($split);
+            $nowPk = $pk['primary_key'];
+            for($i = count($nowPk); $i < count($pks); $i++) {
+                $nowPk[] = array($pks[$i][0], null, PrimaryKeyTypeConst::CONST_INF_MIN);
+            }
+            $splits[] = array(
+                'lower_bound' => $lastPk,
+                'upper_bound' => $nowPk
+            );
+            $lastPk = $nowPk;
+        }
+
+        $splits[] = array(
+            'lower_bound' => $lastPk,
+            'upper_bound' => $infEnd
+        );
+
+        $locations = $pbMessage->getLocations();
+        $index = 0;
+        foreach($locations as $location) {
+            for($i = 0; $i < $location->getRepeat(); $i++) {
+                $splits[$index]['location'] = $location->getLocation();
+                $index++;
+            }
+        }
+
+        $response = array(
+            'consumed' => $this->parseConsumed($pbMessage->getConsumed()),
+            'primary_key_schema' => $pks,
+            'splits' => $splits
         );
         return $response;
     }
@@ -154,8 +252,8 @@ class ProtoBufferDecoder
             return $codedInputStream->readRow();
         } else {
             return array(
-                "primary_key" => array(),
-                "attribute_columns" => array()
+                'primary_key' => array(),
+                'attribute_columns' => array()
             );
         }
     }
@@ -171,10 +269,10 @@ class ProtoBufferDecoder
         $pbMessage->mergeFromString($body);
         $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
-            "primary_key" => $rawRow["primary_key"],
-            "attribute_columns" => $rawRow["attribute_columns"],
-            "token" => $pbMessage->getNextToken()
+            'consumed' => $this->parseConsumed($pbMessage->getConsumed()),
+            'primary_key' => $rawRow['primary_key'],
+            'attribute_columns' => $rawRow['attribute_columns'],
+            'next_token' => $pbMessage->getNextToken()
         );
 
         return $response;
@@ -186,9 +284,9 @@ class ProtoBufferDecoder
         $pbMessage->mergeFromString($body);
         $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
-            "primary_key" => $rawRow["primary_key"],
-            "attribute_columns" => $rawRow["attribute_columns"]
+            'consumed' => $this->parseConsumed($pbMessage->getConsumed()),
+            'primary_key' => $rawRow['primary_key'],
+            'attribute_columns' => $rawRow['attribute_columns']
         );
         return $response;
     }
@@ -199,9 +297,9 @@ class ProtoBufferDecoder
         $pbMessage->mergeFromString($body);
         $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
-            "primary_key" => $rawRow["primary_key"],
-            "attribute_columns" => $rawRow["attribute_columns"]
+            'consumed' => $this->parseConsumed($pbMessage->getConsumed()),
+            'primary_key' => $rawRow['primary_key'],
+            'attribute_columns' => $rawRow['attribute_columns']
         );
         return $response;
     }
@@ -212,9 +310,9 @@ class ProtoBufferDecoder
         $pbMessage->mergeFromString($body);
         $rawRow = $this->parseRow($pbMessage->getRow());
         $response = array(
-            "consumed" => $this->parseConsumed($pbMessage->getConsumed()),
-            "primary_key" => $rawRow["primary_key"],
-            "attribute_columns" => $rawRow["attribute_columns"]
+            'consumed' => $this->parseConsumed($pbMessage->getConsumed()),
+            'primary_key' => $rawRow['primary_key'],
+            'attribute_columns' => $rawRow['attribute_columns']
         );
         return $response;
     }
@@ -251,19 +349,20 @@ class ProtoBufferDecoder
                 {
                     $rawRow = $this->parseRow($rowInBatchGetRow->getRow());
                     $rowData = array(
-                        "is_ok" => $isOK,
-                        "consumed" => $this->parseConsumed($consumed),
-                        "primary_key" => $rawRow["primary_key"],
-                        "attribute_columns" => $rawRow["attribute_columns"]
+                        'is_ok' => $isOK,
+                        'consumed' => $this->parseConsumed($consumed),
+                        'primary_key' => $rawRow['primary_key'],
+                        'attribute_columns' => $rawRow['attribute_columns'],
+                        'next_token' => $rowInBatchGetRow->getNextToken()
                     );
                 }
                 else
                 {
                     $rowData = array(
-                        "is_ok" => $isOK,
-                        "error" => array(
-                            "code" => $error->getCode(),
-                            "message" =>$error->getMessage()
+                        'is_ok' => $isOK,
+                        'error' => array(
+                            'code' => $error->getCode(),
+                            'message' =>$error->getMessage()
                         ),
                     );
                 }
@@ -271,12 +370,12 @@ class ProtoBufferDecoder
             }
 
             array_push($tables, array(
-                "table_name" => $tableInBatchGetRow->getTableName(),
-                "rows" => $rowList,
+                'table_name' => $tableInBatchGetRow->getTableName(),
+                'rows' => $rowList,
             ));
         }
 
-        return array("tables" => $tables);
+        return array('tables' => $tables);
     }
 
 
@@ -289,17 +388,17 @@ class ProtoBufferDecoder
         if ($isOK) {
             $rawRow = $this->parseRow($rowItem->getRow());
             $row = array(
-                "is_ok" => $isOK,
-                "consumed" => $this->parseConsumed($consumed),
-                "primary_key" => $rawRow["primary_key"],
-                "attribute_columns" => $rawRow["attribute_columns"]
+                'is_ok' => $isOK,
+                'consumed' => $this->parseConsumed($consumed),
+                'primary_key' => $rawRow['primary_key'],
+                'attribute_columns' => $rawRow['attribute_columns']
             );
         } else {
             $row = array(
-                "is_ok" => $isOK,
-                "error" => array(
-                    "code" => $error->getCode(),
-                    "message" => $error->getMessage()
+                'is_ok' => $isOK,
+                'error' => array(
+                    'code' => $error->getCode(),
+                    'message' => $error->getMessage()
                 ),
             );
         }
@@ -354,12 +453,159 @@ class ProtoBufferDecoder
         }
 
         return array(
-            "consumed" => $this->parseConsumed($consumed),
-            "next_start_primary_key" => $nextStartPrimaryKey,
-            "rows" => $rowList,
-            "next_token" => $pbMessage->getNextToken()
+            'consumed' => $this->parseConsumed($consumed),
+            'next_start_primary_key' => $nextStartPrimaryKey,
+            'rows' => $rowList,
+            'next_token' => $pbMessage->getNextToken()
         );
     }
+
+    private function parseStream($message) {
+        return array(
+            'stream_id' => $message->getStreamId(),
+            'table_name' => $message->getTableName(),
+            'creation_time' => $message->getCreationTime()
+        );
+    }
+
+    public function decodeListStreamResponse($body)
+    {
+        $pbMessage = new ListStreamResponse();
+        $pbMessage->mergeFromString($body);
+        $streams = $pbMessage->getStreams();
+        $outStreams = array();
+        foreach($streams as $stream) {
+            $outStreams[] = $this->parseStream($stream);
+        }
+        $response = array(
+            'streams' => $outStreams
+        );
+        return $response;
+    }
+
+    private function parseStreamShard($message) {
+        return array(
+            'shard_id' => $message->getShardId(),
+            'parent_id' => $message->getParentId(),
+            'parent_sibling_id' => $message->getParentSiblingId()
+        );
+    }
+
+    private function parseStreamStatus($message) {
+        if($message == StreamStatus::STREAM_ENABLING){
+            return StreamStatusConst::CONST_ENABLING;
+        }
+        else if($message == StreamStatus::STREAM_ACTIVE) {
+            return StreamStatusConst::CONST_ACTIVE;
+        }
+        else {
+            throw new OTSClientException('unknown stream status.');
+        }
+    }
+
+    public function decodeDescribeStreamResponse($body)
+    {
+        $pbMessage = new DescribeStreamResponse();
+        $pbMessage->mergeFromString($body);
+
+        $oriShards = $pbMessage->getShards();
+        $shards = array();
+        foreach ($oriShards as $shard) {
+            $shards[] = $this->parseStreamShard($shard);
+        }
+
+        $response = array(
+            'stream_id' => $pbMessage->getStreamId(),
+            'expiration_time' => $pbMessage->getExpirationTime(),
+            'table_name' => $pbMessage->getTableName(),
+            'creation_time' => $pbMessage->getCreationTime(),
+            'stream_status' => $this->parseStreamStatus($pbMessage->getStreamStatus()),
+            'shards' => $shards,
+            'next_shard_id' => $pbMessage->getNextShardId()
+        );
+        return $response;
+    }
+
+    public function decodeGetShardIteratorResponse($body)
+    {
+        $pbMessage = new GetShardIteratorResponse();
+        $pbMessage->mergeFromString($body);
+        $response = array(
+            'shard_iterator' => $pbMessage->getShardIterator()
+        );
+        return $response;
+    }
+
+    private function parserActionType($message) {
+        if($message == ActionType::PUT_ROW){
+            return OperationTypeConst::CONST_PUT;
+        }
+        else if($message == ActionType::UPDATE_ROW) {
+            return OperationTypeConst::CONST_UPDATE;
+        }
+        else if($message == ActionType::DELETE_ROW) {
+            return OperationTypeConst::CONST_DELETE;
+        }
+        else {
+            throw new OTSClientException('unknown action type.');
+        }
+    }
+
+    private function parseStreamRecord($message) {
+        $type = $message->getActionType();
+        $rawRow = $this->parseRow($message->getRecord());
+        $op = $this->parserActionType($type);
+
+        if($op == OperationTypeConst::CONST_UPDATE ) {
+            $put = array();
+            $delete = array();
+            $deleteAll = array();
+            foreach($rawRow['attribute_columns'] as $column) {
+                if(!is_null($column[1])) {
+                    $put[] = $column;
+                } else if(!is_null($column[3])) {
+                    $delete[] = array($column[0],$column[3]);
+                } else {
+                    $deleteAll[] = $column[0];
+                }
+            }
+            return array(
+                'operation_type' => $op,
+                'primary_key' => $rawRow['primary_key'],
+                'update_of_attribute_columns' => array(
+                    'PUT' => $put,
+                    'DELETE' => $delete,
+                    'DELETE_ALL'=> $deleteAll
+                ),
+                'extension' => $rawRow['extension']
+            );
+
+        } else {
+            return array(
+                'operation_type' => $op,
+                'primary_key' => $rawRow['primary_key'],
+                'attribute_columns' => $rawRow['attribute_columns'],
+                'extension' => $rawRow['extension']
+            );
+        }
+    }
+
+    public function decodeGetStreamRecordResponse($body)
+    {
+        $pbMessage = new GetStreamRecordResponse();
+        $pbMessage->mergeFromString($body);
+        $oriRecords = $pbMessage->getStreamRecords();
+        $records = array();
+        foreach ($oriRecords as $record) {
+            $records[] = $this->parseStreamRecord($record);
+        }
+        $response = array(
+            'next_shard_iterator' => $pbMessage->getNextShardIterator(),
+            'stream_records' => $records
+        );
+        return $response;
+    }
+
 
     public function handleAfter($context)
     {
@@ -368,7 +614,7 @@ class ProtoBufferDecoder
         }
 
         $apiName = $context->apiName;
-        $methodName = "decode" . $apiName . "Response";
+        $methodName = 'decode' . $apiName . 'Response';
         $response = $this->$methodName($context->responseBody);
         $context->response = $response;
 

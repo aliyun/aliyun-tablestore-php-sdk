@@ -9,12 +9,11 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42;*
- * * HBase支持以下参数：
- * *     1. TimeRange或指定time
- * *     2. Filter（根据列值或列名来过滤）
- * * 我们只支持给同版本的选择条件。
- * *&#47;
+ **
+ * HBase支持以下参数：
+ *     1. TimeRange或指定time
+ *     2. Filter（根据列值或列名来过滤）
+ * 我们只支持给同版本的选择条件。
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.GetRangeRequest</code>
  */
@@ -66,6 +65,13 @@ class GetRangeRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $exclusive_end_primary_key = '';
     private $has_exclusive_end_primary_key = false;
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 9 [default = true];</code>
+     */
+    private $cache_blocks = false;
+    private $has_cache_blocks = false;
     /**
      * Generated from protobuf field <code>optional bytes filter = 10;</code>
      */
@@ -326,6 +332,38 @@ class GetRangeRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasExclusiveEndPrimaryKey()
     {
         return $this->has_exclusive_end_primary_key;
+    }
+
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 9 [default = true];</code>
+     * @return bool
+     */
+    public function getCacheBlocks()
+    {
+        return $this->cache_blocks;
+    }
+
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 9 [default = true];</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setCacheBlocks($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->cache_blocks = $var;
+        $this->has_cache_blocks = true;
+
+        return $this;
+    }
+
+    public function hasCacheBlocks()
+    {
+        return $this->has_cache_blocks;
     }
 
     /**

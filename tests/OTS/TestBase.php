@@ -58,7 +58,7 @@ abstract class SDKTestBase extends \PHPUnit_Framework_TestCase {
         SDKTestBase::waitForAvoidFrequency();
     }
     public static function waitForTableReady() {
-        sleep (30);
+        sleep (10);
     }
     public static function waitForAvoidFrequency() {
         sleep (1);
@@ -76,29 +76,20 @@ abstract class SDKTestBase extends \PHPUnit_Framework_TestCase {
         $this->assertColumnEquals($expect['attribute_columns'], $actual['attribute_columns']);
     }
 
-    public function assertAttrEquals($expect, $actual) {
-        $this->assertTrue(is_array($expect));
-        $this->assertTrue(is_array($actual));
-        $this->assertEquals(count($expect), count($actual));
-        foreach ($expect as $name => $value) {
-            $this->assertEquals($value, $actual[$name][0][0]);
-        }
-    }
-
     public function assertColumnEquals($expect, $actual) {
         $this->assertTrue(is_array($expect));
         $this->assertTrue(is_array($actual));
         $this->assertEquals(count($expect), count($actual));
         for($i = 0; $i < count($expect); $i++) {
             $this->assertEquals($expect[$i][0], $actual[$i][0]);
-            if(!isset($actual[$i][1])) {
+            if(!empty($expect[$i][1])) {
                 $this->assertEquals($expect[$i][1], $actual[$i][1]);
             }
-            if(!isset($actual[$i][2])) {
-                $this->assertEquals($expect[$i][2], $actual[$i][3]);
+            if(!empty($expect[$i][2])) {
+                $this->assertEquals($expect[$i][2], $actual[$i][2]);
             }
-            if(!isset($actual[$i][3])) {
-                $this->assertEquals($expect[$i][2], $actual[$i][3]);
+            if(!empty($expect[$i][3])) {
+                $this->assertEquals($expect[$i][3], $actual[$i][3]);
             }
         }
     }

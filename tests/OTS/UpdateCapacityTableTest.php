@@ -4,101 +4,101 @@ namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 
-require_once __DIR__ . "/TestBase.php";
-require_once __DIR__ . "/../../vendor/autoload.php";
+require_once __DIR__ . '/TestBase.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 
 class UpdatePerfTableTest extends SDKTestBase {
 
     private static $usedTables = array (
-        "myTable1",
-        "myTable2",
-        "myTable3",
-        "myTable4",
+        'myTable1',
+        'myTable2',
+        'myTable3',
+        'myTable4',
     );
 
     public static function setUpBeforeClass()
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[0],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[0],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             ),
-            "table_options" => array(
-                "time_to_live" => -1,
-                "max_versions" => 2,
-                "deviation_cell_version_in_sec" => 86400
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 2,
+                'deviation_cell_version_in_sec' => 86400
             )
         ));
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[1],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[1],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             ),
-            "table_options" => array(
-                "time_to_live" => -1,
-                "max_versions" => 2,
-                "deviation_cell_version_in_sec" => 86400
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 2,
+                'deviation_cell_version_in_sec' => 86400
             )
         ));
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[2],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[2],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             ),
-            "table_options" => array(
-                "time_to_live" => -1,
-                "max_versions" => 2,
-                "deviation_cell_version_in_sec" => 86400
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 2,
+                'deviation_cell_version_in_sec' => 86400
             )
         ));
 
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[3],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[3],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             ),
-            "table_options" => array(
-                "time_to_live" => -1,
-                "max_versions" => 2,
-                "deviation_cell_version_in_sec" => 86400
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 2,
+                'deviation_cell_version_in_sec' => 86400
             )
         ));
     }
@@ -117,11 +117,11 @@ class UpdatePerfTableTest extends SDKTestBase {
     public function testUpdateTable() {
         $name['table_name'] = self::$usedTables[0];
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "table_options" => array (
-                "time_to_live" => 86400,
-                "max_versions" => 3,
-                "deviation_cell_version_in_sec" => 86420
+            'table_name' => self::$usedTables[0],
+            'table_options' => array (
+                'time_to_live' => 86400,
+                'max_versions' => 3,
+                'deviation_cell_version_in_sec' => 86420
             )
         );
         $this->otsClient->updateTable ($tablename);
@@ -137,9 +137,9 @@ class UpdatePerfTableTest extends SDKTestBase {
     public function testTimeToLiveOnly() {
         $name['table_name'] = self::$usedTables[1];
         $tablename = array (
-            "table_name" => self::$usedTables[1],
-            "table_options" => array (
-                "time_to_live" => 86400
+            'table_name' => self::$usedTables[1],
+            'table_options' => array (
+                'time_to_live' => 86400
             )
         );
         $this->otsClient->updateTable ($tablename);
@@ -157,9 +157,9 @@ class UpdatePerfTableTest extends SDKTestBase {
     public function testMaxVersionOnly() {
         $name['table_name'] = self::$usedTables[2];
         $tablename = array (
-            "table_name" => self::$usedTables[2],
-            "table_options" => array (
-                "max_versions" => 3
+            'table_name' => self::$usedTables[2],
+            'table_options' => array (
+                'max_versions' => 3
             )
         );
         $this->otsClient->updateTable ($tablename);
@@ -177,9 +177,9 @@ class UpdatePerfTableTest extends SDKTestBase {
     public function testDeviationOnly() {
         $name['table_name'] = self::$usedTables[3];
         $tablename = array (
-            "table_name" => self::$usedTables[3],
-            "table_options" => array (
-                "deviation_cell_version_in_sec" => 86420
+            'table_name' => self::$usedTables[3],
+            'table_options' => array (
+                'deviation_cell_version_in_sec' => 86420
             )
         );
         $this->otsClient->updateTable ($tablename);

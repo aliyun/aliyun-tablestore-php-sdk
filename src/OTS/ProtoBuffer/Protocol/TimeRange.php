@@ -9,12 +9,10 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42; ########################################################################################################## *&#47;
- * /&#42;*
- * * 时间戳的取值最小值为0，最大值为INT64.MAX
- * * 1. 若要查询一个范围，则指定start_time和end_time
- * * 2. 若要查询一个特定时间戳，则指定specific_time
- * *&#47;
+ **
+ * 时间戳的取值最小值为0，最大值为INT64.MAX
+ * 1. 若要查询一个范围，则指定start_time和end_time
+ * 2. 若要查询一个特定时间戳，则指定specific_time
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.TimeRange</code>
  */

@@ -1,3 +1,10 @@
+# 版本 4.1.0 发布于 2018/06/05
+1. 完善文档，修复bug.
+2. 增加 ComputeSplitPointsBySize 接口，并增加样例
+3. 增加流相关接口，ListStream, DescribeStream, GetShardIterator, GetStreamRecord.
+4. 变更：GetRow, BatchGetRow, GetRange支持TimeRange过滤.
+5. 变更：CreateTable, UpdateTable, DescribeTable 支持stream设置.
+
 # 版本 4.0.0 发布于 2018/05/15
 1. 支持5.5以上php版本，包括5.5、5.6、7.0、7.1、7.2等版本，只支持64位的PHP系统，推荐使用PHP7.
 2. 新功能：支持TTL设置，createTable, updateTable新增table_options参数

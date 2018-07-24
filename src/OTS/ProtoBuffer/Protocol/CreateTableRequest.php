@@ -9,18 +9,16 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42; #############################################  CreateTable  ############################################# *&#47;
- * /&#42;*
- * * table_meta用于存储表中不可更改的schema属性，可以更改的ReservedThroughput和TableOptions独立出来，作为UpdateTable的参数。
- * * 加入GlobalIndex和LocalIndex之后，结构会变为：
- * * message CreateTableRequest {
- * *         required TableMeta table_meta = 1;
- * *         required ReservedThroughput reserved_throughput = 2;
- * *         required TableOptions table_options = 3;
- * *         repeated LocalIndex local_indexes = 4; // LocalIndex不再单独包含ReservedThroughput和TableOptions，其与主表共享配置。
- * *         repeated GlobalIndex global_indexes = 5; // GlobalIndex内单独包含ReservedThroughput和TableOptions
- * * }
- * *&#47;
+ **
+ * table_meta用于存储表中不可更改的schema属性，可以更改的ReservedThroughput和TableOptions独立出来，作为UpdateTable的参数。
+ * 加入GlobalIndex和LocalIndex之后，结构会变为：
+ * message CreateTableRequest {
+ *         required TableMeta table_meta = 1;
+ *         required ReservedThroughput reserved_throughput = 2;
+ *         required TableOptions table_options = 3;
+ *         repeated LocalIndex local_indexes = 4; // LocalIndex不再单独包含ReservedThroughput和TableOptions，其与主表共享配置。
+ *         repeated GlobalIndex global_indexes = 5; // GlobalIndex内单独包含ReservedThroughput和TableOptions
+ * }
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.CreateTableRequest</code>
  */
@@ -48,6 +46,11 @@ class CreateTableRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $partitions;
     private $has_partitions = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamSpecification stream_spec = 5;</code>
+     */
+    private $stream_spec = null;
+    private $has_stream_spec = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -168,6 +171,34 @@ class CreateTableRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasPartitions()
     {
         return $this->has_partitions;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamSpecification stream_spec = 5;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\StreamSpecification
+     */
+    public function getStreamSpec()
+    {
+        return $this->stream_spec;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamSpecification stream_spec = 5;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\StreamSpecification $var
+     * @return $this
+     */
+    public function setStreamSpec($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\StreamSpecification::class);
+        $this->stream_spec = $var;
+        $this->has_stream_spec = true;
+
+        return $this;
+    }
+
+    public function hasStreamSpec()
+    {
+        return $this->has_stream_spec;
     }
 
 }

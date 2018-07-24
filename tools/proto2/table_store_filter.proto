@@ -1,4 +1,5 @@
-package com.aliyun.tablestore.protocol;
+syntax = "proto2";
+package aliyun.OTS.ProtoBuffer.Protocol;
 
 enum FilterType {
     FT_SINGLE_COLUMN_VALUE = 1;

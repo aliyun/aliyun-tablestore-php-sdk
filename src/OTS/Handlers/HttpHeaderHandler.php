@@ -173,7 +173,7 @@ class HttpHeaderHandler
 
     // OTSClient version information
     const OTS_NAME = "aliyun-tablestore-sdk-php";
-    const OTS_VERSION = "4.0.0";
+    const OTS_VERSION = "4.1.0";
     const OTS_BUILD = "2015-12-31";
 
     // OTS Internal constants

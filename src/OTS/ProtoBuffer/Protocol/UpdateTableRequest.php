@@ -9,7 +9,7 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42; #############################################  UpdateTable  ############################################# *&#47;
+ * #############################################  UpdateTable  ############################################# 
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.UpdateTableRequest</code>
  */
@@ -30,6 +30,11 @@ class UpdateTableRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $table_options = null;
     private $has_table_options = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamSpecification stream_spec = 4;</code>
+     */
+    private $stream_spec = null;
+    private $has_stream_spec = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -118,6 +123,34 @@ class UpdateTableRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasTableOptions()
     {
         return $this->has_table_options;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamSpecification stream_spec = 4;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\StreamSpecification
+     */
+    public function getStreamSpec()
+    {
+        return $this->stream_spec;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamSpecification stream_spec = 4;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\StreamSpecification $var
+     * @return $this
+     */
+    public function setStreamSpec($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\StreamSpecification::class);
+        $this->stream_spec = $var;
+        $this->has_stream_spec = true;
+
+        return $this;
+    }
+
+    public function hasStreamSpec()
+    {
+        return $this->has_stream_spec;
     }
 
 }

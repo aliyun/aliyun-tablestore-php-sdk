@@ -17,16 +17,21 @@ use Aliyun\OTS\ProtoBuffer\Protocol\BatchWriteRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\CapacityUnit;
 use Aliyun\OTS\ProtoBuffer\Protocol\ColumnPaginationFilter;
 use Aliyun\OTS\ProtoBuffer\Protocol\CompositeColumnValueFilter;
+use Aliyun\OTS\ProtoBuffer\Protocol\ComputeSplitPointsBySizeRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\Condition;
 use Aliyun\OTS\ProtoBuffer\Protocol\CreateTableRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\DeleteRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\DeleteTableRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\DescribeStreamRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\DescribeTableRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\Direction;
 use Aliyun\OTS\ProtoBuffer\Protocol\Filter;
 use Aliyun\OTS\ProtoBuffer\Protocol\FilterType;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetRangeRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetRowRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\GetShardIteratorRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\GetStreamRecordRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\ListStreamRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\OperationType;
 use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeySchema;
 use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeyType;
@@ -37,6 +42,7 @@ use Aliyun\OTS\ProtoBuffer\Protocol\ReturnType;
 use Aliyun\OTS\ProtoBuffer\Protocol\RowExistenceExpectation;
 use Aliyun\OTS\ProtoBuffer\Protocol\RowInBatchWriteRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\SingleColumnValueFilter;
+use Aliyun\OTS\ProtoBuffer\Protocol\StreamSpecification;
 use Aliyun\OTS\ProtoBuffer\Protocol\TableInBatchGetRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\TableInBatchWriteRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\TableMeta;
@@ -334,12 +340,12 @@ class ProtoBufferEncoder
 
     	foreach ($column_filters as $name => $value)
     	{
-    		if ( strcmp( $name, "logical_operator" ) == 0 || strcmp( $name, "sub_conditions" ) == 0 ) {
+    		if ( strcmp( $name, 'logical_operator' ) == 0 || strcmp( $name, 'sub_conditions' ) == 0 || strcmp( $name, 'sub_filters' ) == 0 ) {
     			// a composite condition
-    			if ( strcmp( $name, "logical_operator" ) == 0 ) {
+    			if ( strcmp( $name, 'logical_operator' ) == 0 ) {
     				$value = $this->preprocessLogicalOperator($value);
     				$ret = array_merge( $ret, array( $name => $value ) );
-    			} else if ( strcmp( $name, "sub_conditions" ) == 0 ) {
+    			} else if ( strcmp( $name, 'sub_conditions' ) == 0 || strcmp( $name, 'sub_filters' ) == 0) {
     				$sub_conditions = array();
     				foreach( $value as $cond ) {
     					if ( is_array( $cond ) )
@@ -347,21 +353,27 @@ class ProtoBufferEncoder
     					else
     						throw new \Aliyun\OTS\OTSClientException( "The value of sub_conditions field should be array of array." );
     				}
-    				$ret = array_merge( $ret, array( "sub_conditions" => $sub_conditions ) );
+    				$ret = array_merge( $ret, array( 'sub_conditions' => $sub_conditions ) );
     			}
-    		} else if ( strcmp( $name, "column_name" ) == 0 || strcmp( $name, "value" ) == 0 || strcmp( $name, "comparator" ) == 0 || strcmp( $name, "pass_if_missing" ) == 0 ) {
+    		} else if ( strcmp( $name, 'column_name' ) == 0 || strcmp( $name, 'value' ) == 0 || strcmp( $name, 'comparator' ) == 0 || strcmp( $name, 'pass_if_missing' ) == 0 ) {
     			// a relation condition
-    			if ( strcmp( $name, "value" ) == 0 ) {
+    			if ( strcmp( $name, 'value' ) == 0 ) {
+    			    if(is_array($value)) {
+    			        $value = array(
+    			          'value' => $value[0],
+                          'type' => $value[1]
+                        );
+                    }
     				$ret = array_merge( $ret, array(
     						$name => $this->preprocessColumnValue( $value )
     				) );
-    			} else if ( strcmp( $name, "comparator" ) == 0 ) {
+    			} else if ( strcmp( $name, 'comparator' ) == 0 ) {
     				$ret = array_merge( $ret, array(
     						$name => $this->preprocessComparatorType( $value ) ) );
     			} else {
                     $ret = array_merge($ret, array($name => $value));
                 }
-    		} else if(strcmp($name, "column_pagination") == 0) {
+    		} else if(strcmp($name, 'column_pagination') == 0) {
     		    // a column pagination
     		    $ret = array_merge($ret, array(
     		        $name => $this->preprocessPagination($value)
@@ -381,17 +393,17 @@ class ProtoBufferEncoder
     	if ( is_string($condition) ) {
 
     		$value = $this->preprocessRowExistence($condition);
-	        $res = array( "row_existence" => $value );
+	        $res = array( 'row_existence' => $value );
     	} else if ( is_array( $condition ) ) {
     		if ( isset($condition['row_existence']) && !empty($condition['row_existence']) ) {
 
     			$value = $this->preprocessRowExistence($condition['row_existence']);
-    			$res = array( "row_existence" => $value );
+    			$res = array( 'row_existence' => $value );
     			if ( isset($condition['column_filter']) ) {
-    				$res = array_merge( $res, array( "column_filter" => $this->preprocessColumnCondition($condition['column_filter']) ) );
+    				$res = array_merge( $res, array( 'column_filter' => $this->preprocessColumnCondition($condition['column_filter']) ) );
     			}
                 if ( isset($condition['column_condition']) ) {
-                    $res = array_merge( $res, array( "column_filter" => $this->preprocessColumnCondition($condition['column_condition']) ) );
+                    $res = array_merge( $res, array( 'column_filter' => $this->preprocessColumnCondition($condition['column_condition']) ) );
                 }
     		} else
     			throw new \Aliyun\OTS\OTSClientException("Row existence is compulsory for Condition.");
@@ -435,12 +447,16 @@ class ProtoBufferEncoder
         }
         if (!isset($request['table_options'])) {
             $ret['table_options'] = array(
-                "time_to_live" => -1,
-                "max_versions" => 1,
-                "deviation_cell_version_in_sec" => 86400
+                'time_to_live' => -1,
+                'max_versions' => 1,
+                'deviation_cell_version_in_sec' => 86400
             );
         } else {
             $ret['table_options'] = $request['table_options'];
+        }
+
+        if(isset($request['stream_spec'])) {
+            $ret['stream_spec'] = $request['stream_spec'];
         }
         return $ret;
     }
@@ -500,9 +516,6 @@ class ProtoBufferEncoder
 
         if(isset($request['time_range'])) {
             $ret['time_range'] = $request['time_range'];
-            if(is_array($request['time_range']) && count($request['time_range']) != 2) {
-                throw new \Aliyun\OTS\OTSClientException("TimeRange must be array of length 2 or specify time");
-            }
         }
         return $ret;
     }
@@ -517,14 +530,14 @@ class ProtoBufferEncoder
     {
         $columns = array();
         foreach($columnsToDelete as $column) {
-            if(!isset($column['name']) || !isset($column['timestamp'])) {
+            if(!isset($column[0]) || !isset($column[1])) {
                 throw new \Aliyun\OTS\OTSClientException("column in DELETE must have name and timestamp ");
             }
             $columnData = array(
-                'name' => $column['name'],
+                'name' => $column[0],
                 'value' => array(
-                    'timestamp' => $column['timestamp'],
-                    "value" => null
+                    'timestamp' => $column[1],
+                    'value' => null
                 )
             );
             array_push($columns, $columnData);
@@ -621,9 +634,6 @@ class ProtoBufferEncoder
 
         if(isset($request['time_range'])) {
             $ret['time_range'] = $request['time_range'];
-            if(is_array($request['time_range']) && count($request['time_range']) != 2) {
-                throw new \Aliyun\OTS\OTSClientException("TimeRange must be array of length 2 or specify time");
-            }
         }
         return $ret;
     }
@@ -638,9 +648,9 @@ class ProtoBufferEncoder
 
                 $outTable['table_name'] = $inTable['table_name'];
                 $outTable['primary_key'] = array();
-                if(isset($inTable['rows'])) {
-                    for ($j = 0; $j < count($inTable['rows']); $j++) {
-                        $outTable['primary_key'][] = $this->preprocessPrimaryKey($inTable['rows'][$j]['primary_key']);
+                if(isset($inTable['primary_keys'])) {
+                    for ($j = 0; $j < count($inTable['primary_keys']); $j++) {
+                        $outTable['primary_key'][] = $this->preprocessPrimaryKey($inTable['primary_keys'][$j]);
                     }
                 }
                 if (!isset($inTable['columns_to_get'])) {
@@ -654,23 +664,20 @@ class ProtoBufferEncoder
                 if(isset($inTable['max_versions'])) {
                     $outTable['max_versions'] = $inTable['max_versions'];
                 }
-                if(isset($request['start_column'])) {
+                if(isset($inTable['start_column'])) {
                     $outTable['start_column'] = $inTable['start_column'];
                 }
 
-                if(isset($request['end_column'])) {
+                if(isset($inTable['end_column'])) {
                     $outTable['end_column'] = $inTable['end_column'];
                 }
 
-                if(isset($request['token'])) {
+                if(isset($inTable['token'])) {
                     $outTable['token'] = $inTable['token'];
                 }
 
-                if(isset($request['time_range'])) {
+                if(isset($inTable['time_range'])) {
                     $outTable['time_range'] = $inTable['time_range'];
-                    if(is_array($request['time_range']) && count($inTable['time_range']) != 2) {
-                        throw new \Aliyun\OTS\OTSClientException("TimeRange must be array of length 2 or specify time");
-                    }
                 }
 
                 $ret['tables'][$i] = $outTable;
@@ -720,13 +727,13 @@ class ProtoBufferEncoder
 
     private function encodeListTableRequest($request)
     {
-        return "";
+        return '';
     }
     
     private function encodeDeleteTableRequest($request)
     {
         $pbMessage = new DeleteTableRequest();
-        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setTableName($request['table_name']);
 
         return $pbMessage->SerializeToString();
     }
@@ -734,8 +741,16 @@ class ProtoBufferEncoder
     private function encodeDescribeTableRequest($request)
     {
         $pbMessage = new DescribeTableRequest();
-        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setTableName($request['table_name']);
                                           
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeComputeSplitPointsBySizeRequest($request)
+    {
+        $pbMessage = new ComputeSplitPointsBySizeRequest();
+        $pbMessage->setTableName($request['table_name']);
+        $pbMessage->setSplitSize($request['split_size']);
         return $pbMessage->SerializeToString();
     }
 
@@ -776,6 +791,16 @@ class ProtoBufferEncoder
         if($hasTOUpdate) {
             $pbMessage->setTableOptions($tableOptions);
         }
+
+        if(!empty($request['stream_spec'])) {
+            $streamSpec = new StreamSpecification();
+            $streamSpec->setEnableStream($request['stream_spec']['enable_stream']);
+            if($request['stream_spec']['enable_stream']) {
+                $streamSpec->setExpirationTime($request['stream_spec']['expiration_time']);
+            }
+            $pbMessage->setStreamSpec($streamSpec);
+        }
+
         return $pbMessage->SerializeToString();
     }
 
@@ -812,6 +837,16 @@ class ProtoBufferEncoder
         $pbMessage->setTableMeta($tableMeta);
         $pbMessage->setReservedThroughput($reservedThroughput);
         $pbMessage->setTableOptions($tableOptions);
+
+        if(!empty($request['stream_spec'])) {
+            $streamSpec = new StreamSpecification();
+            $streamSpec->setEnableStream($request['stream_spec']['enable_stream']);
+            if($request['stream_spec']['enable_stream']) {
+                $streamSpec->setExpirationTime($request['stream_spec']['expiration_time']);
+            }
+            $pbMessage->setStreamSpec($streamSpec);
+        }
+
 
         return $pbMessage->SerializeToString();
     }
@@ -917,13 +952,7 @@ class ProtoBufferEncoder
         }
 
         if(isset($request['time_range'])) {
-            $timeRange = new TimeRange();
-            if(is_array($request['time_range']) && count($request['time_range']) == 2) {
-                $timeRange->setStartTime($request['time_range'][0]);
-                $timeRange->setEndTime($request['time_range'][1]);
-            } else {
-                $timeRange->setSpecificTime($request['time_range']);
-            }
+            $timeRange = $this->parseTimeRange($request['time_range']);
             $pbMessage->setTimeRange($timeRange);
         }
 
@@ -956,7 +985,7 @@ class ProtoBufferEncoder
     private function encodeUpdateRowRequest($request)
     {
         $pbMessage = new UpdateRowRequest();
-        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setTableName($request['table_name']);
 
         $condition = new Condition();
         $condition->setRowExistence($request['condition']['row_existence']);
@@ -978,7 +1007,7 @@ class ProtoBufferEncoder
     private function encodeDeleteRowRequest($request)
     {
         $pbMessage = new DeleteRowRequest();
-        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setTableName($request['table_name']);
 
         $primaryKey = PlainBufferBuilder::serializeForDeleteRow($request['primary_key']);
         $pbMessage->setPrimaryKey($primaryKey);
@@ -1044,13 +1073,7 @@ class ProtoBufferEncoder
                     $tableInBatchGetRowRequest->setToken($table['token']);
                 }
                 if(isset($table['time_range'])) {
-                    $timeRange = new TimeRange();
-                    if(is_array($table['time_range']) && count($table['time_range']) == 2) {
-                        $timeRange->setStartTime($table['time_range'][0]);
-                        $timeRange->setEndTime($table['time_range'][1]);
-                    } else {
-                        $timeRange->setSpecificTime($table['time_range']);
-                    }
+                    $timeRange = $this->parseTimeRange($table['time_range']);
                     $tableInBatchGetRowRequest->setTimeRange($timeRange);
                 }
                 $pbMessage->getTables()[] = $tableInBatchGetRowRequest;
@@ -1154,17 +1177,54 @@ class ProtoBufferEncoder
         }
 
         if(isset($request['time_range'])) {
-            $timeRange = new TimeRange();
-            if(is_array($request['time_range']) && count($request['time_range']) == 2) {
-                $timeRange->setStartTime($request['time_range'][0]);
-                $timeRange->setEndTime($request['time_range'][1]);
-            } else {
-                $timeRange->setSpecificTime($request['time_range']);
-            }
+            $timeRange = $this->parseTimeRange($request['time_range']);
+            $pbMessage->setTimeRange($timeRange);
         }
 
         return $pbMessage->SerializeToString();
 
+    }
+
+    private function encodeListStreamRequest($request)
+    {
+        $pbMessage = new ListStreamRequest();
+        $pbMessage->setTableName($request['table_name']);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeDescribeStreamRequest($request)
+    {
+        $pbMessage = new DescribeStreamRequest();
+        $pbMessage->setStreamId($request['stream_id']);
+        if(isset($request['inclusive_start_shard_id'])) {
+            $pbMessage->setInclusiveStartShardId($request['inclusive_start_shard_id']);
+        }
+        if(isset($request['shard_limit'])) {
+            $pbMessage->setShardLimit($request['shard_limit']);
+        }
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeGetShardIteratorRequest($request)
+    {
+        $pbMessage = new GetShardIteratorRequest();
+        $pbMessage->setStreamId($request['stream_id']);
+        $pbMessage->setShardId($request['shard_id']);
+        if(!empty($request['timestamp'])) {
+            $pbMessage->setTimestamp($request['timestamp']);
+        }
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeGetStreamRecordRequest($request)
+    {
+        $pbMessage = new GetStreamRecordRequest();
+        $pbMessage->setShardIterator($request['shard_iterator']);
+        if(!empty($request['limit'])) {
+            $pbMessage->setLimit($request['limit']);
+        }
+        return $pbMessage->SerializeToString();
     }
 
     public function handleBefore($context)
@@ -1194,5 +1254,24 @@ class ProtoBufferEncoder
         if ($context->otsServerException != null) {
             return;
         }
+    }
+
+    /**
+     * @param $table
+     * @return TimeRange
+     */
+    private function parseTimeRange($table)
+    {
+        $timeRange = new TimeRange();
+        if (isset($table['start_time'])) {
+            $timeRange->setStartTime($table['start_time']);
+        }
+        if (isset($table['end_time'])) {
+            $timeRange->setEndTime($table['end_time']);
+        }
+        if (isset($table['specific_time'])) {
+            $timeRange->setSpecificTime($table['specific_time']);
+        }
+        return $timeRange;
     }
 }

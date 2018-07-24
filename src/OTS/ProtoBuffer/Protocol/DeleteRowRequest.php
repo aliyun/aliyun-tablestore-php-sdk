@@ -9,11 +9,9 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42; #############################################  DeleteRow  ############################################# *&#47;
- * /&#42;*
- * * OTS只支持删除该行的所有列所有版本，不支持：
- * *  1. 删除所有列的所有小于等于某个版本的所有版本
- * *&#47;
+ **
+ * OTS只支持删除该行的所有列所有版本，不支持：
+ *  1. 删除所有列的所有小于等于某个版本的所有版本
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.DeleteRowRequest</code>
  */

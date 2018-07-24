@@ -5,7 +5,7 @@
 namespace Aliyun\OTS\ProtoBuffer\Protocol;
 
 /**
- *&#47;&#42; #############################################  GetRange  ############################################# *&#47;
+ * #############################################  GetRange  ############################################# 
  *
  * Protobuf enum <code>Aliyun\OTS\ProtoBuffer\Protocol\Direction</code>
  */

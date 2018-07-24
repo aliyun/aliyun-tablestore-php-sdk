@@ -17,6 +17,7 @@
 			<file>tests/OTS/DescribeTableTest.php</file>
 			<file>tests/OTS/ListTableTest.php</file>
 			<file>tests/OTS/UpdateCapacityTableTest.php</file>
+			<file>tests/OTS/TableWithStreamTest.php</file>
 		</testsuite>
 		<testsuite name="RowTest">
 			<file>tests/OTS/PutRowTest.php</file>
@@ -25,6 +26,7 @@
 			<file>tests/OTS/GetRowTest.php</file>
 			<file>tests/OTS/PKAutoIncrTest.php</file>
 			<file>tests/OTS/WideRowTest.php</file>
+			<file>tests/OTS/TimeRangeTest.php</file>
 		</testsuite>
 		<testsuite name="BatchTest">
 			<file>tests/OTS/BatchGetRowTest.php</file>

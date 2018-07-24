@@ -19,7 +19,7 @@ class DefaultRetryPolicy implements RetryPolicy
     private $scaleFactor = 2;
      
     private $serverThrottlingExceptionDelayFactor = 500;
-     
+
     private $stabilityExceptionDelayFactor = 200;
      
     public function __construct(int $maxRetryTimes = null, int $maxRetryDelay = null)
@@ -68,7 +68,7 @@ class DefaultRetryPolicy implements RetryPolicy
         if (RetryUtil::isServerThrottlingException($context)) {
             $delayFactor = $this->serverThrottlingExceptionDelayFactor;
         } else {
-            $delayFactor = $this->StabilityExceptionDelayFactor;
+            $delayFactor = $this->stabilityExceptionDelayFactor;
         }
          
         $delayLimit = $delayFactor * pow($this->scaleFactor, $context->retryTimes);

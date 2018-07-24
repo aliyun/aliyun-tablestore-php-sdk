@@ -19,7 +19,7 @@ class PlainBufferCodedInputStream
     private function readPrimaryKeyValue($cellCheckSum)
     {
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_CELL_VALUE)) {
-            throw new OTSClientException("Expect TAG_CELL_VALUE but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL_VALUE but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
 
         $this->input->readRawLittleEndian32();
@@ -57,7 +57,7 @@ class PlainBufferCodedInputStream
     private function readColumnValue($cellCheckSum)
     {
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_CELL_VALUE)) {
-            throw new OTSClientException("Expect TAG_CELL_VALUE but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL_VALUE but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
         $this->input->readRawLittleEndian32();
         $columnType = ord($this->input->readRawByte());
@@ -108,12 +108,12 @@ class PlainBufferCodedInputStream
     private function readColumn($rowCheckSum)
     {
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_CELL)) {
-            throw new OTSClientException("Expect TAG_CELL but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
         self::readTag();
 
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_CELL_NAME)) {
-            throw new OTSClientException("Expect TAG_CELL_NAME but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL_NAME but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
 
         $cellCheckSum = 0;
@@ -121,8 +121,10 @@ class PlainBufferCodedInputStream
         $columnValue = null;
         $columnType = null;
         $timestamp = null;
+        $cellType = null;
         $nameSize = $this->input->readRawLittleEndian32();
         $columnName = $this->input->readUtfString($nameSize);
+
         $cellCheckSum = PlainBufferCrc8::crcString($cellCheckSum, $columnName);
         self::readTag();
 
@@ -132,16 +134,23 @@ class PlainBufferCodedInputStream
             $columnType = $column['type'];
             $cellCheckSum = $column['cell_check_sum'];
         }
-        // skip CELL_TYPE
-//        if (self::getLastTag() == PlainBufferConsts::TAG_CELL_TYPE) {
-//            $cellCheckSum = PlainBufferCrc8::crcInt8($cellCheckSum, $cellType);
-//            self::readTag();
-//        }
+        if (self::getLastTag() == PlainBufferConsts::TAG_CELL_TYPE) {
+            $cellType = ord($this->input->readRawByte());
+            self::readTag();
+        }
+
         if (self::getLastTag() == PlainBufferConsts::TAG_CELL_TIMESTAMP) {
             $timestamp = $this->input->readInt64();
             $cellCheckSum = PlainBufferCrc8::crcInt64($cellCheckSum, $timestamp);
             self::readTag();
         }
+
+        // NOTE：这里特别注意下计算crc的顺序， cell_type在cell_timestamp之后，虽然数据是在前面
+
+        if(!is_null($cellType)) {
+            $cellCheckSum = PlainBufferCrc8::crcInt8($cellCheckSum, $cellType);
+        }
+
         if (self::getLastTag() == PlainBufferConsts::TAG_CELL_CHECKSUM) {
             $checkSum = PlainBufferCrc8::toByte(ord($this->input->readRawByte()));
             if ($checkSum != $cellCheckSum) {
@@ -150,7 +159,7 @@ class PlainBufferCodedInputStream
             self::readTag();
         }
         else {
-            throw new OTSClientException("Expect TAG_CELL_CHECKSUM but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL_CHECKSUM but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
 
         $rowCheckSum = PlainBufferCrc8::crcInt8($rowCheckSum, $cellCheckSum);
@@ -166,12 +175,12 @@ class PlainBufferCodedInputStream
     private function readPrimaryKeyColumn($rowCheckSum)
     {
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_CELL)) {
-            throw new OTSClientException("Expect TAG_CELL but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
         self::readTag();
 
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_CELL_NAME)) {
-            throw new OTSClientException("Expect TAG_CELL_NAME but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL_NAME but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
 
         $cellCheckSum = 0;
@@ -181,7 +190,7 @@ class PlainBufferCodedInputStream
         self::readTag();
 
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_CELL_VALUE)) {
-            throw new OTSClientException("Expect TAG_CELL_VALUE but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL_VALUE but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
         $primaryKey = self::readPrimaryKeyValue($cellCheckSum);
 
@@ -197,7 +206,7 @@ class PlainBufferCodedInputStream
             self::readTag();
         }
         else {
-            throw new OTSClientException("Expect TAG_CELL_CHECKSUM but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_CELL_CHECKSUM but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
 
         $rowCheckSum = PlainBufferCrc8::crcInt8($rowCheckSum, $cellCheckSum);
@@ -207,6 +216,57 @@ class PlainBufferCodedInputStream
             "primary_key_type" => $primaryKeyType,
             "row_check_sum" => $rowCheckSum
         );
+    }
+
+    private function readExtension()
+    {
+        $extension = null;
+        if (self::checkLastTagWas(PlainBufferConsts::TAG_EXTENSION)) {
+            $this->input->readInt32(); //length
+            self::readTag();
+            while (PlainBufferConsts::isTagInExtension(self::getLastTag())) {
+                if (self::checkLastTagWas(PlainBufferConsts::TAG_SEQ_INFO)) {
+                    $extension = self::readSequenceInfo();
+                } else {
+                    $length = $this->input->readRawLittleEndian32();
+                    $this->input->skipRawSize($length);
+                    self::readTag();
+                }
+            }
+        }
+        return $extension;
+    }
+
+    private function readSequenceInfo()
+    {
+        if (!self::checkLastTagWas(PlainBufferConsts::TAG_SEQ_INFO)) {
+            throw new OTSClientException("Expect TAG_SEQ_INFO but it was ". PlainBufferConsts::printTag(self::getLastTag()));
+        }
+        $this->input->readRawLittleEndian32(); //length
+        self::readTag();
+
+        $seq = array();
+        if (self::checkLastTagWas(PlainBufferConsts::TAG_SEQ_INFO_EPOCH)) {
+            $seq['epoch'] = $this->input->readInt32();
+            self::readTag();
+        } else {
+            throw new OTSClientException("Expect TAG_SEQ_INFO_EPOCH but it was ". PlainBufferConsts::printTag(self::getLastTag()));
+        }
+
+        if (self::checkLastTagWas(PlainBufferConsts::TAG_SEQ_INFO_TS)) {
+            $seq['timestamp'] = $this->input->readInt64();
+            self::readTag();
+        } else {
+            throw new OTSClientException("Expect TAG_SEQ_INFO_TS but it was ". PlainBufferConsts::printTag(self::getLastTag()));
+        }
+
+        if (self::checkLastTagWas(PlainBufferConsts::TAG_SEQ_INFO_ROW_INDEX)) {
+            $seq['row_index'] = $this->input->readInt32();
+            self::readTag();
+        } else {
+            throw new OTSClientException("Expect TAG_SEQ_INFO_ROW_INDEX but it was ". PlainBufferConsts::printTag(self::getLastTag()));
+        }
+        return $seq;
     }
 
     private function getLastTag()
@@ -260,7 +320,7 @@ class PlainBufferCodedInputStream
         $attributes = [];
 
         if (!self::checkLastTagWas(PlainBufferConsts::TAG_ROW_PK)) {
-            throw new OTSClientException("Expect TAG_ROW_PK but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_ROW_PK but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
 
         self::readTag();
@@ -292,6 +352,8 @@ class PlainBufferCodedInputStream
             $rowCheckSum = PlainBufferCrc8::crcInt8($rowCheckSum, 0);
         }
 
+        $extension = self::readExtension();
+
         if (self::checkLastTagWas(PlainBufferConsts::TAG_ROW_CHECKSUM)) {
             $checkSum = PlainBufferCrc8::toByte(ord($this->input->readRawByte()));
             if ($checkSum != $rowCheckSum) {
@@ -299,11 +361,21 @@ class PlainBufferCodedInputStream
             }
             self::readTag();
         } else {
-            throw new OTSClientException("Expect TAG_ROW_CHECKSUM but it was " . self::getLastTag());
+            throw new OTSClientException("Expect TAG_ROW_CHECKSUM but it was " . PlainBufferConsts::printTag(self::getLastTag()));
         }
 
         $ret['primary_key'] = $primaryKey;
         $ret['attribute_columns'] = $attributes;
+        $ret['extension'] = $extension;
+        return $ret;
+    }
+
+    public function toString()
+    {
+        $ret = array();
+        for ($i = 0; $i < strlen($this->input->buffer); $i++) {
+            $ret[] = (PlainBufferCrc8::toByte(ord($this->input->buffer[$i])));
+        }
         return $ret;
     }
 }

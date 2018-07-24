@@ -9,10 +9,9 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42;*
- * * 当前只返回一个简单的名称列表，需要讨论是否有业务场景需要获取除了表名之外的其他信息。
- * * 其他信息可以包含预留吞吐量以及表的状态，这个信息只能是一个粗略的信息，表的详细信息还是需要通过DescribeTable来获取。
- * *&#47;
+ **
+ * 当前只返回一个简单的名称列表，需要讨论是否有业务场景需要获取除了表名之外的其他信息。
+ * 其他信息可以包含预留吞吐量以及表的状态，这个信息只能是一个粗略的信息，表的详细信息还是需要通过DescribeTable来获取。
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.ListTableResponse</code>
  */

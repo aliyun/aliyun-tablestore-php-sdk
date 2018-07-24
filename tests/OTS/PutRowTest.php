@@ -6,81 +6,81 @@ use Aliyun\OTS\Consts\ComparatorTypeConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
 
-require_once __DIR__ . "/TestBase.php";
-require_once __DIR__ . "/../../vendor/autoload.php";
+require_once __DIR__ . '/TestBase.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 
 class PutRowTest extends SDKTestBase {
 
     private static $usedTables = array (
-        "myTable",
-        "myTable1",
-        "TableAll",
+        'myTable',
+        'myTable1',
+        'TableAll',
     );
 
     public static function setUpBeforeClass()
     {
         SDKTestBase::cleanUp ( self::$usedTables );
         SDKTestBase::createInitialTable ( array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[0],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[0],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             ),
-            "table_options" => array(
-                "time_to_live" => -1,
-                "max_versions" => 2,
-                "deviation_cell_version_in_sec" => 86400
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 2,
+                'deviation_cell_version_in_sec' => 86400
             )
         ) );
         SDKTestBase::createInitialTable ( array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[1],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[1],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             ),
-            "table_options" => array(
-                "time_to_live" => -1,
-                "max_versions" => 2,
-                "deviation_cell_version_in_sec" => 86400
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 2,
+                'deviation_cell_version_in_sec' => 86400
             )
         ) );
 
         SDKTestBase::createInitialTable ( array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[2],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING),
-                    array("PK3", PrimaryKeyTypeConst::CONST_BINARY)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[2],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING),
+                    array('PK3', PrimaryKeyTypeConst::CONST_BINARY)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             ),
-            "table_options" => array(
-                "time_to_live" => -1,
-                "max_versions" => 2,
-                "deviation_cell_version_in_sec" => 86400
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 2,
+                'deviation_cell_version_in_sec' => 86400
             )
         ) );
 
@@ -99,15 +99,15 @@ class PutRowTest extends SDKTestBase {
      */
     public function testTableNameOfZeroLength() {
         $tablename1 = array (
-            "table_name" => "",
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => '',
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("attr1", "name"),
-                array("attr2", 256)
+            'attribute_columns' => array (
+                array('attr1', 'name'),
+                array('attr2', 256)
             ) 
         );
         try {
@@ -119,15 +119,15 @@ class PutRowTest extends SDKTestBase {
         // print_r($this->otsClient->putRow($tablename));
         // die;
         $tablename2 = array (
-            "table_name" => "testU+0053",
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => 'testU+0053',
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("attr1", "name"),
-                array("attr2", 256)
+            'attribute_columns' => array (
+                array('attr1', 'name'),
+                array('attr2', 256)
             ) 
         );
         try {
@@ -150,15 +150,15 @@ class PutRowTest extends SDKTestBase {
     public function testColumnNameLength() {
         // ColumnNameOfZeroLength
         $tablename1 = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("", "name"),
-                array("attr2", 256)
+            'attribute_columns' => array (
+                array('', 'name'),
+                array('attr2', 256)
             ) 
         );
         try {
@@ -170,15 +170,15 @@ class PutRowTest extends SDKTestBase {
         }
         // ColumnNameWithUnicode
         $tablename2 = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("#name", "name"),
-                array("attr2", 256)
+            'attribute_columns' => array (
+                array('#name', 'name'),
+                array('attr2', 256)
             ) 
         );
         try {
@@ -189,20 +189,20 @@ class PutRowTest extends SDKTestBase {
             $this->assertEquals ( $c, $exc->getOTSErrorMessage () );
         }
         // 1KBColumnName
-        $name = "";
+        $name = '';
         for($i = 1; $i < 1025; $i ++) {
-            $name .= "a";
+            $name .= 'a';
         }
         $tablename3 = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("{$name}", "name"),
-                array("attr2", 256)
+            'attribute_columns' => array (
+                array("{$name}", 'name'),
+                array('attr2', 256)
             ) 
         );
         try {
@@ -219,19 +219,19 @@ class PutRowTest extends SDKTestBase {
      * 测试接口消耗10个写CU时返回的CU Consumed符合预期。
      */
     public function testWrite10CUConsumed() {
-        $name = "";
+        $name = '';
         for($i = 1; $i < (4097 * 9); $i ++) {
-            $name .= "a";
+            $name .= 'a';
         }
         $tablename = array (
-            "table_name" => self::$usedTables[1],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[1],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("att2", $name)
+            'attribute_columns' => array (
+                array('att2', $name)
             )
         );
         
@@ -252,31 +252,31 @@ class PutRowTest extends SDKTestBase {
      * 测试StringValue包含Unicode字符的情况。
      */
     public function testNormanStringValue() {
-        $name = "";
+        $name = '';
         for($i = 1; $i < (1025 * 10); $i ++) {
-            $name .= "a";
+            $name .= 'a';
         }
         // echo strlen($a);die;
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 11),
-                array("PK2", "a11")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 11),
+                array('PK2', 'a11')
             ),
-            "attribute_columns" => array (
-                array("att2", $name)
+            'attribute_columns' => array (
+                array('att2', $name)
             ) 
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 11),
-                array("PK2", "a11")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 11),
+                array('PK2', 'a11')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array () 
+            'max_versions' => 1,
+            'columns_to_get' => array () 
         );
         
         if (is_array ( $this->otsClient->getRow ( $body ) )) {
@@ -298,26 +298,26 @@ class PutRowTest extends SDKTestBase {
     public function testUnicodeStringValue() {
         // echo strlen($a);die;
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 12),
-                array("PK2", "a12")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 12),
+                array('PK2', 'a12')
             ),
-            "attribute_columns" => array (
-                array("att1", "sdfv\u597d"),
-                array("att2", "U+0053"),
-                array("att3", "表格存储")
+            'attribute_columns' => array (
+                array('att1', 'sdfv\u597d'),
+                array('att2', 'U+0053'),
+                array('att3', '表格存储')
             )
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 12),
-                array("PK2", "a12")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 12),
+                array('PK2', 'a12')
             ),
-            "max_versions" => 1
+            'max_versions' => 1
         );
         
         if (is_array ( $this->otsClient->getRow ( $body ) )) {
@@ -326,25 +326,25 @@ class PutRowTest extends SDKTestBase {
             $this->assertColumnEquals($tablename['attribute_columns'], $name['attribute_columns']);
         }
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 13),
-                array("PK2", "a13")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 13),
+                array('PK2', 'a13')
             ),
-            "attribute_columns" => array (
-                array("att1", ""),
-                array("att2", "")
+            'attribute_columns' => array (
+                array('att1', ''),
+                array('att2', '')
             ) 
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 13),
-                array("PK2", "a13")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 13),
+                array('PK2', 'a13')
             ),
-            "max_versions" => 1
+            'max_versions' => 1
         );
         
         if (is_array ( $this->otsClient->getRow ( $body ) )) {
@@ -362,20 +362,19 @@ class PutRowTest extends SDKTestBase {
      * 测试字符串长度为1MB的情况，期望返回错误消息 最长2097152。
      */
     public function testStringValueTooLong() {
-        $name = "";
-        for($i = 1; $i < (1025 * 1024 * 3); $i ++) {
-            $name .= "a";
-        }
+
+        $name = str_repeat('a', 1024 * 1024 * 3);
+
         // echo strlen($a);die;
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 20),
-                array("PK2", "a20")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 20),
+                array('PK2', 'a20')
             ),
-            "attribute_columns" => array (
-                array("att1", $name)
+            'attribute_columns' => array (
+                array('att1', $name)
             ) 
         );
         try {
@@ -397,51 +396,51 @@ class PutRowTest extends SDKTestBase {
      */
     public function testIntegerValue() {
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 30),
-                array("PK2", "a30")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 30),
+                array('PK2', 'a30')
             ),
-            "attribute_columns" => array (
-                array("attr10", -10)
+            'attribute_columns' => array (
+                array('attr10', -10)
             ) 
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 30),
-                array("PK2", "a30")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 30),
+                array('PK2', 'a30')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array () 
+            'max_versions' => 1,
+            'columns_to_get' => array () 
         );
         $getrow = $this->otsClient->getRow ( $body );
         $this->assertColumnEquals($tablename['attribute_columns'], $getrow['attribute_columns']);
         
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 31),
-                array("PK2", "a31")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 31),
+                array('PK2', 'a31')
             ),
-            "attribute_columns" => array (
-                array("attr1", 1),
-                array("attr2", 0),
-                array("attr3", 4293856185)
+            'attribute_columns' => array (
+                array('attr1', 1),
+                array('attr2', 0),
+                array('attr3', 4293856185)
             ) 
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 31),
-                array("PK2", "a31")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 31),
+                array('PK2', 'a31')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array () 
+            'max_versions' => 1,
+            'columns_to_get' => array () 
         );
         $getrow1 = $this->otsClient->getRow ( $body );
         // echo $getrow['attribute_columns']['attr1'];die;
@@ -456,50 +455,50 @@ class PutRowTest extends SDKTestBase {
      */
     public function testDoubleValue() {
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 40),
-                array("PK2", "a40")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 40),
+                array('PK2', 'a40')
             ),
-            "attribute_columns" => array (
-                array("attr10", 3.1415926)
+            'attribute_columns' => array (
+                array('attr10', 3.1415926)
             )
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 40),
-                array("PK2", "a40")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 40),
+                array('PK2', 'a40')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array () 
+            'max_versions' => 1,
+            'columns_to_get' => array () 
         );
         $getrow = $this->otsClient->getRow ( $body );
         $this->assertColumnEquals($tablename['attribute_columns'], $getrow['attribute_columns']);
 
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 41),
-                array("PK2", "a41")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 41),
+                array('PK2', 'a41')
             ),
-            "attribute_columns" => array (
-                array("attr11", -0.0000001),
-                array("attr12", 9.9999999)
+            'attribute_columns' => array (
+                array('attr11', -0.0000001),
+                array('attr12', 9.9999999)
             ) 
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 41),
-                array("PK2", "a41")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 41),
+                array('PK2', 'a41')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array () 
+            'max_versions' => 1,
+            'columns_to_get' => array () 
         );
         $getrow1 = $this->otsClient->getRow ( $body );
         // echo $getrow1['attribute_columns']['attr11'];die;
@@ -512,45 +511,45 @@ class PutRowTest extends SDKTestBase {
      */
     public function testAllValue() {
         $tablename = array (
-            "table_name" => self::$usedTables[2],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 40),
-                array("PK2", "a40"),
-                array("PK3", "\x01\x02\x03", PrimaryKeyTypeConst::CONST_BINARY)
+            'table_name' => self::$usedTables[2],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 40),
+                array('PK2', 'a40'),
+                array('PK3', '\x01\x02\x03', PrimaryKeyTypeConst::CONST_BINARY)
             ),
-            "attribute_columns" => array (
-                array("int", 1024),
-                array("double", 3.1415926),
-                array("neg_double", -3.1415926),
-                array("empty", ""),
-                array("string", '中国人民很行'),
-                array("binary", "\x00\x03\x05\x07", PrimaryKeyTypeConst::CONST_BINARY),
-                array("bool", true)
+            'attribute_columns' => array (
+                array('int', 1024),
+                array('double', 3.1415926),
+                array('neg_double', -3.1415926),
+                array('empty', ''),
+                array('string', '中国人民很行'),
+                array('binary', '\x00\x03\x05\x07', PrimaryKeyTypeConst::CONST_BINARY),
+                array('bool', true)
             )
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[2],
-            "primary_key" => array (
-                array("PK1", 40),
-                array("PK2","a40"),
-                array("PK3","\x01\x02\x03",'BINARY')
+            'table_name' => self::$usedTables[2],
+            'primary_key' => array (
+                array('PK1', 40),
+                array('PK2','a40'),
+                array('PK3','\x01\x02\x03','BINARY')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array ()
+            'max_versions' => 1,
+            'columns_to_get' => array ()
         );
         $getrow = $this->otsClient->getRow ( $body );
 
         // notice here, sorted by OTS return.
         $expectColumns = array(
-            array("binary", "\x00\x03\x05\x07", "BINARY"),
-            array("bool", true),
-            array("double", 3.1415926),
-            array("empty", "", "STRING"),
-            array("int", 1024),
-            array("neg_double", -3.1415926),
-            array("string", "中国人民很行")
+            array('binary', '\x00\x03\x05\x07', 'BINARY'),
+            array('bool', true),
+            array('double', 3.1415926),
+            array('empty', '', 'STRING'),
+            array('int', 1024),
+            array('neg_double', -3.1415926),
+            array('string', '中国人民很行')
         );
 
         $this->assertColumnEquals($expectColumns, $getrow['attribute_columns']);
@@ -563,26 +562,26 @@ class PutRowTest extends SDKTestBase {
      */
     public function testBooleanValue() {
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "attribute_columns" => array (
-                array("attr1", true),
-                array("attr2", false)
+            'attribute_columns' => array (
+                array('attr1', true),
+                array('attr2', false)
             )
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array ()
+            'max_versions' => 1,
+            'columns_to_get' => array ()
         );
         $getrow = $this->otsClient->getRow ( $body );
         $this->assertColumnEquals($tablename['attribute_columns'], $getrow['attribute_columns']);
@@ -595,27 +594,27 @@ class PutRowTest extends SDKTestBase {
     public function testPutWithTimestamp() {
         $timestamp = getMicroTime();
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 31415),
-                array("PK2", "a31415")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 31415),
+                array('PK2', 'a31415')
             ),
-            "attribute_columns" => array (
-                array("attr1", 1234),
-                array("attr2", 3.1415),
-                array("attr3", 'with timestamp', null, $timestamp)
+            'attribute_columns' => array (
+                array('attr1', 1234),
+                array('attr2', 3.1415),
+                array('attr3', 'with timestamp', null, $timestamp)
             )
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 31415),
-                array("PK2", "a31415")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 31415),
+                array('PK2', 'a31415')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array ()
+            'max_versions' => 1,
+            'columns_to_get' => array ()
         );
         $getrow = $this->otsClient->getRow ( $body );
         $this->assertColumnEquals($tablename['attribute_columns'], $getrow['attribute_columns']);
@@ -629,50 +628,50 @@ class PutRowTest extends SDKTestBase {
      */
     public function testExpectNotExistConditionWhenRowNotExist() {
         $request = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ) 
         );
         $this->otsClient->deleteRow ( $request );
         
         $tablename = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "attribute_columns" => array (
-                array("attr1", true),
-                array("attr2", false)
+            'attribute_columns' => array (
+                array('attr1', true),
+                array('attr2', false)
             ) 
         );
         $this->otsClient->putRow ( $tablename );
         $body = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array () 
+            'max_versions' => 1,
+            'columns_to_get' => array () 
         );
         $getrow = $this->otsClient->getRow ( $body );
         $this->assertColumnEquals($tablename['attribute_columns'], $getrow['attribute_columns']);
         
         $tablename1 = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "attribute_columns" => array (
-                array("attr1", true),
-                array("attr2", false)
+            'attribute_columns' => array (
+                array('attr1', true),
+                array('attr2', false)
             ) 
         );
         
@@ -681,7 +680,7 @@ class PutRowTest extends SDKTestBase {
             $this->fail ( 'An expected exception has not been raised.' );
         } catch ( \Aliyun\OTS\OTSServerException $exc ) {
             $a = $exc->getMessage ();
-            $c = "Condition check failed.";
+            $c = 'Condition check failed.';
             $this->assertContains ( $c, $a );
         }
     }
@@ -691,84 +690,84 @@ class PutRowTest extends SDKTestBase {
      */
     public function testPutRowWithColumnCondition() {
         $delete_query = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ) 
         );
         $this->otsClient->deleteRow ( $delete_query );
         
         $put_query1 = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST,
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "attribute_columns" => array (
-                array("attr1", true),
-                array("attr2", true)
+            'attribute_columns' => array (
+                array('attr1', true),
+                array('attr2', true)
             ) 
         );
         $this->otsClient->putRow ( $put_query1 );
         
         $put_query2 = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => array (
-                "row_existence" => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
-                "column_condition" => array (
-                    "column_name" => "attr1",
-                    "value" => true,
-                    "comparator" => ComparatorTypeConst::CONST_EQUAL 
+            'table_name' => self::$usedTables[0],
+            'condition' => array (
+                'row_existence' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
+                'column_condition' => array (
+                    'column_name' => 'attr1',
+                    'value' => true,
+                    'comparator' => ComparatorTypeConst::CONST_EQUAL 
                 ) 
             ),
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "attribute_columns" => array (
-                array("attr3", false),
-                array("attr4", false)
+            'attribute_columns' => array (
+                array('attr3', false),
+                array('attr4', false)
             ) 
         );
         $this->otsClient->putRow ( $put_query2 );
         
         $get_query = array (
-            "table_name" => self::$usedTables[0],
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'table_name' => self::$usedTables[0],
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "max_versions" => 1,
-            "columns_to_get" => array (
-                "attr1",
-                "attr2",
-                "attr3",
-                "attr4" 
+            'max_versions' => 1,
+            'columns_to_get' => array (
+                'attr1',
+                'attr2',
+                'attr3',
+                'attr4' 
             ) 
         );
         $get_row_res = $this->otsClient->getRow ( $get_query );
         $this->assertColumnEquals($put_query2['attribute_columns'], $get_row_res['attribute_columns']);
         
         $put_query3 = array (
-            "table_name" => self::$usedTables[0],
-            "condition" => array (
-                "row_existence" => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
-                "column_condition" => array (
-                    "column_name" => "attr3",
-                    "value" => true,
-                    "comparator" => ComparatorTypeConst::CONST_EQUAL 
+            'table_name' => self::$usedTables[0],
+            'condition' => array (
+                'row_existence' => RowExistenceExpectationConst::CONST_EXPECT_EXIST,
+                'column_condition' => array (
+                    'column_name' => 'attr3',
+                    'value' => true,
+                    'comparator' => ComparatorTypeConst::CONST_EQUAL 
                 ) 
             ),
-            "primary_key" => array (
-                array("PK1", 50),
-                array("PK2", "a50")
+            'primary_key' => array (
+                array('PK1', 50),
+                array('PK2', 'a50')
             ),
-            "attribute_columns" => array (
-                array("attr5", false),
-                array("attr6", false)
+            'attribute_columns' => array (
+                array('attr5', false),
+                array('attr6', false)
             ) 
         );
         try {
@@ -776,7 +775,7 @@ class PutRowTest extends SDKTestBase {
             $this->fail ( 'An expected exception has not been raised.' );
         } catch ( \Aliyun\OTS\OTSServerException $exc ) {
             $a = $exc->getMessage ();
-            $c = "Condition check failed.";
+            $c = 'Condition check failed.';
             $this->assertContains ( $c, $a );
         }
     }

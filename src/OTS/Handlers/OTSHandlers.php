@@ -41,35 +41,10 @@ class OTSHandlers
         $this->httpHeaderHandler = new HttpHeaderHandler();
         $this->httpHandler = new HttpHandler();
 
-        if (class_exists('\GuzzleHttp\Client')) {
-            $this->httpClient = new \GuzzleHttp\Client(array(
-                'base_uri' => $config->getEndPoint(),
-                'timeout' => $config->connectionTimeout,
-            ));
-        } else if (class_exists('\Guzzle\Http\Client')) {
-            // Be compatible with Guzzle older version
-            $this->httpClient = new \Guzzle\Http\Client($config->getEndPoint());
-        } else {
-            throw new \Aliyun\OTS\OTSClientException("Internal Error: Faild to create guzzle http client.");
-        }
-
-        /** This is needed because in some PHP versions (e.g. 5.2.10) the CURLOPT_TIMEOUT_MS and
-          * CURLOPT_CONNECTTIMEOUT_MS are not defined.
-          */
-        if(!defined('CURLOPT_CONNECTTIMEOUT_MS')) {
-
-            /**
-             * @ignore
-             */
-            define('CURLOPT_CONNECTTIMEOUT_MS', 156);
-        }
-        if(!defined('CURLOPT_TIMEOUT_MS')) {
-            
-            /**
-             * @ignore
-             */
-            define('CURLOPT_TIMEOUT_MS', 155);
-        }
+        $this->httpClient = new \GuzzleHttp\Client(array(
+            'base_uri' => $config->getEndPoint(),
+            'timeout' => $config->connectionTimeout,
+        ));
     }
 
     public function doHandle($apiName, array $request) 

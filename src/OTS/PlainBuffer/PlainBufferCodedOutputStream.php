@@ -249,6 +249,8 @@ class PlainBufferCodedOutputStream
             $this->output->writeRawLittleEndian64($timestamp);
             $cellCheckSum = PlainBufferCrc8::crcInt64($cellCheckSum, $timestamp);
         }
+
+        // NOTE：这里特别注意下计算crc的顺序， cell_op/cell_type 在cell_timestamp之后，虽然数据是在前面
         if($updateType == UpdateTypeConst::CONST_DELETE) {
             $cellCheckSum = PlainBufferCrc8::crcInt8($cellCheckSum, PlainBufferConsts::DELETE_ONE_VERSION);
         }

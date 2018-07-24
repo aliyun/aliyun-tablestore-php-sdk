@@ -123,6 +123,22 @@ class OTSClient
     }
 
     /**
+     * 将全表的数据在逻辑上划分成接近指定大小的若干分片，返回这些分片之间的分割点以及分片所在机器的提示。
+     * 一般用于计算引擎规划并发度等执行计划。
+     * API说明：https://help.aliyun.com/document_detail/53813.html
+     * @api
+     * @param [] $request 请求参数。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "examples/ComputeSplitPointsBySizeRequest.php" 40
+     */
+    public function computeSplitPointsBySize(array $request)
+    {
+        return $this->handlers->doHandle("ComputeSplitPointsBySize", $request);
+    }
+
+    /**
      * 写入一行数据。如果该行已经存在，则覆盖原有数据。返回该操作消耗的CU。
      * API说明：https://help.aliyun.com/document_detail/27306.html
      * @api
@@ -227,7 +243,7 @@ class OTSClient
      * 请注意，这个范围有可能会被服务端截断，你需要判断返回中的 next_start_primary_key 来决定是否继续调用 GetRange。
      * 你可以指定最多读取多少行。
      * 在指定开始主键和结束主键时，你可以用 INF_MIN 和 INF_MAX 来代表最大值和最小值，详见下面的代码样例。
-     * API说明：
+     * API说明：https://help.aliyun.com/document_detail/27309.html
      * @api
      * @param [] $request 请求参数
      * @return [] 请求返回 
@@ -240,6 +256,62 @@ class OTSClient
     public function getRange(array $request) 
     {
         return $this->handlers->doHandle("GetRange", $request);
+    }
+
+    /**
+     * 获取当前实例下所有表的stream信息。
+     * API说明：https://help.aliyun.com/document_detail/52568.html
+     * @api
+     * @param [] $request 请求参数
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     */
+    public function listStream(array $request)
+    {
+        return $this->handlers->doHandle("ListStream", $request);
+    }
+
+    /**
+     * 获取当前stream的shard信息。
+     * API说明：https://help.aliyun.com/document_detail/52590.html
+     * @api
+     * @param [] $request 请求参数
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     */
+    public function describeStream(array $request)
+    {
+        return $this->handlers->doHandle("DescribeStream", $request);
+    }
+
+    /**
+     * 获取读取当前shard记录的起始iterator。
+     * API说明：https://help.aliyun.com/document_detail/52600.html
+     * @api
+     * @param [] $request 请求参数
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     */
+    public function getShardIterator(array $request)
+    {
+        return $this->handlers->doHandle("GetShardIterator", $request);
+    }
+
+    /**
+     * 读取当前shard的增量内容。
+     * API说明：https://help.aliyun.com/document_detail/52604.html
+     * @api
+     * @param [] $request 请求参数
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     */
+    public function getStreamRecord(array $request)
+    {
+        return $this->handlers->doHandle("GetStreamRecord", $request);
     }
 
 }

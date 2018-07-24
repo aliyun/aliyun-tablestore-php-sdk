@@ -9,10 +9,9 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42;*
- * * 这里允许用户为每列单独设置timestamp，而不是强制整行统一一个timestamp。
- * * 原因是列都是用统一的结构，该结构本身是带timestamp的，其次强制统一timestamp增强了规范性但是丧失了灵活性，且该规范性没有明显的好处，反而带来了结构的复杂。
- * *&#47;
+ **
+ * 这里允许用户为每列单独设置timestamp，而不是强制整行统一一个timestamp。
+ * 原因是列都是用统一的结构，该结构本身是带timestamp的，其次强制统一timestamp增强了规范性但是丧失了灵活性，且该规范性没有明显的好处，反而带来了结构的复杂。
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.PutRowRequest</code>
  */

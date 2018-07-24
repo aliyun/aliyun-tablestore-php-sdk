@@ -72,8 +72,16 @@ Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
 
 4. 执行 `php vendor/bin/phpunit`
 
+## 贡献代码
+ - 我们非常欢迎大家为TableStore PHP SDK以及其他阿里云SDK贡献代码
+
 # 帮助和支持 FAQ
 
-* 阿里云官网论坛: http://bbs.aliyun.com/thread/226.html
-* 云栖社区: https://yq.aliyun.com/groups/82
-* TableStore官网:  http://ots.aliyun.com
+- [阿里云TableStore官方网站](http://www.aliyun.com/product/ots)
+- [阿里云TableStore官方论坛](http://bbs.aliyun.com)
+- [阿里云TableStore官方文档中心](https://help.aliyun.com/product/8315004_ots.html)
+- [阿里云云栖社区](http://yq.aliyun.com)
+- [阿里云工单系统](https://workorder.console.aliyun.com/#/ticket/createIndex)
+
+### 扫码加入TableStore讨论群，和我们直接交流讨论
+![tablestoregroup](https://tablestore-doc.oss-cn-hangzhou.aliyuncs.com/tablestore_dingding.jpg?x-oss-process=image/resize,m_lfit,h_400)

@@ -9,7 +9,7 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42; #############################################  UpdateRow  ############################################# *&#47;
+ * #############################################  UpdateRow  ############################################# 
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.UpdateRowRequest</code>
  */

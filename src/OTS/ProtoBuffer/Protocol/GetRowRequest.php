@@ -9,10 +9,9 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42;*
- * * 1. 支持用户指定版本时间戳范围或者特定的版本时间来读取指定版本的列
- * * 2. 目前暂不支持行内的断点
- * *&#47;
+ **
+ * 1. 支持用户指定版本时间戳范围或者特定的版本时间来读取指定版本的列
+ * 2. 目前暂不支持行内的断点
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.GetRowRequest</code>
  */
@@ -47,6 +46,13 @@ class GetRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $max_versions = 0;
     private $has_max_versions = false;
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 6 [default = true];</code>
+     */
+    private $cache_blocks = false;
+    private $has_cache_blocks = false;
     /**
      * Generated from protobuf field <code>optional bytes filter = 7;</code>
      */
@@ -219,6 +225,38 @@ class GetRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasMaxVersions()
     {
         return $this->has_max_versions;
+    }
+
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 6 [default = true];</code>
+     * @return bool
+     */
+    public function getCacheBlocks()
+    {
+        return $this->cache_blocks;
+    }
+
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 6 [default = true];</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setCacheBlocks($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->cache_blocks = $var;
+        $this->has_cache_blocks = true;
+
+        return $this;
+    }
+
+    public function hasCacheBlocks()
+    {
+        return $this->has_cache_blocks;
     }
 
     /**

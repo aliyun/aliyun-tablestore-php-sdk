@@ -2,6 +2,7 @@
 	"name" : "aliyun/aliyun-tablestore-sdk-php",
 	"homepage" : "http://www.aliyun.com/product/ots",
 	"description" : "Aliyun Tablestore SDK for PHP",
+	"license": "MIT",
 	"authors" : [{
 			"name" : "Aliyun Tablestore Team",
 			"homepage" : "http://www.aliyun.com/product/ots"
@@ -18,12 +19,18 @@
 	},
 	"require" : {
 		"php" : ">=5.5",
-		"guzzlehttp/guzzle" : "3.8.1|~6.0.1|~6.1",
+		"guzzlehttp/guzzle": "^5.3.1|^6.2.1",
+		"guzzlehttp/psr7": "^1.4.1",
+		"guzzlehttp/promises": "~1.0",
 		"google/protobuf": "^3.5"
 	},
 	"require-dev" : {
 		"phpunit/phpunit": "^4.8.35|^5.4.3",
 		"satooshi/php-coveralls": "~1.0"
+	},
+	"suggest": {
+		"ext-openssl": "Allows working with HTTPS",
+		"ext-curl": "To send requests using cURL"
 	},
 	"minimum-stability": "stable",
 	"autoload" : {

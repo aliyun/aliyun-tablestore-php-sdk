@@ -9,7 +9,8 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42; #############################################  BatchGetRow  ############################################# *&#47;
+ **
+ * HBase支持Batch操作的每行都拥有不同的查询参数，OTS不支持。
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.TableInBatchGetRowRequest</code>
  */
@@ -49,6 +50,13 @@ class TableInBatchGetRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $max_versions = 0;
     private $has_max_versions = false;
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 7 [default = true];</code>
+     */
+    private $cache_blocks = false;
+    private $has_cache_blocks = false;
     /**
      * Generated from protobuf field <code>optional bytes filter = 8;</code>
      */
@@ -244,6 +252,38 @@ class TableInBatchGetRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasMaxVersions()
     {
         return $this->has_max_versions;
+    }
+
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 7 [default = true];</code>
+     * @return bool
+     */
+    public function getCacheBlocks()
+    {
+        return $this->cache_blocks;
+    }
+
+    /**
+     * 本次读出的数据是否进入BlockCache
+     *
+     * Generated from protobuf field <code>optional bool cache_blocks = 7 [default = true];</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setCacheBlocks($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->cache_blocks = $var;
+        $this->has_cache_blocks = true;
+
+        return $this;
+    }
+
+    public function hasCacheBlocks()
+    {
+        return $this->has_cache_blocks;
     }
 
     /**

@@ -22,3 +22,22 @@ function getMicroTime()
 {
     return ceil(microtime(true) * 1000);
 }
+
+/**
+ * 工具函数。attribute_column默认是list类型。
+ * 通过此函数可以转换成map的结构，方便通过columnName来获取columnValue.
+ * @param $columns
+ * @return array
+ */
+function getColumnValueAsMap($columns)
+{
+    $ret = array();
+    foreach($columns as $column) {
+        if(isset($ret[$column[0]])) {
+            $ret[$column[0]][] = $column;
+        } else {
+            $ret[$column[0]] = [$column];
+        }
+    }
+    return $ret;
+}

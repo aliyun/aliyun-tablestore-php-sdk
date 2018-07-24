@@ -9,82 +9,82 @@ use Aliyun\OTS\Consts\LogicalOperatorConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\DirectionConst;
 
-require_once __DIR__ . "/TestBase.php";
-require_once __DIR__ . "/../../vendor/autoload.php";
+require_once __DIR__ . '/TestBase.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 
 class GetRangeTest extends SDKTestBase {
 
     private static $usedTables = array (
-        "myTable",
-        "myTablexx",
-        "myTablexx2",
-        "myTable1"
+        'myTable',
+        'myTablexx',
+        'myTablexx2',
+        'myTable1'
     );
 
     public static function setUpBeforeClass()
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[0],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[0],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             )
         ));
 
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[1],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[1],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             )
         ));
 
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[2],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[2],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             )
         ));
 
         SDKTestBase::createInitialTable (array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[3],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK2", PrimaryKeyTypeConst::CONST_STRING),
-                    array("PK3", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK4", PrimaryKeyTypeConst::CONST_STRING)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[3],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING),
+                    array('PK3', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK4', PrimaryKeyTypeConst::CONST_STRING)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             )
         ));
@@ -106,52 +106,52 @@ class GetRangeTest extends SDKTestBase {
 
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "limit" => 10,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[0],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'limit' => 10,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 3),
-                array("PK2", "a3")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 3),
+                array('PK2', 'a3')
             )
         );
         $rowone = array (
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("att1", 1),
-                array("att2", "att1")
+            'attribute_columns' => array (
+                array('att1', 1),
+                array('att2', 'att1')
             )
         );
         $rowtwo = array (
-            "primary_key" => array (
-                array("PK1", 2),
-                array("PK2", "a2")
+            'primary_key' => array (
+                array('PK1', 2),
+                array('PK2', 'a2')
             ),
-            "attribute_columns" => array (
-                array("att1", 2),
-                array("att2", "att2")
+            'attribute_columns' => array (
+                array('att1', 2),
+                array('att2', 'att2')
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -168,51 +168,51 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeBackward() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "max_versions" => 1,
-            "direction" => DirectionConst::CONST_BACKWARD,
-            "limit" => 10,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 2),
-                array("PK2", "a2")
+            'table_name' => self::$usedTables[0],
+            'max_versions' => 1,
+            'direction' => DirectionConst::CONST_BACKWARD,
+            'limit' => 10,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 2),
+                array('PK2', 'a2')
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 0),
-                array("PK2", "a0")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 0),
+                array('PK2', 'a0')
             )
         );
         $rowone = array (
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("att1", 1),
-                array("att2", "att1")
+            'attribute_columns' => array (
+                array('att1', 1),
+                array('att2', 'att1')
             )
         );
         $rowtwo = array (
-            "primary_key" => array (
-                array("PK1", 2),
-                array("PK2", "a2")
+            'primary_key' => array (
+                array('PK1', 2),
+                array('PK2', 'a2')
             ),
-            "attribute_columns" => array (
-                array("att1", 2),
-                array("att2", "att2")
+            'attribute_columns' => array (
+                array('att1', 2),
+                array('att2', 'att2')
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -230,52 +230,52 @@ class GetRangeTest extends SDKTestBase {
     public function testInfMinInRange() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 10,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MIN),
-                array("PK2", null, PrimaryKeyTypeConst::CONST_INF_MIN)
+            'table_name' => self::$usedTables[0],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 10,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MIN),
+                array('PK2', null, PrimaryKeyTypeConst::CONST_INF_MIN)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 10),
-                array("PK2", "a10")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 10),
+                array('PK2', 'a10')
             )
         );
         $rowone = array (
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("att1", 1),
-                array("att2", "att1")
+            'attribute_columns' => array (
+                array('att1', 1),
+                array('att2', 'att1')
             )
         );
         $rowtwo = array (
-            "primary_key" => array (
-                array("PK1", 2),
-                array("PK2", "a2")
+            'primary_key' => array (
+                array('PK1', 2),
+                array('PK2', 'a2')
             ),
-            "attribute_columns" => array (
-                array("att1", 2),
-                array("att2", "att2")
+            'attribute_columns' => array (
+                array('att1', 2),
+                array('att2', 'att2')
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -293,51 +293,51 @@ class GetRangeTest extends SDKTestBase {
     public function testInfMaxInRange() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "direction" => DirectionConst::CONST_BACKWARD,
-            "limit" => 10,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK2", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'table_name' => self::$usedTables[0],
+            'direction' => DirectionConst::CONST_BACKWARD,
+            'limit' => 10,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK2', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 0),
-                array("PK2", "a0")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 0),
+                array('PK2', 'a0')
             )
         );
         $rowone = array (
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("att1", 1),
-                array("att2", "att1")
+            'attribute_columns' => array (
+                array('att1', 1),
+                array('att2', 'att1')
             )
         );
         $rowtwo = array (
-            "primary_key" => array (
-                array("PK1", 2),
-                array("PK2", "a2")
+            'primary_key' => array (
+                array('PK1', 2),
+                array('PK2', 'a2')
             ),
-            "attribute_columns" => array (
-                array("att1", 2),
-                array("att2", "att2")
+            'attribute_columns' => array (
+                array('att1', 2),
+                array('att2', 'att2')
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -355,60 +355,60 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeWithDefaultColumnsToGet() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[3],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i),
-                    array("PK3", $i),
-                    array("PK4", "b" . $i)
+                'table_name' => self::$usedTables[3],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i),
+                    array('PK3', $i),
+                    array('PK4', 'b' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i),
-                    array("att3", $i),
-                    array("att4", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i),
+                    array('att3', $i),
+                    array('att4', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[3],
-            "direction" => DirectionConst::CONST_BACKWARD,
-            "max_versions" => 1,
-            "columns_to_get" => array (
-                "att1",
-                "att2",
-                "att3",
-                "att4"
+            'table_name' => self::$usedTables[3],
+            'direction' => DirectionConst::CONST_BACKWARD,
+            'max_versions' => 1,
+            'columns_to_get' => array (
+                'att1',
+                'att2',
+                'att3',
+                'att4'
             ),
-            "limit" => 10,
-            "inclusive_start_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK2", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK3", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK4", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'limit' => 10,
+            'inclusive_start_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK2', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK3', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK4', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 0),
-                array("PK2", "a0"),
-                array("PK3", 1),
-                array("PK4", "a0")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 0),
+                array('PK2', 'a0'),
+                array('PK3', 1),
+                array('PK4', 'a0')
             )
         );
-        $rowone = // "primary_key" => array("PK1" => 1, "PK2" => "a1"),
+        $rowone = // 'primary_key' => array('PK1' => 1, 'PK2' => 'a1'),
         array (
-            array("att1", 2),
-            array("att2", "att2"),
-            array("att3", 2),
-            array("att4", "att2")
+            array('att1', 2),
+            array('att2', 'att2'),
+            array('att3', 2),
+            array('att4', 'att2')
         );
-        $rowtwo = // "primary_key" => array("PK1" => 2, "PK2" => "a2"),
+        $rowtwo = // 'primary_key' => array('PK1' => 2, 'PK2' => 'a2'),
         array (
-            array("att1", 1),
-            array("att2", "att1"),
-            array("att3", 1),
-            array("att4", "att1")
+            array('att1', 1),
+            array('att2', 'att1'),
+            array('att3', 1),
+            array('att4', 'att1')
         );
         $tables = $this->otsClient->getRange ($getRange);
         // print_r($tables);die;
@@ -428,68 +428,68 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeWith0ColumsToGet() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[3],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i),
-                    array("PK3", $i),
-                    array("PK4", "b" . $i)
+                'table_name' => self::$usedTables[3],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i),
+                    array('PK3', $i),
+                    array('PK4', 'b' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i),
-                    array("att3", $i),
-                    array("att4", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i),
+                    array('att3', $i),
+                    array('att4', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[3],
-            "direction" => DirectionConst::CONST_BACKWARD,
-            "columns_to_get" => array (),
-            "max_versions" => 1,
-            "limit" => 10,
-            "inclusive_start_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK2", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK3", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK4", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'table_name' => self::$usedTables[3],
+            'direction' => DirectionConst::CONST_BACKWARD,
+            'columns_to_get' => array (),
+            'max_versions' => 1,
+            'limit' => 10,
+            'inclusive_start_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK2', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK3', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK4', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 0),
-                array("PK2", "a0"),
-                array("PK3", 1),
-                array("PK4", "a0")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 0),
+                array('PK2', 'a0'),
+                array('PK3', 1),
+                array('PK4', 'a0')
             )
         );
         $rowone = array (
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1"),
-                array("PK3", 1),
-                array("PK4", "b1")
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1'),
+                array('PK3', 1),
+                array('PK4', 'b1')
             ),
-            "attribute_columns" => array (
-                array("att1", 1),
-                array("att2", "att1"),
-                array("att3", 1),
-                array("att4", "att1")
+            'attribute_columns' => array (
+                array('att1', 1),
+                array('att2', 'att1'),
+                array('att3', 1),
+                array('att4', 'att1')
             )
         );
         $rowtwo = array (
-            "primary_key" => array (
-                array("PK1", 2),
-                array("PK2", "a2"),
-                array("PK3", 2),
-                array("PK4", "b2")
+            'primary_key' => array (
+                array('PK1', 2),
+                array('PK2', 'a2'),
+                array('PK3', 2),
+                array('PK4', 'b2')
             ),
-            "attribute_columns" => array (
-                array("att1", 2),
-                array("att2", "att2"),
-                array("att3", 2),
-                array("att4", "att2")
+            'attribute_columns' => array (
+                array('att1', 2),
+                array('att2', 'att2'),
+                array('att3', 2),
+                array('att4', 'att2')
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -507,69 +507,69 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeWith4ColumnsToGet() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[3],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i),
-                    array("PK3", $i),
-                    array("PK4", "b" . $i)
+                'table_name' => self::$usedTables[3],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i),
+                    array('PK3', $i),
+                    array('PK4', 'b' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i),
-                    array("att3", $i),
-                    array("att4", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i),
+                    array('att3', $i),
+                    array('att4', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[3],
-            "direction" => DirectionConst::CONST_BACKWARD,
-            "max_versions" => 1,
-            "columns_to_get" => array (
-                "PK1",
-                "PK2",
-                "att1",
-                "att2"
+            'table_name' => self::$usedTables[3],
+            'direction' => DirectionConst::CONST_BACKWARD,
+            'max_versions' => 1,
+            'columns_to_get' => array (
+                'PK1',
+                'PK2',
+                'att1',
+                'att2'
             ),
-            "limit" => 10,
-            "inclusive_start_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK2", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK3", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK4", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'limit' => 10,
+            'inclusive_start_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK2', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK3', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK4', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 0),
-                array("PK2", "a0"),
-                array("PK3", 1),
-                array("PK4", "a0")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 0),
+                array('PK2', 'a0'),
+                array('PK3', 1),
+                array('PK4', 'a0')
             )
         );
         $rowone = array (
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1"),
-                array("PK3", 1),
-                array("PK4", "b1")
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1'),
+                array('PK3', 1),
+                array('PK4', 'b1')
             ),
-            "attribute_columns" => array (
-                array("att1", 1),
-                array("att2", "att1")
+            'attribute_columns' => array (
+                array('att1', 1),
+                array('att2', 'att1')
             )
         );
         $rowtwo = array (
-            "primary_key" => array (
-                array("PK1", 2),
-                array("PK2", "a2"),
-                array("PK3", 2),
-                array("PK4", "b2")
+            'primary_key' => array (
+                array('PK1', 2),
+                array('PK2', 'a2'),
+                array('PK3', 2),
+                array('PK4', 'b2')
             ),
-            "attribute_columns" => array (
-                array("att1", 2),
-                array("att2", "att2")
+            'attribute_columns' => array (
+                array('att1', 2),
+                array('att2', 'att2')
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -586,15 +586,15 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeWith1000ColumnsToGet() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
@@ -603,18 +603,18 @@ class GetRangeTest extends SDKTestBase {
             $a[] = 'a' . $i;
         }
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => $a,
-            "max_versions" => 1,
-            "limit" => 10,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[0],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => $a,
+            'max_versions' => 1,
+            'limit' => 10,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 3),
-                array("PK2", "a3")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 3),
+                array('PK2', 'a3')
             )
         );
         
@@ -629,35 +629,35 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeWithDuplicateColumnsToGet() {
         for($i = 1; $i < 3; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (
-                "att1",
-                "att1"
+            'table_name' => self::$usedTables[0],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (
+                'att1',
+                'att1'
             ),
-            "limit" => 10,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'limit' => 10,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", 3),
-                array("PK2", "a3")
+            'exclusive_end_primary_key' => array (
+                array('PK1', 3),
+                array('PK2', 'a3')
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -679,42 +679,42 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeWithLimit10() {
         for($i = 1; $i < 21; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i)
+                'attribute_columns' => array (
+                    array('att1', $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 10,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[0],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 10,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK2", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK2', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
         for($i = 1; $i < 11; $i ++) {
             $row[] = array (
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i)
+                'attribute_columns' => array (
+                    array('att1', $i)
                 )
             );
         }
@@ -722,8 +722,8 @@ class GetRangeTest extends SDKTestBase {
             $this->assertRowEquals ($row[$i], $tables['rows'][$i]);
         }
         $primary = array (
-            array("PK1", 11),
-            array("PK2", "a11")
+            array('PK1', 11),
+            array('PK2', 'a11')
         );
         $this->assertEquals ($tables['next_start_primary_key'], $primary);
         $this->assertEquals (count ($tables['rows']), 10);
@@ -737,41 +737,41 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeIteratorWith1Row() {
         for($i = 1; $i < 2; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[0],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i),
-                    array("PK2", "a" . $i)
+                'table_name' => self::$usedTables[0],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i),
+                    array('PK2', 'a' . $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i)
+                'attribute_columns' => array (
+                    array('att1', $i)
                 )
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[0],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 1,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'table_name' => self::$usedTables[0],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 1,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX),
-                array("PK2", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX),
+                array('PK2', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
         $row = array (
-            "primary_key" => array (
-                array("PK1", 1),
-                array("PK2", "a1")
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'a1')
             ),
-            "attribute_columns" => array (
-                array("att1", 1)
+            'attribute_columns' => array (
+                array('att1', 1)
             )
         );
         $this->assertRowEquals($row, $tables['rows'][0]);
@@ -786,26 +786,26 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeIteratorWith5000Rows() {
         for($i = 1; $i < 5001; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[1],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i)
+                'table_name' => self::$usedTables[1],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i)
                 ),
-                "attribute_columns" => array ()
+                'attribute_columns' => array ()
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[1],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1)
+            'table_name' => self::$usedTables[1],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -820,26 +820,26 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeIteratorWith5001Rows() {
         for($i = 1; $i < 5002; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[1],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i)
+                'table_name' => self::$usedTables[1],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i)
                 ),
-                "attribute_columns" => array ()
+                'attribute_columns' => array ()
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[1],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1)
+            'table_name' => self::$usedTables[1],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $tables = $this->otsClient->getRange ($getRange);
@@ -854,69 +854,69 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeIteratorWith15001Rows() {
         for($i = 1; $i < 15001; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[1],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i)
+                'table_name' => self::$usedTables[1],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i)
                 ),
-                "attribute_columns" => array ()
+                'attribute_columns' => array ()
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[1],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1)
+            'table_name' => self::$usedTables[1],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
 
             )
         );
         $this->otsClient->getRange ($getRange);
         $getRange1 = array (
-            "table_name" => self::$usedTables[1],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 5001)
+            'table_name' => self::$usedTables[1],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 5001)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $this->otsClient->getRange ($getRange1);
         $getRange2 = array (
-            "table_name" => self::$usedTables[1],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 10001)
+            'table_name' => self::$usedTables[1],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 10001)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $this->otsClient->getRange ($getRange2);
         $getRange3 = array (
-            "table_name" => self::$usedTables[1],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 15001)
+            'table_name' => self::$usedTables[1],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 15001)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $tables = $this->otsClient->getRange ($getRange3);
@@ -931,42 +931,42 @@ class GetRangeTest extends SDKTestBase {
     public function testGetRangeWithDefaultLimit() {
         for($i = 1; $i < 10001; $i ++) {
             $tablename = array (
-                "table_name" => self::$usedTables[2],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i)
+                'table_name' => self::$usedTables[2],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i)
                 ),
-                "attribute_columns" => array ()
+                'attribute_columns' => array ()
             );
             $this->otsClient->putRow ($tablename);
         }
         $getRange = array (
-            "table_name" => self::$usedTables[2],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1)
+            'table_name' => self::$usedTables[2],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $this->otsClient->getRange ($getRange);
-        // $primary = array("PK1" => 5001);
+        // $primary = array('PK1' => 5001);
         // $this->assertEquals($tables['next_start_primary_key'], $primary);
         $getRange1 = array (
-            "table_name" => self::$usedTables[2],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 5001)
+            'table_name' => self::$usedTables[2],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (),
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 5001)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             )
         );
         $tables = $this->otsClient->getRange ($getRange1);
@@ -979,46 +979,46 @@ class GetRangeTest extends SDKTestBase {
     public function testGetGetRangeWithSingleCompositeCondition() {
         for($i = 1; $i < 10001; $i ++) {
             $putdata = array (
-                "table_name" => self::$usedTables[2],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i)
+                'table_name' => self::$usedTables[2],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($putdata);
         }
         
         $getRange = array (
-            "table_name" => self::$usedTables[2],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (
-                "att1",
-                "att2"
+            'table_name' => self::$usedTables[2],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (
+                'att1',
+                'att2'
             ),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1)
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             ),
-            "column_filter" => array (
-                "logical_operator" => LogicalOperatorConst::CONST_AND,
-                "sub_conditions" => array (
+            'column_filter' => array (
+                'logical_operator' => LogicalOperatorConst::CONST_AND,
+                'sub_filters' => array (
                     array (
-                        "column_name" => "attr1",
-                        "value" => 10,
-                        "comparator" => ComparatorTypeConst::CONST_GREATER_THAN
+                        'column_name' => 'attr1',
+                        'value' => 10,
+                        'comparator' => ComparatorTypeConst::CONST_GREATER_THAN
                     ),
                     array (
-                        "column_name" => "attr2",
-                        "value" => "att10001",
-                        "comparator" => ComparatorTypeConst::CONST_LESS_THAN
+                        'column_name' => 'attr2',
+                        'value' => 'att10001',
+                        'comparator' => ComparatorTypeConst::CONST_LESS_THAN
                     )
                 )
             )
@@ -1033,64 +1033,64 @@ class GetRangeTest extends SDKTestBase {
     public function testGetGetRangeWithMultipleCompositeCondition() {
         for($i = 1; $i < 10001; $i ++) {
             $putdata = array (
-                "table_name" => self::$usedTables[2],
-                "condition" => RowExistenceExpectationConst::CONST_IGNORE,
-                "primary_key" => array (
-                    array("PK1", $i)
+                'table_name' => self::$usedTables[2],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array (
+                    array('PK1', $i)
                 ),
-                "attribute_columns" => array (
-                    array("att1", $i),
-                    array("att2", "att" . $i)
+                'attribute_columns' => array (
+                    array('att1', $i),
+                    array('att2', 'att' . $i)
                 )
             );
             $this->otsClient->putRow ($putdata);
         }
         
         $getRange = array (
-            "table_name" => self::$usedTables[2],
-            "direction" => DirectionConst::CONST_FORWARD,
-            "columns_to_get" => array (
-                "att1",
-                "att2"
+            'table_name' => self::$usedTables[2],
+            'direction' => DirectionConst::CONST_FORWARD,
+            'columns_to_get' => array (
+                'att1',
+                'att2'
             ),
-            "limit" => 5000,
-            "max_versions" => 1,
-            "inclusive_start_primary_key" => array (
-                array("PK1", 1)
+            'limit' => 5000,
+            'max_versions' => 1,
+            'inclusive_start_primary_key' => array (
+                array('PK1', 1)
             ),
-            "exclusive_end_primary_key" => array (
-                array("PK1", null, PrimaryKeyTypeConst::CONST_INF_MAX)
+            'exclusive_end_primary_key' => array (
+                array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
             ),
-            "column_filter" => array (
-                "logical_operator" => LogicalOperatorConst::CONST_OR,
-                "sub_conditions" => array (
+            'column_filter' => array (
+                'logical_operator' => LogicalOperatorConst::CONST_OR,
+                'sub_filters' => array (
                     array (
-                        "logical_operator" => LogicalOperatorConst::CONST_AND,
-                        "sub_conditions" => array (
+                        'logical_operator' => LogicalOperatorConst::CONST_AND,
+                        'sub_filters' => array (
                             array (
-                                "column_name" => "attr1",
-                                "value" => 10,
-                                "comparator" => ComparatorTypeConst::CONST_GREATER_THAN
+                                'column_name' => 'attr1',
+                                'value' => 10,
+                                'comparator' => ComparatorTypeConst::CONST_GREATER_THAN
                             ),
                             array (
-                                "column_name" => "attr1",
-                                "value" => 20000,
-                                "comparator" => ComparatorTypeConst::CONST_LESS_THAN
+                                'column_name' => 'attr1',
+                                'value' => 20000,
+                                'comparator' => ComparatorTypeConst::CONST_LESS_THAN
                             )
                         )
                     ),
                     array (
-                        "logical_operator" => LogicalOperatorConst::CONST_AND,
-                        "sub_conditions" => array (
+                        'logical_operator' => LogicalOperatorConst::CONST_AND,
+                        'sub_filters' => array (
                             array (
-                                "column_name" => "attr2",
-                                "value" => "att1001",
-                                "comparator" => ComparatorTypeConst::CONST_GREATER_THAN
+                                'column_name' => 'attr2',
+                                'value' => 'att1001',
+                                'comparator' => ComparatorTypeConst::CONST_GREATER_THAN
                             ),
                             array (
-                                "column_name" => "attr2",
-                                "value" => "att1002",
-                                "comparator" => ComparatorTypeConst::CONST_LESS_EQUAL
+                                'column_name' => 'attr2',
+                                'value' => 'att1002',
+                                'comparator' => ComparatorTypeConst::CONST_LESS_EQUAL
                             )
                         )
                     )

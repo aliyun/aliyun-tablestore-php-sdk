@@ -23,6 +23,11 @@ class UpdateTableResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $table_options = null;
     private $has_table_options = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamDetails stream_details = 3;</code>
+     */
+    private $stream_details = null;
+    private $has_stream_details = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -83,6 +88,34 @@ class UpdateTableResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasTableOptions()
     {
         return $this->has_table_options;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamDetails stream_details = 3;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\StreamDetails
+     */
+    public function getStreamDetails()
+    {
+        return $this->stream_details;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.StreamDetails stream_details = 3;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\StreamDetails $var
+     * @return $this
+     */
+    public function setStreamDetails($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\StreamDetails::class);
+        $this->stream_details = $var;
+        $this->has_stream_details = true;
+
+        return $this;
+    }
+
+    public function hasStreamDetails()
+    {
+        return $this->has_stream_details;
     }
 
 }

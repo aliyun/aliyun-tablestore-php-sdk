@@ -14,21 +14,35 @@ use Google\Protobuf\Internal\GPBUtil;
 class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
 {
     /**
-     * 数据生命周期,可以动态更改
+     * 可以动态更改
      *
      * Generated from protobuf field <code>optional int32 time_to_live = 1;</code>
      */
     private $time_to_live = 0;
     private $has_time_to_live = false;
     /**
-     * 最大数据版本,可以动态更改
+     * 可以动态更改
      *
      * Generated from protobuf field <code>optional int32 max_versions = 2;</code>
      */
     private $max_versions = 0;
     private $has_max_versions = false;
     /**
-     * 数据有效版本偏差,可以动态修改
+     * 可以动态更改
+     *
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.BloomFilterType bloom_filter_type = 3;</code>
+     */
+    private $bloom_filter_type = 0;
+    private $has_bloom_filter_type = false;
+    /**
+     * 可以动态更改
+     *
+     * Generated from protobuf field <code>optional int32 block_size = 4;</code>
+     */
+    private $block_size = 0;
+    private $has_block_size = false;
+    /**
+     * 可以动态修改
      *
      * Generated from protobuf field <code>optional int64 deviation_cell_version_in_sec = 5;</code>
      */
@@ -41,7 +55,7 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * 数据生命周期,可以动态更改
+     * 可以动态更改
      *
      * Generated from protobuf field <code>optional int32 time_to_live = 1;</code>
      * @return int
@@ -52,7 +66,7 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * 数据生命周期,可以动态更改
+     * 可以动态更改
      *
      * Generated from protobuf field <code>optional int32 time_to_live = 1;</code>
      * @param int $var
@@ -73,7 +87,7 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * 最大数据版本,可以动态更改
+     * 可以动态更改
      *
      * Generated from protobuf field <code>optional int32 max_versions = 2;</code>
      * @return int
@@ -84,7 +98,7 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * 最大数据版本,可以动态更改
+     * 可以动态更改
      *
      * Generated from protobuf field <code>optional int32 max_versions = 2;</code>
      * @param int $var
@@ -105,7 +119,71 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * 数据有效版本偏差,可以动态修改
+     * 可以动态更改
+     *
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.BloomFilterType bloom_filter_type = 3;</code>
+     * @return int
+     */
+    public function getBloomFilterType()
+    {
+        return $this->bloom_filter_type;
+    }
+
+    /**
+     * 可以动态更改
+     *
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.BloomFilterType bloom_filter_type = 3;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setBloomFilterType($var)
+    {
+        GPBUtil::checkEnum($var, \Aliyun\OTS\ProtoBuffer\Protocol\BloomFilterType::class);
+        $this->bloom_filter_type = $var;
+        $this->has_bloom_filter_type = true;
+
+        return $this;
+    }
+
+    public function hasBloomFilterType()
+    {
+        return $this->has_bloom_filter_type;
+    }
+
+    /**
+     * 可以动态更改
+     *
+     * Generated from protobuf field <code>optional int32 block_size = 4;</code>
+     * @return int
+     */
+    public function getBlockSize()
+    {
+        return $this->block_size;
+    }
+
+    /**
+     * 可以动态更改
+     *
+     * Generated from protobuf field <code>optional int32 block_size = 4;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setBlockSize($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->block_size = $var;
+        $this->has_block_size = true;
+
+        return $this;
+    }
+
+    public function hasBlockSize()
+    {
+        return $this->has_block_size;
+    }
+
+    /**
+     * 可以动态修改
      *
      * Generated from protobuf field <code>optional int64 deviation_cell_version_in_sec = 5;</code>
      * @return int|string
@@ -116,7 +194,7 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * 数据有效版本偏差,可以动态修改
+     * 可以动态修改
      *
      * Generated from protobuf field <code>optional int64 deviation_cell_version_in_sec = 5;</code>
      * @param int|string $var

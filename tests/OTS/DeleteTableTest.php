@@ -5,14 +5,14 @@ namespace Aliyun\OTS\Tests;
 use Aliyun\OTS;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 
-require_once __DIR__ . "/TestBase.php";
-require_once __DIR__ . "/../../vendor/autoload.php";
+require_once __DIR__ . '/TestBase.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 
 class DeleteTableTest extends SDKTestBase {
 
     private static $usedTables = array (
-        "myTable"
+        'myTable'
     );
     
     /*
@@ -22,19 +22,19 @@ class DeleteTableTest extends SDKTestBase {
      */
     public function testDeleteTable() {
         $tablebody = array (
-            "table_meta" => array (
-                "table_name" => self::$usedTables[0],
-                "primary_key_schema" => array (
-                    array("PK1", PrimaryKeyTypeConst::CONST_STRING),
-                    array("PK2", PrimaryKeyTypeConst::CONST_INTEGER),
-                    array("PK3", PrimaryKeyTypeConst::CONST_STRING),
-                    array("PK4", PrimaryKeyTypeConst::CONST_INTEGER)
+            'table_meta' => array (
+                'table_name' => self::$usedTables[0],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_STRING),
+                    array('PK2', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK3', PrimaryKeyTypeConst::CONST_STRING),
+                    array('PK4', PrimaryKeyTypeConst::CONST_INTEGER)
                 )
             ),
-            "reserved_throughput" => array (
-                "capacity_unit" => array (
-                    "read" => 0,
-                    "write" => 0
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
                 )
             )
         );
@@ -42,7 +42,7 @@ class DeleteTableTest extends SDKTestBase {
         SDKTestBase::waitForAvoidFrequency();
 
         $request = array (
-            "table_name" => self::$usedTables[0]
+            'table_name' => self::$usedTables[0]
         );
         // print_r($this->listtable->ListTable());
         $response = $this->otsClient->deleteTable ($request);
@@ -57,7 +57,7 @@ class DeleteTableTest extends SDKTestBase {
      */
     public function testDeleteTableEmpty() {
         $request = array (
-            "table_name" => ""
+            'table_name' => ''
         );
         
         try {
@@ -76,7 +76,7 @@ class DeleteTableTest extends SDKTestBase {
      */
     public function testNotExiteTableName() {
         $request = array (
-            "table_name" => "TableThatNotExisting"
+            'table_name' => 'TableThatNotExisting'
         );
         
         try {

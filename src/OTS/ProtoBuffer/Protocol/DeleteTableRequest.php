@@ -9,7 +9,7 @@ use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
 
 /**
- *&#47;&#42; #############################################  DeleteTable  ############################################# *&#47;
+ * #############################################  DeleteTable  ############################################# 
  *
  * Generated from protobuf message <code>aliyun.OTS.ProtoBuffer.Protocol.DeleteTableRequest</code>
  */

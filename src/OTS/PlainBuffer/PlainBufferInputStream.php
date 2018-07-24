@@ -8,17 +8,19 @@ class PlainBufferInputStream
     var $buffer;
     var $curPos;
     var $lastTag;
+    var $len;
 
     public function __construct($buffer)
     {
         $this->buffer = $buffer;
         $this->curPos = 0;
         $this->lastTag = 0;
+        $this->len = strlen($this->buffer);
     }
 
     public function isAtEnd()
     {
-        return strlen($this->buffer) == $this->curPos;
+        return $this->len == $this->curPos;
     }
 
     public function readTag()
@@ -27,19 +29,19 @@ class PlainBufferInputStream
             $this->lastTag = 0;
             return 0;
         }
-        $this->lastTag = $this->readRawByte();
-        return PlainBufferCrc8::toByte(ord($this->lastTag));
+        $this->lastTag = PlainBufferCrc8::toByte(ord($this->readRawByte()));
+        return $this->lastTag;
     }
 
     public function checkLastTagWas($tag)
     {
         //return ($this->lastTag) == $tag;
-        return PlainBufferCrc8::toByte(ord($this->lastTag)) == $tag;
+        return $this->lastTag == $tag;
     }
 
     public function getLastTag()
     {
-        return PlainBufferCrc8::toByte(ord($this->lastTag));
+        return $this->lastTag;
     }
 
     public function readRawByte()
@@ -97,6 +99,10 @@ class PlainBufferInputStream
     public function readUtfString($size)
     {
         return self::readBytes($size);
+    }
+
+    public function skipRawSize($size) {
+        self::readBytes($size);
     }
 }
 
