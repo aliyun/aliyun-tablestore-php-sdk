@@ -1,6 +1,6 @@
 <?php
-require (__DIR__ . "/../vendor/autoload.php");
-require (__DIR__ . "/ExampleConfig.php");
+require (__DIR__ . '/../vendor/autoload.php');
+require (__DIR__ . '/ExampleConfig.php');
 
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
@@ -30,10 +30,10 @@ $request = array (
             'write' => 0
         )
     ),
-    "table_options" => array(
-        "time_to_live" => -1,   // 数据生命周期, -1表示永久，单位秒
-        "max_versions" => 2,    // 最大数据版本
-        "deviation_cell_version_in_sec" => 86400  // 数据有效版本偏差，单位秒
+    'table_options' => array(
+        'time_to_live' => -1,   // 数据生命周期, -1表示永久，单位秒
+        'max_versions' => 2,    // 最大数据版本
+        'deviation_cell_version_in_sec' => 86400  // 数据有效版本偏差，单位秒
     )
 );
 $otsClient->createTable ($request);
@@ -82,25 +82,19 @@ $request = array (
     'tables' => array (
         array (
             'table_name' => 'MyTable',
-            "max_versions" => 1,
-            'rows' => array (
+            'max_versions' => 1,
+            'primary_keys' => array (
                 array (
-                    'primary_key' => array (
-                        array('PK0', 1),
-                        array('PK1', 'Zhejiang')
-                    )
+                    array('PK0', 1),
+                    array('PK1', 'Zhejiang')
                 ), // 第一行
                 array (
-                    'primary_key' => array (
-                        array('PK0', 2),
-                        array('PK1', 'Jiangsu')
-                    )
+                    array('PK0', 2),
+                    array('PK1', 'Jiangsu')
                 ), // 第二行
                 array (
-                    'primary_key' => array (
-                        array('PK0', 3),
-                        array('PK1', 'Guangdong')
-                    )
+                    array('PK0', 3),
+                    array('PK1', 'Guangdong')
                 )
             )
         )
@@ -131,7 +125,8 @@ print json_encode ($response);
 			],
 			"attribute_columns": [
 				["attr1", "Hangzhou", "STRING", 1526419069131]
-			]
+			],
+            "next_token": ""
 		},
 
 

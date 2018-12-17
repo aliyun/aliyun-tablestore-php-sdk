@@ -1,6 +1,6 @@
 <?php
-require (__DIR__ . "/../vendor/autoload.php");
-require (__DIR__ . "/ExampleConfig.php");
+require (__DIR__ . '/../vendor/autoload.php');
+require (__DIR__ . '/ExampleConfig.php');
 
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
@@ -30,10 +30,10 @@ $request = array (
             'write' => 0
         )
     ),
-    "table_options" => array(
-        "time_to_live" => -1,   // 数据生命周期, -1表示永久，单位秒
-        "max_versions" => 2,    // 最大数据版本
-        "deviation_cell_version_in_sec" => 86400  // 数据有效版本偏差，单位秒
+    'table_options' => array(
+        'time_to_live' => -1,   // 数据生命周期, -1表示永久，单位秒
+        'max_versions' => 2,    // 最大数据版本
+        'deviation_cell_version_in_sec' => 86400  // 数据有效版本偏差，单位秒
     )
 );
 $otsClient->createTable ($request);
@@ -82,73 +82,55 @@ $request = array (
     'tables' => array (
         array (
             'table_name' => 'MyTable1', // 第一个表
-            "max_versions" => 1,
-            'rows' => array (
+            'max_versions' => 1,
+            'primary_keys' => array (
                 array (
-                    'primary_key' => array (
-                        array('PK0', 1),
-                        array('PK1', 'Zhejiang')
-                    )
+                    array('PK0', 1),
+                    array('PK1', 'Zhejiang')
                 ),
                 array (
-                    'primary_key' => array (
-                        array('PK0', 2),
-                        array('PK1', 'Jiangsu')
-                    )
+                    array('PK0', 2),
+                    array('PK1', 'Jiangsu')
                 ),
                 array (
-                    'primary_key' => array (
-                        array('PK0', 3),
-                        array('PK1', 'Guangdong')
-                    )
+                    array('PK0', 3),
+                    array('PK1', 'Guangdong')
                 )
             )
         ),
         array (
             'table_name' => 'MyTable2', // 第二个表
-            "max_versions" => 1,
-            'rows' => array (
+            'max_versions' => 1,
+            'primary_keys' => array (
                 array (
-                    'primary_key' => array (
-                        array('PK0', 4),
-                        array('PK1', 'a')
-                    )
+                    array('PK0', 4),
+                    array('PK1', 'a')
                 ),
                 array (
-                    'primary_key' => array (
-                        array('PK0', 5),
-                        array('PK1', 'b')
-                    )
+                    array('PK0', 5),
+                    array('PK1', 'b')
                 ),
                 array (
-                    'primary_key' => array (
-                        array('PK0', 6),
-                        array('PK1', 'c')
-                    )
+                    array('PK0', 6),
+                    array('PK1', 'c')
                 )
             )
         ),
         array (
             'table_name' => 'MyTable3', // 第三个表
-            "max_versions" => 1,
-            'rows' => array (
+            'max_versions' => 1,
+            'primary_keys' => array (
                 array (
-                    'primary_key' => array (
-                        array('PK0', 7),
-                        array('PK1', 'd')
-                    )
+                    array('PK0', 7),
+                    array('PK1', 'd')
                 ),
                 array (
-                    'primary_key' => array (
-                        array('PK0', 8),
-                        array('PK1', '3')
-                    )
+                    array('PK0', 8),
+                    array('PK1', '3')
                 ),
                 array (
-                    'primary_key' => array (
-                        array('PK0', 9),
-                        array('PK1', 'f')
-                    )
+                    array('PK0', 9),
+                    array('PK1', 'f')
                 )
             )
         )

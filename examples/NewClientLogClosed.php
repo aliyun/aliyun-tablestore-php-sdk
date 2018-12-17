@@ -1,7 +1,7 @@
 <?php
 
-require (__DIR__ . "/../vendor/autoload.php");
-require (__DIR__ . "/ExampleConfig.php");
+require (__DIR__ . '/../vendor/autoload.php');
+require (__DIR__ . '/ExampleConfig.php');
 
 use Aliyun\OTS\OTSClient as OTSClient;
 

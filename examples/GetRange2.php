@@ -1,6 +1,6 @@
 <?php
-require (__DIR__ . "/../vendor/autoload.php");
-require (__DIR__ . "/ExampleConfig.php");
+require (__DIR__ . '/../vendor/autoload.php');
+require (__DIR__ . '/ExampleConfig.php');
 
 use Aliyun\OTS\Consts\DirectionConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
@@ -33,10 +33,10 @@ $request = array (
             'write' => 0
         )
     ),
-    "table_options" => array(
-        "time_to_live" => -1,   // 数据生命周期, -1表示永久，单位秒
-        "max_versions" => 2,    // 最大数据版本
-        "deviation_cell_version_in_sec" => 86400  // 数据有效版本偏差，单位秒
+    'table_options' => array(
+        'time_to_live' => -1,   // 数据生命周期, -1表示永久，单位秒
+        'max_versions' => 2,    // 最大数据版本
+        'deviation_cell_version_in_sec' => 86400  // 数据有效版本偏差，单位秒
     )
 );
 $otsClient->createTable ($request);
@@ -70,7 +70,7 @@ $startPK = array (
 );
 
 $endPK = array (
-    array('PK0', null, PrimaryKeyTypeConst::CONST_INF_MAX), // 'INF_MAX' 用来表示最小值
+    array('PK0', null, PrimaryKeyTypeConst::CONST_INF_MAX), // 'INF_MAX' 用来表示最大值
     array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
 
 );
@@ -79,7 +79,7 @@ while (! empty ($startPK)) {
   
   $request = array (
       'table_name' => 'MyTable',
-      "max_versions" => 1,
+      'max_versions' => 1,
       'direction' => DirectionConst::CONST_FORWARD, // 方向可以为 FORWARD 或者 BACKWARD
       'inclusive_start_primary_key' => $startPK, // 开始主键
       'exclusive_end_primary_key' => $endPK, // 结束主键

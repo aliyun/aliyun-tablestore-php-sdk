@@ -1,6 +1,6 @@
 <?php
-require (__DIR__ . "/../vendor/autoload.php");
-require (__DIR__ . "/ExampleConfig.php");
+require (__DIR__ . '/../vendor/autoload.php');
+require (__DIR__ . '/ExampleConfig.php');
 
 use Aliyun\OTS\Consts\ColumnTypeConst;
 use Aliyun\OTS\Consts\ComparatorTypeConst;
@@ -32,10 +32,10 @@ $request = array (
             'write' => 0
         )
     ),
-    "table_options" => array(
-        "time_to_live" => -1,   // 数据生命周期, -1表示永久，单位秒
-        "max_versions" => 2,    // 最大数据版本
-        "deviation_cell_version_in_sec" => 86400  // 数据有效版本偏差，单位秒
+    'table_options' => array(
+        'time_to_live' => -1,   // 数据生命周期, -1表示永久，单位秒
+        'max_versions' => 2,    // 最大数据版本
+        'deviation_cell_version_in_sec' => 86400  // 数据有效版本偏差，单位秒
     )
 );
 $otsClient->createTable ($request);
@@ -54,7 +54,7 @@ $request = array (
         array('attr2', 3.14), // DOUBLE类型
         array('attr3', true), // BOOLEAN类型
         array('attr4', false), // BOOLEAN类型
-        array('attr5', "a binary string", ColumnTypeConst::CONST_BINARY)  // BINARY类型
+        array('attr5', 'a binary string', ColumnTypeConst::CONST_BINARY)  // BINARY类型
     )
 );
 
@@ -66,19 +66,19 @@ $request = array (
         array('PK0', 123),
         array('PK1', 'abc')
     ),
-    "max_versions" => 1,
+    'max_versions' => 1,
     'columns_to_get' => array (
         'attr0',
         'attr3',
         'attr5'
     ), // 只读取 attr0, attr3, attr5 这几列
     'column_filter' => array (
-        "logical_operator" => LogicalOperatorConst::CONST_AND, // 对返回的数据进行筛选，只有当attr1为Hanzhou且attr2为3.14的时候才返回数据
-        "sub_conditions" => array (
+        'logical_operator' => LogicalOperatorConst::CONST_AND, // 对返回的数据进行筛选，只有当attr1为Hanzhou且attr2为3.14的时候才返回数据
+        'sub_filters' => array (
             array (
-                "column_name" => "attr0",
-                "value" => 456,
-                "comparator" => ComparatorTypeConst::CONST_EQUAL
+                'column_name' => 'attr0',
+                'value' => 456,
+                'comparator' => ComparatorTypeConst::CONST_EQUAL
             ),
             array (
                 'column_name' => 'attr3',
@@ -108,7 +108,7 @@ print json_encode ($response);
 		["attr3", true, "BOOLEAN", 1526406831494],                  // 可以直接给putRow，getRow, updateRow用
 		["attr5", "a binary string", "BINARY", 1526406831494]       // OTS返回的column是被排序的
 	],
-	"token": ""
+	"next_token": ""
 }
 
 */

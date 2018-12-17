@@ -1,6 +1,6 @@
 <?php
 
-require (__DIR__ . "/../vendor/autoload.php");
+require (__DIR__ . '/../vendor/autoload.php');
 
 
 
@@ -31,10 +31,10 @@ function myDebugLogHandler($message) {
 
 
 $otsClient = new OTSClient(array(
-    'EndPoint' => "http://<你的服务地址>",           # 这个地址从OTS的控制台的实例详情页面可以看到
-    'AccessKeyID' => "你的Access Key ID",            # 请联系你的系统管理员获取
-    'AccessKeySecret' => "你的Access Key Secret",    # 请联系你的系统管理员获取
-    'InstanceName' => "你的实例名",
+    'EndPoint' => 'http://<Your endpoint>',           # 这个地址从OTS的控制台的实例详情页面可以看到
+    'AccessKeyID' => 'Your Access Key ID',            # 请联系你的系统管理员获取
+    'AccessKeySecret' => 'Your Access Key Secret',    # 请联系你的系统管理员获取
+    'InstanceName' => 'Your instance name',
 
     // 以下是可选参数
     'ConnectionTimeout' => 2.0,                      # 与OTS建立连接的最大延时，默认 2.0秒

@@ -1,6 +1,6 @@
 <?php
-require (__DIR__ . "/../vendor/autoload.php");
-require (__DIR__ . "/ExampleConfig.php");
+require (__DIR__ . '/../vendor/autoload.php');
+require (__DIR__ . '/ExampleConfig.php');
 
 use Aliyun\OTS\Consts\ComparatorTypeConst;
 use Aliyun\OTS\Consts\DirectionConst;
@@ -33,10 +33,10 @@ $request = array (
             'write' => 0
         )
     ),
-    "table_options" => array(
-        "time_to_live" => -1,   // 数据生命周期, -1表示永久，单位秒
-        "max_versions" => 2,    // 最大数据版本
-        "deviation_cell_version_in_sec" => 86400  // 数据有效版本偏差，单位秒
+    'table_options' => array(
+        'time_to_live' => -1,   // 数据生命周期, -1表示永久，单位秒
+        'max_versions' => 2,    // 最大数据版本
+        'deviation_cell_version_in_sec' => 86400  // 数据有效版本偏差，单位秒
     )
 );
 $otsClient->createTable ($request);
@@ -83,10 +83,10 @@ while (! empty ($startPK) && $limit > 0) {
       'inclusive_start_primary_key' => $startPK, // 开始主键
       'exclusive_end_primary_key' => $endPK, // 结束主键
       'limit' => $limit,
-      "max_versions" => 1,
+      'max_versions' => 1,
       'column_filter' => array (
           'logical_operator' => LogicalOperatorConst::CONST_AND,
-          'sub_conditions' => array (
+          'sub_filters' => array (
               array (
                   'column_name' => 'attr0',
                   'value' => 456,
