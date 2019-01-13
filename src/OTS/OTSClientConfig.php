@@ -78,13 +78,13 @@ class OTSClientConfig
             $this->retryPolicy = $args['RetryPolicy'];
         }
         
-        if (!isset($args['ErrorLogHandler'])) {
+        if (!array_key_exists('ErrorLogHandler', $args)) {
             $this->errorLogHandler = "defaultOTSErrorLogHandler";
         } else {
             $this->errorLogHandler = $args['ErrorLogHandler'];
         }
 
-        if (!isset($args['DebugLogHandler'])) {
+        if (!array_key_exists('DebugLogHandler', $args)) {
             $this->debugLogHandler = 'defaultOTSDebugLogHandler';
         } else {
             $this->debugLogHandler = $args['DebugLogHandler'];
