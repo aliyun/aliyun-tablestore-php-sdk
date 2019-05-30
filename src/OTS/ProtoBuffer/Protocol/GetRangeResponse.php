@@ -37,6 +37,16 @@ class GetRangeResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $next_token = '';
     private $has_next_token = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DataBlockType data_block_type = 5;</code>
+     */
+    private $data_block_type = 0;
+    private $has_data_block_type = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.CompressType compress_type = 6;</code>
+     */
+    private $compress_type = 0;
+    private $has_compress_type = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -161,6 +171,62 @@ class GetRangeResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasNextToken()
     {
         return $this->has_next_token;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DataBlockType data_block_type = 5;</code>
+     * @return int
+     */
+    public function getDataBlockType()
+    {
+        return $this->data_block_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DataBlockType data_block_type = 5;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setDataBlockType($var)
+    {
+        GPBUtil::checkEnum($var, \Aliyun\OTS\ProtoBuffer\Protocol\DataBlockType::class);
+        $this->data_block_type = $var;
+        $this->has_data_block_type = true;
+
+        return $this;
+    }
+
+    public function hasDataBlockType()
+    {
+        return $this->has_data_block_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.CompressType compress_type = 6;</code>
+     * @return int
+     */
+    public function getCompressType()
+    {
+        return $this->compress_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.CompressType compress_type = 6;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setCompressType($var)
+    {
+        GPBUtil::checkEnum($var, \Aliyun\OTS\ProtoBuffer\Protocol\CompressType::class);
+        $this->compress_type = $var;
+        $this->has_compress_type = true;
+
+        return $this;
+    }
+
+    public function hasCompressType()
+    {
+        return $this->has_compress_type;
     }
 
 }

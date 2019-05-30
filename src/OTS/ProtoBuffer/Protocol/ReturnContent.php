@@ -18,6 +18,11 @@ class ReturnContent extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $return_type = 0;
     private $has_return_type = false;
+    /**
+     * Generated from protobuf field <code>repeated string return_column_names = 2;</code>
+     */
+    private $return_column_names;
+    private $has_return_column_names = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -50,6 +55,34 @@ class ReturnContent extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasReturnType()
     {
         return $this->has_return_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated string return_column_names = 2;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getReturnColumnNames()
+    {
+        return $this->return_column_names;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated string return_column_names = 2;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setReturnColumnNames($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
+        $this->return_column_names = $arr;
+        $this->has_return_column_names = true;
+
+        return $this;
+    }
+
+    public function hasReturnColumnNames()
+    {
+        return $this->has_return_column_names;
     }
 
 }

@@ -50,6 +50,40 @@ use Aliyun\OTS\ProtoBuffer\Protocol\TableOptions;
 use Aliyun\OTS\ProtoBuffer\Protocol\TimeRange;
 use Aliyun\OTS\ProtoBuffer\Protocol\UpdateRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\UpdateTableRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\ListSearchIndexRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\DescribeSearchIndexRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\CreateSearchIndexRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\FieldSchema;
+use Aliyun\OTS\ProtoBuffer\Protocol\FieldType;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexSchema;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexSetting;
+use Aliyun\OTS\ProtoBuffer\Protocol\Sort;
+use Aliyun\OTS\ProtoBuffer\Protocol\Sorter;
+use Aliyun\OTS\ProtoBuffer\Protocol\FieldSort;
+use Aliyun\OTS\ProtoBuffer\Protocol\GeoDistanceSort;
+use Aliyun\OTS\ProtoBuffer\Protocol\ScoreSort;
+use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeySort;
+use Aliyun\OTS\ProtoBuffer\Protocol\ColumnType;
+use Aliyun\OTS\ProtoBuffer\Protocol\QueryType;
+use Aliyun\OTS\ProtoBuffer\Protocol\DeleteSearchIndexRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\SearchRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\ColumnsToGet;
+use Aliyun\OTS\Protobuffer\Protocol\SearchQuery;
+use Aliyun\OTS\Protobuffer\Protocol\Collapse;
+use Aliyun\OTS\Protobuffer\Protocol\Query;
+use Aliyun\OTS\ProtoBuffer\Protocol\DefinedColumnSchema;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexMeta;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexType;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexUpdateMode;
+use Aliyun\OTS\ProtoBuffer\Protocol\CreateIndexRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\DropIndexRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\StartLocalTransactionRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\CommitTransactionRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\AbortTransactionRequest;
+
+
+use Aliyun\OTS\Consts\ConstMapStringToInt;
+
 
 class ProtoBufferEncoder
 {
@@ -424,6 +458,9 @@ class ProtoBufferEncoder
         if (isset($request['return_content'])) {
             $ret['return_content'] = $this->preprocessReturnContent($request['return_content']);
         }
+        if(isset($request['transaction_id'])) {
+            $ret['transaction_id'] = $request['transaction_id'];
+        }
         return $ret;
     }
 
@@ -445,6 +482,17 @@ class ProtoBufferEncoder
                 $ret['table_meta']['primary_key_schema'][$i]['option'] = $this->preprocessPrimaryKeyOption($primaryKeys[$i][2]);
             }
         }
+        if (isset($request['table_meta']['defined_column'])) {
+            $definedColumns = $request['table_meta']['defined_column'];
+            for ($i = 0; $i < count($definedColumns); $i++) {
+                if (isset($definedColumns[$i][0])) {
+                    $ret['table_meta']['defined_column'][$i]['name'] = $definedColumns[$i][0];
+                }
+                if (isset($definedColumns[$i][1])) {
+                    $ret['table_meta']['defined_column'][$i]['type'] = ConstMapStringToInt::DefinedColumnTypeMap($definedColumns[$i][1]);
+                }
+            }
+        }
         if (!isset($request['table_options'])) {
             $ret['table_options'] = array(
                 'time_to_live' => -1,
@@ -457,6 +505,10 @@ class ProtoBufferEncoder
 
         if(isset($request['stream_spec'])) {
             $ret['stream_spec'] = $request['stream_spec'];
+        }
+
+        if (isset($request['index_metas'])) {
+            $ret['index_metas'] = $request['index_metas'];
         }
         return $ret;
     }
@@ -481,6 +533,10 @@ class ProtoBufferEncoder
         $ret['attribute_columns'] = $this->preprocessColumns($request['attribute_columns']);
         if (isset($request['return_content'])) {
             $ret['return_content'] = $this->preprocessReturnContent($request['return_content']);
+        }
+
+        if(isset($request['transaction_id'])) {
+            $ret['transaction_id'] = $request['transaction_id'];
         }
         return $ret;
     }
@@ -516,6 +572,10 @@ class ProtoBufferEncoder
 
         if(isset($request['time_range'])) {
             $ret['time_range'] = $request['time_range'];
+        }
+
+        if(isset($request['transaction_id'])) {
+            $ret['transaction_id'] = $request['transaction_id'];
         }
         return $ret;
     }
@@ -583,6 +643,11 @@ class ProtoBufferEncoder
         if (isset($request['return_content'])) {
             $ret['return_content'] = $this->preprocessReturnContent($request['return_content']);
         }
+
+        if(isset($request['transaction_id'])) {
+            $ret['transaction_id'] = $request['transaction_id'];
+        }
+
         return $ret;
     }
 
@@ -722,6 +787,10 @@ class ProtoBufferEncoder
             $tables[] = $outTable;
         }
         $ret['tables'] = $tables;
+
+        if(isset($request['transaction_id'])) {
+            $ret['transaction_id'] = $request['transaction_id'];
+        }
         return $ret;
     }
 
@@ -822,6 +891,17 @@ class ProtoBufferEncoder
                 $tableMeta->getPrimaryKey()[] = $primaryKeySchema;
             }
         }
+        if (!empty($request["table_meta"]["defined_column"]))
+        {
+            for ($i=0; $i < count($request['table_meta']['defined_column']); $i++)
+            {
+                $definedColumnSchema = new DefinedColumnSchema();
+                $definedColumnSchema->setName($request['table_meta']['defined_column'][$i]['name']);
+                $definedColumnSchema->setType($request['table_meta']['defined_column'][$i]['type']);
+
+                $tableMeta->getDefinedColumn()[] = $definedColumnSchema;
+            }
+        }
          
         $reservedThroughput = new ReservedThroughput();
         $capacityUnit = new CapacityUnit();
@@ -833,6 +913,21 @@ class ProtoBufferEncoder
         $tableOptions->setMaxVersions($request['table_options']['max_versions']);
         $tableOptions->setTimeToLive($request['table_options']['time_to_live']);
         $tableOptions->setDeviationCellVersionInSec($request['table_options']['deviation_cell_version_in_sec']);
+
+        if (!empty($request["index_metas"]) && is_array($request["index_metas"])) {
+            $indexMetas = array();
+            foreach ($request["index_metas"] as $item) {
+                $indexMeta = new IndexMeta();
+                $indexMeta->setName($item["name"]);
+                $indexMeta->setIndexType(IndexType::IT_GLOBAL_INDEX);//only globalIndex for now
+                $indexMeta->setIndexUpdateMode(IndexUpdateMode::IUM_ASYNC_INDEX);//default for now
+                $indexMeta->setPrimaryKey($item["primary_key"]);
+                $indexMeta->setDefinedColumn($item["defined_column"]);
+
+                array_push($indexMetas, $indexMeta);
+            }
+            $pbMessage->setIndexMetas($indexMetas);
+        }
 
         $pbMessage->setTableMeta($tableMeta);
         $pbMessage->setReservedThroughput($reservedThroughput);
@@ -956,6 +1051,10 @@ class ProtoBufferEncoder
             $pbMessage->setTimeRange($timeRange);
         }
 
+        if(isset($request['transaction_id'])) {
+            $pbMessage->setTransactionId($request['transaction_id']);
+        }
+
         return $pbMessage->SerializeToString();
     }
 
@@ -979,6 +1078,10 @@ class ProtoBufferEncoder
         $row = PlainBufferBuilder::serializeForPutRow($request['primary_key'], $request['attribute_columns']);
         $pbMessage->setRow($row);
 
+        if(isset($request['transaction_id'])) {
+            $pbMessage->setTransactionId($request['transaction_id']);
+        }
+
         return $pbMessage->SerializeToString();
     }
 
@@ -1001,6 +1104,10 @@ class ProtoBufferEncoder
         $rowChange = PlainBufferBuilder::serializeForUpdateRow($request['primary_key'], $request['attribute_columns']);
         $pbMessage->setRowChange($rowChange);
 
+        if(isset($request['transaction_id'])) {
+            $pbMessage->setTransactionId($request['transaction_id']);
+        }
+
         return $pbMessage->SerializeToString();
     }
 
@@ -1021,6 +1128,10 @@ class ProtoBufferEncoder
         $pbMessage->setCondition($condition);
         if(isset($request['return_content'])) {
             $pbMessage->setReturnContent($this->encodeReturnContent($request['return_content']));
+        }
+
+        if(isset($request['transaction_id'])) {
+            $pbMessage->setTransactionId($request['transaction_id']);
         }
 
         return $pbMessage->SerializeToString();
@@ -1128,6 +1239,11 @@ class ProtoBufferEncoder
             //整体设置
             $pbMessage->getTables()[] = $tableInBatchGetWriteRequest;
         }
+
+        if(isset($request['transaction_id'])) {
+            $pbMessage->setTransactionId($request['transaction_id']);
+        }
+
         return $pbMessage->SerializeToString();
 
     }
@@ -1224,6 +1340,505 @@ class ProtoBufferEncoder
         if(!empty($request['limit'])) {
             $pbMessage->setLimit($request['limit']);
         }
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeListSearchIndexRequest($request)
+    {
+        $pbMessage = new ListSearchIndexRequest();
+        $pbMessage->setTableName($request["table_name"]);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeDescribeSearchIndexRequest($request)
+    {
+        $pbMessage = new DescribeSearchIndexRequest();
+        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setIndexName($request["index_name"]);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeCreateSearchIndexRequest($request)
+    {
+        $pbMessage = new CreateSearchIndexRequest();
+        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setIndexName($request["index_name"]);
+        $pbMessage->setSchema($this->parseIndexSchema($request["schema"]));
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function parseIndexSchema($schema) {
+        $indexSchema = new IndexSchema();
+        $fieldSchemas = array();
+        for ($i = 0; $i < sizeof($schema["field_schemas"]); $i++)
+        {
+            $fieldSchema = $this->parseFieldSchema($schema["field_schemas"][$i]);
+            array_push($fieldSchemas, $fieldSchema);
+        }
+        $indexSchema->setFieldSchemas($fieldSchemas);
+        if (isset($schema["index_setting"])) {
+            $indexSchema->setIndexSetting($this->parseIndexSetting($schema["index_setting"]));
+        } else {
+            $indexSchema->setIndexSetting($this->parseIndexSetting(null));
+        }
+        if (isset($schema["index_sort"]) && is_array($schema["index_sort"])) {
+            $indexSchema->setIndexSort($this->parseSort($schema["index_sort"]));
+        }
+
+        return $indexSchema;
+    }
+
+    private function parseFieldSchema($schema) {
+        $fieldType = ConstMapStringToInt::FieldTypeMap($schema["field_type"]);
+        $fieldSchema = new FieldSchema();
+        $fieldSchema->setFieldName($schema["field_name"]);
+        $fieldSchema->setFieldType($fieldType);
+        if (!empty($schema["index_options"])) {
+            $fieldSchema->setIndexOptions(ConstMapStringToInt::IndexOptionsMap($schema["index_options"]));
+        }
+        if (!empty($schema["analyzer"])) {
+            $fieldSchema->setAnalyzer($schema["analyzer"]);
+        }
+        if ($fieldType == FieldType::NESTED) {
+            $subFieldSchemas = array();
+            for ($i = 0; $i < sizeof($schema["field_schemas"]); $i++) {
+                $subFieldSchema = $this->parseFieldSchema($schema["field_schemas"][$i]);
+                array_push($subFieldSchemas, $subFieldSchema);
+            }
+            $fieldSchema->setFieldSchemas($subFieldSchemas);
+
+        }
+        if (!empty($schema["enable_sort_and_agg"])) {
+            $fieldSchema->setDocValues($schema["enable_sort_and_agg"]);
+        }
+        if (!empty($schema["index"])) {
+            $fieldSchema->setIndex($schema["index"]);
+        }
+        if (!empty($schema["store"])) {
+            $fieldSchema->setStore($schema["store"]);
+        }
+        if (!empty($schema["is_array"])) {
+            $fieldSchema->setIsArray($schema["is_array"]);
+        }
+
+        return $fieldSchema;
+    }
+
+    private function parseIndexSetting($setting) {
+        $indexSetting = new IndexSetting();
+        $indexSetting->setNumberOfShards(1);
+
+        if ($setting == null) {
+            return $indexSetting;
+        } else {
+            if (isset($setting["routing_fields"]) && is_array($setting["routing_fields"])) {
+                $indexSetting->setRoutingFields($setting["routing_fields"]);
+            }
+//            if (isset($setting["routing_partition_size"])) {
+//                $indexSetting->setRoutingPartitionSize($setting["routing_partition_size"]);
+//            }
+        }
+
+        return $indexSetting;
+    }
+
+    private function parseSort($sorters)
+    {
+        $indexSort = new Sort();
+        $sorterList = array();
+        for ($i = 0; $i < count($sorters); $i++) {
+            $aSorter = new Sorter();
+            $sorter = $sorters[$i];
+
+            if (isset($sorter["field_sort"])) {
+                $fieldSort = new FieldSort();
+                $fieldSort->setFieldName($sorter["field_sort"]["field_name"]);
+                if (isset($sorter["field_sort"]["order"])) {
+                    $order = ConstMapStringToInt::SortOrderMap($sorter["field_sort"]["order"]);
+                    $fieldSort->setOrder($order);
+                }
+                if (isset($sorter["field_sort"]["mode"])) {
+                    $mode = ConstMapStringToInt::SortModeMap($sorter["field_sort"]["mode"]);
+                    $fieldSort->setMode($mode);
+                }
+                if (isset($sorter["field_sort"]["nested_filter"])) {
+                    $nestedFilter = new OTS\ProtoBuffer\Protocol\NestedFilter();
+                    $nestedFilter->setPath($sorter["field_sort"]["nested_filter"]["path"]);
+                    $nestedFilter->setFilter($this->parseQuery($sorter["field_sort"]["nested_filter"]['query']));
+
+                    $fieldSort->setNestedFilter($nestedFilter);
+                }
+
+                $aSorter->setFieldSort($fieldSort);
+            } else if (isset($sorter["pk_sort"])) {
+                $pkSort = new PrimaryKeySort();
+                if (isset($sorter["pk_sort"]["order"])) {
+                    $order = ConstMapStringToInt::SortOrderMap($sorter["pk_sort"]["order"]);
+                    $pkSort->setOrder($order);
+                }
+
+                $aSorter->setPkSort($pkSort);
+            } else if (isset($sorter["geo_distance_sort"])) {
+                $geoDistanceSort = new GeoDistanceSort();
+                $geoDistanceSort->setFieldName($sorter["geo_distance_sort"]["field_name"]);
+                if (isset($sorter["geo_distance_sort"]["order"])) {
+                    $order = ConstMapStringToInt::SortOrderMap($sorter["geo_distance_sort"]["order"]);
+                    $geoDistanceSort->setOrder($order);
+                }
+                if (isset($sorter["geo_distance_sort"]["mode"])) {
+                    $mode = ConstMapStringToInt::SortModeMap($sorter["geo_distance_sort"]["mode"]);
+                    $geoDistanceSort->setMode($mode);
+                }
+                if (isset($sorter["geo_distance_sort"]["distance_type"])) {
+                    $distanceType = ConstMapStringToInt::GeoDistanceTypeMap($sorter["geo_distance_sort"]["distance_type"]);
+                    $geoDistanceSort->setDistanceType($distanceType);
+                }
+                if (isset($sorter["geo_distance_sort"]["points"]) && is_array($sorter["geo_distance_sort"]["points"])) {
+                    $points = $sorter["geo_distance_sort"]["points"];
+                    $geoDistanceSort->setPoints($points);
+                }
+                if (isset($sorter["geo_distance_sort"]["nested_filter"])) {
+                    $nestedFilter = new OTS\ProtoBuffer\Protocol\NestedFilter();
+                    $nestedFilter->setPath($sorter["geo_distance_sort"]["nested_filter"]["path"]);
+                    $nestedFilter->setFilter($this->parseQuery($sorter["geo_distance_sort"]["nested_filter"]));
+
+                    $geoDistanceSort->setNestedFilter($nestedFilter);
+                }
+
+                $aSorter->setGeoDistanceSort($geoDistanceSort);
+            } else if (isset($sorter["score_sort"])) {
+                $scoreSort = new ScoreSort();
+                if (isset($sorter["score_sort"]["order"])) {
+                    $order = ConstMapStringToInt::SortOrderMap($sorter["score_sort"]["order"]);
+                    $scoreSort->setOrder($order);
+                }
+
+                $aSorter->setScoreSort($scoreSort);
+            }
+
+            array_push($sorterList, $aSorter);
+        }
+        $indexSort->setSorter($sorterList);
+
+        return $indexSort;
+    }
+
+    private function encodeDeleteSearchIndexRequest($request)
+    {
+        $pbMessage = new DeleteSearchIndexRequest();
+        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setIndexName($request["index_name"]);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeSearchRequest($request)
+    {
+        $pbMessage = new SearchRequest();
+        $pbMessage->setTableName($request["table_name"]);
+        $pbMessage->setIndexName($request["index_name"]);
+
+        $searchQuery = $this->parseSearchQuery($request["search_query"]);
+        $pbMessage->setSearchQuery($searchQuery->serializeToString());
+        if (isset($request["columns_to_get"])) {
+            $columnsToGet = new ColumnsToGet();
+            $returnType = ConstMapStringToInt::ColumnReturnTypeMap($request["columns_to_get"]["return_type"]);
+            $columnsToGet->setReturnType($returnType);
+            if ($returnType == OTS\ProtoBuffer\Protocol\ColumnReturnType::RETURN_SPECIFIED) {
+                $returnNames = array();
+                if (isset($request["columns_to_get"]["return_names"]) && is_array($request["columns_to_get"]["return_names"])) {
+                    $returnNames = $request["columns_to_get"]["return_names"];
+                }
+                $columnsToGet->setColumnNames($returnNames);
+            }
+            $pbMessage->setColumnsToGet($columnsToGet);
+        }
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function parseSearchQuery($searchQuery)
+    {
+        $aSearchQuery = new SearchQuery();
+        $aSearchQuery->setOffset($searchQuery["offset"]);
+        $aSearchQuery->setLimit($searchQuery["limit"]);
+        $aSearchQuery->setGetTotalCount($searchQuery["get_total_count"]);
+
+        $query = $this->parseQuery($searchQuery["query"]);
+        $aSearchQuery->setQuery($query);
+
+        if (isset($searchQuery["sort"])) {
+            $sort = $this->parseSort($searchQuery["sort"]);
+            $aSearchQuery->setSort($sort);
+        }
+        if (isset($searchQuery["collapse"])) {
+            $collapse = new Collapse();
+            $collapse->setFieldName($searchQuery["collapse"]["field_name"]);
+            $aSearchQuery->setCollapse($collapse);
+        }
+        if (isset($searchQuery["token"])) {
+            $aSearchQuery->setToken($searchQuery["token"]);
+        }
+
+        return $aSearchQuery;
+    }
+
+    private function parseQuery($query)
+    {
+        $aQuery = new Query();
+        $queryType = ConstMapStringToInt::QueryTypeMap($query["query_type"]);
+        $innerQuery = $this->parseInnerQuery($queryType, $queryType == QueryType::MATCH_ALL_QUERY ? null : $query["query"]);
+        if (isset($query["score_mode"])) {
+            $innerQuery->setScoreMode(ConstMapStringToInt::ScoreModeMap($query["score_mode"]));
+        }
+
+        $aQuery->setType($queryType);
+        $aQuery->setQuery($innerQuery->serializeToString());
+
+        return $aQuery;
+    }
+
+    private function parseInnerQuery($queryType, $query)
+    {
+        switch ($queryType) {
+            case QueryType::MATCH_QUERY:
+                $matchQuery = new OTS\ProtoBuffer\Protocol\MatchQuery();
+                $matchQuery->setFieldName($query["field_name"]);
+                $matchQuery->setText($query["text"]);
+                if (isset($query["minimum_should_match"])) {
+                    $matchQuery->setMinimumShouldMatch($query["minimum_should_match"]);
+                }
+                if (isset($query["operator"])) {
+                    $matchQuery->setOperator(ConstMapStringToInt::QueryOperatorMap($query["operator"]));
+                }
+
+                return $matchQuery;
+
+            case QueryType::MATCH_PHRASE_QUERY://2
+                $matchPhraseQuery = new OTS\ProtoBuffer\Protocol\MatchPhraseQuery();
+                $matchPhraseQuery->setFieldName($query["field_name"]);
+                $matchPhraseQuery->setText($query["text"]);
+
+                return $matchPhraseQuery;
+
+            case QueryType::TERM_QUERY://3
+                $termQuery = new OTS\ProtoBuffer\Protocol\TermQuery();
+                $termQuery->setFieldName($query["field_name"]);
+
+                $columnValue = $this->preprocessColumnValue($query["term"]);
+                $termQuery->setTerm(PlainBufferBuilder::serializeColumnValue($columnValue));
+
+                return $termQuery;
+
+            case QueryType::RANGE_QUERY://4
+                $rangeQuery = new OTS\ProtoBuffer\Protocol\RangeQuery();
+                $rangeQuery->setFieldName($query["field_name"]);
+                if (isset($query["range_from"])) {
+                    $rangeFrom = $this->preprocessColumnValue($query["range_from"]);
+                    $rangeQuery->setRangeFrom(PlainBufferBuilder::serializeColumnValue($rangeFrom));
+                    if (isset($query["include_lower"])) {
+                        $rangeQuery->setIncludeLower($query["include_lower"]);
+                    }
+                }
+                if (isset($query["range_to"])) {
+                    $rangeTo = $this->preprocessColumnValue($query["range_to"]);
+                    $rangeQuery->setRangeTo(PlainBufferBuilder::serializeColumnValue($rangeTo));
+                    if (isset($query["include_upper"])) {
+                        $rangeQuery->setIncludeUpper($query["include_upper"]);
+                    }
+                }
+
+                return $rangeQuery;
+
+            case QueryType::PREFIX_QUERY://5
+                $prefixQuery = new OTS\ProtoBuffer\Protocol\PrefixQuery();
+                $prefixQuery->setFieldName($query["field_name"]);
+                $prefixQuery->setPrefix($query["prefix"]);
+
+                return $prefixQuery;
+
+            case QueryType::BOOL_QUERY://6
+                $boolQuery = new OTS\ProtoBuffer\Protocol\BoolQuery();
+                if (isset($query["must_queries"]) && is_array($query["must_queries"])) {
+                    $mustQueries = array();
+                    foreach ($query["must_queries"] as $query) {
+                        $aQuery = $this->parseQuery($query);
+                        array_push($mustQueries, $aQuery);
+                    }
+
+                    $boolQuery->setMustQueries($mustQueries);
+                } else if (isset($query["must_not_queries"]) && is_array($query["must_not_queries"])) {
+                    $mustNotQueries = array();
+                    foreach ($query["must_not_queries"] as $query) {
+                        $aQuery = $this->parseQuery($query);
+                        array_push($mustNotQueries, $aQuery);
+                    }
+
+                    $boolQuery->setMustNotQueries($mustNotQueries);
+                } else if (isset($query["filter_queries"]) && is_array($query["filter_queries"])) {
+                    $filterQueries = array();
+                    foreach ($query["filter_queries"] as $query) {
+                        $aQuery = $this->parseQuery($query);
+                        array_push($filterQueries, $aQuery);
+                    }
+
+                    $boolQuery->setFilterQueries($filterQueries);
+                } else if (isset($query["should_queries"]) && is_array($query["should_queries"])) {
+                    $shouldQueries = array();
+                    foreach ($query["should_queries"] as $singleQuery) {
+                        $aQuery = $this->parseQuery($singleQuery);
+                        array_push($shouldQueries, $aQuery);
+                    }
+
+                    $boolQuery->setShouldQueries($shouldQueries);
+                    if (isset($query["minimum_should_match"])) {
+                        $boolQuery->setMinimumShouldMatch($query["minimum_should_match"]);
+                    }
+                }
+
+                return $boolQuery;
+
+            case QueryType::CONST_SCORE_QUERY://7
+                $constScoreQuery = new OTS\ProtoBuffer\Protocol\ConstScoreQuery();
+                $constScoreQuery->setFilter($this->parseQuery($query["filter"]));
+
+                return $constScoreQuery;
+
+            case QueryType::FUNCTION_SCORE_QUERY://8
+                $functionScoreQuery = new OTS\ProtoBuffer\Protocol\FunctionScoreQuery();
+                $functionScoreQuery->setQuery($this->parseQuery($query["query"]));
+
+                $fieldValueFactor = new OTS\ProtoBuffer\Protocol\FieldValueFactor();
+                $fieldValueFactor->setFieldName($query["field_value_factor"]["field_name"]);
+                $functionScoreQuery->setFieldValueFactor($fieldValueFactor);
+
+                return $functionScoreQuery;
+
+            case QueryType::NESTED_QUERY://9
+                $nestedQuery = new OTS\ProtoBuffer\Protocol\NestedQuery();
+                $nestedQuery->setPath($query["path"]);
+                $nestedQuery->setQuery($this->parseQuery($query["query"]));
+                if (isset($query["score_mode"])) {
+                    $nestedQuery->setScoreMode(ConstMapStringToInt::ScoreModeMap($query["score_mode"]));
+                }
+
+                return $nestedQuery;
+
+            case QueryType::WILDCARD_QUERY://10
+                $wildcardQuery = new OTS\ProtoBuffer\Protocol\WildcardQuery();
+                $wildcardQuery->setFieldName($query["field_name"]);
+                $wildcardQuery->setValue($query["value"]);
+
+                return $wildcardQuery;
+
+            case QueryType::MATCH_ALL_QUERY://11
+                $matchAllQuery = new OTS\ProtoBuffer\Protocol\MatchAllQuery();
+
+                return $matchAllQuery;
+
+            case QueryType::GEO_BOUNDING_BOX_QUERY://12
+                $geoBoundingBoxQuery = new OTS\ProtoBuffer\Protocol\GeoBoundingBoxQuery();
+                $geoBoundingBoxQuery->setFieldName($query["field_name"]);
+                $geoBoundingBoxQuery->setTopLeft($query["top_left"]);
+                $geoBoundingBoxQuery->setBottomRight($query["bottom_right"]);
+
+                return $geoBoundingBoxQuery;
+
+            case QueryType::GEO_DISTANCE_QUERY://13
+                $geoDistanceQuery = new OTS\ProtoBuffer\Protocol\GeoDistanceQuery();
+                $geoDistanceQuery->setFieldName($query["field_name"]);
+                $geoDistanceQuery->setCenterPoint($query["center_point"]);
+                $geoDistanceQuery->setDistance($query["distance"]);
+
+                return $geoDistanceQuery;
+
+            case QueryType::GEO_POLYGON_QUERY://14
+                $geoPolygonQuery = new OTS\ProtoBuffer\Protocol\GeoPolygonQuery();
+                $geoPolygonQuery->setFieldName($query["field_name"]);
+                $geoPolygonQuery->setPoints($query["points"]);
+
+                return $geoPolygonQuery;
+
+            case QueryType::TERMS_QUERY://15
+                $termsQuery = new OTS\ProtoBuffer\Protocol\TermsQuery();
+                $termsQuery->setFieldName($query["field_name"]);
+
+                $terms = array();
+                foreach ($query["terms"] as $term) {
+                    $columnValue = $this->preprocessColumnValue($term);
+                    array_push($terms, PlainBufferBuilder::serializeColumnValue($columnValue));
+                }
+                $termsQuery->setTerms($terms);
+
+                return $termsQuery;
+
+            case QueryType::EXISTS_QUERY://16
+                $existsQuery = new OTS\ProtoBuffer\Protocol\ExistsQuery();
+                $existsQuery->setFieldName($query["field_name"]);
+
+                return $existsQuery;
+
+            default:
+                throw new \Aliyun\OTS\OTSClientException("query_type must be QueryTypeConst::XXX");
+        }
+
+        return null;
+    }
+
+    private function encodeCreateIndexRequest($request)
+    {
+        $pbMessage = new CreateIndexRequest();
+        $pbMessage->setMainTableName($request["table_name"]);
+
+        $indexMeta = new IndexMeta();
+        $indexMeta->setName($request["index_meta"]["name"]);
+        $indexMeta->setIndexType(IndexType::IT_GLOBAL_INDEX);//only globalIndex for now
+        $indexMeta->setIndexUpdateMode(IndexUpdateMode::IUM_ASYNC_INDEX);//default for now
+        $indexMeta->setPrimaryKey($request["index_meta"]["primary_key"]);
+        $indexMeta->setDefinedColumn($request["index_meta"]["defined_column"]);
+
+        $pbMessage->setIndexMeta($indexMeta);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeDropIndexRequest($request)
+    {
+        $pbMessage = new DropIndexRequest();
+        $pbMessage->setMainTableName($request["table_name"]);
+        $pbMessage->setIndexName($request["index_name"]);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeStartLocalTransactionRequest($request)
+    {
+        $pbMessage = new StartLocalTransactionRequest();
+        $pbMessage->setTableName($request["table_name"]);
+
+        $primaryKey = $this->preprocessPrimaryKey($request['key']);
+        $pkPbMessage = PlainBufferBuilder::serializePrimaryKey($primaryKey);
+        $pbMessage->setKey($pkPbMessage);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeCommitTransactionRequest($request)
+    {
+        $pbMessage = new CommitTransactionRequest();
+        $pbMessage->setTransactionId($request["transaction_id"]);
+
+        return $pbMessage->SerializeToString();
+    }
+
+    private function encodeAbortTransactionRequest($request)
+    {
+        $pbMessage = new AbortTransactionRequest();
+        $pbMessage->setTransactionId($request["transaction_id"]);
+
         return $pbMessage->SerializeToString();
     }
 

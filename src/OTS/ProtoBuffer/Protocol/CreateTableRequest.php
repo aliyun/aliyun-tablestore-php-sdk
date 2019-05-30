@@ -51,6 +51,11 @@ class CreateTableRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $stream_spec = null;
     private $has_stream_spec = false;
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.IndexMeta index_metas = 7;</code>
+     */
+    private $index_metas;
+    private $has_index_metas = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -199,6 +204,34 @@ class CreateTableRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasStreamSpec()
     {
         return $this->has_stream_spec;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.IndexMeta index_metas = 7;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getIndexMetas()
+    {
+        return $this->index_metas;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.IndexMeta index_metas = 7;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\IndexMeta[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setIndexMetas($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Aliyun\OTS\ProtoBuffer\Protocol\IndexMeta::class);
+        $this->index_metas = $arr;
+        $this->has_index_metas = true;
+
+        return $this;
+    }
+
+    public function hasIndexMetas()
+    {
+        return $this->has_index_metas;
     }
 
 }

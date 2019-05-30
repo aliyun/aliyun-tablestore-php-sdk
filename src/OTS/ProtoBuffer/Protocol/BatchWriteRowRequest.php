@@ -18,6 +18,11 @@ class BatchWriteRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $tables;
     private $has_tables = false;
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 2;</code>
+     */
+    private $transaction_id = '';
+    private $has_transaction_id = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -50,6 +55,34 @@ class BatchWriteRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasTables()
     {
         return $this->has_tables;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 2;</code>
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        return $this->transaction_id;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 2;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setTransactionId($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->transaction_id = $var;
+        $this->has_transaction_id = true;
+
+        return $this;
+    }
+
+    public function hasTransactionId()
+    {
+        return $this->has_transaction_id;
     }
 
 }

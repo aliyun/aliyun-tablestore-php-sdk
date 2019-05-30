@@ -73,6 +73,11 @@ class GetRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $token = '';
     private $has_token = false;
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 11;</code>
+     */
+    private $transaction_id = '';
+    private $has_transaction_id = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -369,6 +374,34 @@ class GetRowRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasToken()
     {
         return $this->has_token;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 11;</code>
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        return $this->transaction_id;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 11;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setTransactionId($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->transaction_id = $var;
+        $this->has_transaction_id = true;
+
+        return $this;
+    }
+
+    public function hasTransactionId()
+    {
+        return $this->has_transaction_id;
     }
 
 }

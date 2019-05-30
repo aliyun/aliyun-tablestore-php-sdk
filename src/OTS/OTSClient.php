@@ -314,5 +314,168 @@ class OTSClient
         return $this->handlers->doHandle("GetStreamRecord", $request);
     }
 
+    /**
+     * 获取该表下所有的索引名。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/ListSearchIndex.php" 20
+     */
+    public function listSearchIndex(array $request)
+    {
+        return $this->handlers->doHandle("ListSearchIndex", $request);
+    }
+
+    /**
+     * 获取该该表的某个索引的详细信息。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/DescribeSearchIndex.php" 20
+     */
+    public function describeSearchIndex(array $request)
+    {
+        return $this->handlers->doHandle("DescribeSearchIndex", $request);
+    }
+
+
+    /**
+     * 创建索引。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名，索引配置等。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/CreateSearchIndex.php" 20
+     */
+    public function createSearchIndex(array $request)
+    {
+        return $this->handlers->doHandle("CreateSearchIndex", $request);
+    }
+
+    /**
+     * 删除索引。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/DeleteSearchIndex.php" 20
+     */
+    public function deleteSearchIndex(array $request)
+    {
+        return $this->handlers->doHandle("DeleteSearchIndex", $request);
+    }
+
+    /**
+     * 多元索引查询。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/Search.php" 20
+     */
+    public function search(array $request)
+    {
+        return $this->handlers->doHandle("Search", $request);
+    }
+
+    /**
+     * 创建二级索引。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/CreateIndex.php" 20
+     */
+    public function createIndex(array $request)
+    {
+        return $this->handlers->doHandle("CreateIndex", $request);
+    }
+
+    /**
+     * 删除二级索引。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/DropIndex.php" 20
+     */
+    public function dropIndex(array $request)
+    {
+        return $this->handlers->doHandle("DropIndex", $request);
+    }
+
+
+    /**
+     * 开始事务，获取事务ID。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/StartLocalTransaction.php" 20
+     */
+    public function startLocalTransaction(array $request)
+    {
+        return $this->handlers->doHandle("StartLocalTransaction", $request);
+    }
+
+
+    /**
+     * 提交事务。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/CommitTransaction.php" 20
+     */
+    public function commitTransaction(array $request)
+    {
+        return $this->handlers->doHandle("CommitTransaction", $request);
+    }
+
+
+    /**
+     * 舍弃事务。
+     * @api
+     *
+     * @param [] $request
+     *            请求参数，表名。
+     * @return [] 请求返回
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     * @example "src/examples/AbortTransaction.php" 20
+     */
+    public function abortTransaction(array $request)
+    {
+        return $this->handlers->doHandle("AbortTransaction", $request);
+    }
 }
 

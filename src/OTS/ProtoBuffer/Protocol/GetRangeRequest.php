@@ -92,6 +92,26 @@ class GetRangeRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $token = '';
     private $has_token = false;
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 14;</code>
+     */
+    private $transaction_id = '';
+    private $has_transaction_id = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DataBlockType data_block_type_hint = 15 [default = DBT_PLAIN_BUFFER];</code>
+     */
+    private $data_block_type_hint = 0;
+    private $has_data_block_type_hint = false;
+    /**
+     * Generated from protobuf field <code>optional bool return_entire_primary_keys = 16 [default = true];</code>
+     */
+    private $return_entire_primary_keys = false;
+    private $has_return_entire_primary_keys = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.CompressType compress_type_hint = 17 [default = CPT_NONE];</code>
+     */
+    private $compress_type_hint = 0;
+    private $has_compress_type_hint = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -476,6 +496,118 @@ class GetRangeRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasToken()
     {
         return $this->has_token;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 14;</code>
+     * @return string
+     */
+    public function getTransactionId()
+    {
+        return $this->transaction_id;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string transaction_id = 14;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setTransactionId($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->transaction_id = $var;
+        $this->has_transaction_id = true;
+
+        return $this;
+    }
+
+    public function hasTransactionId()
+    {
+        return $this->has_transaction_id;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DataBlockType data_block_type_hint = 15 [default = DBT_PLAIN_BUFFER];</code>
+     * @return int
+     */
+    public function getDataBlockTypeHint()
+    {
+        return $this->data_block_type_hint;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DataBlockType data_block_type_hint = 15 [default = DBT_PLAIN_BUFFER];</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setDataBlockTypeHint($var)
+    {
+        GPBUtil::checkEnum($var, \Aliyun\OTS\ProtoBuffer\Protocol\DataBlockType::class);
+        $this->data_block_type_hint = $var;
+        $this->has_data_block_type_hint = true;
+
+        return $this;
+    }
+
+    public function hasDataBlockTypeHint()
+    {
+        return $this->has_data_block_type_hint;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool return_entire_primary_keys = 16 [default = true];</code>
+     * @return bool
+     */
+    public function getReturnEntirePrimaryKeys()
+    {
+        return $this->return_entire_primary_keys;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool return_entire_primary_keys = 16 [default = true];</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setReturnEntirePrimaryKeys($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->return_entire_primary_keys = $var;
+        $this->has_return_entire_primary_keys = true;
+
+        return $this;
+    }
+
+    public function hasReturnEntirePrimaryKeys()
+    {
+        return $this->has_return_entire_primary_keys;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.CompressType compress_type_hint = 17 [default = CPT_NONE];</code>
+     * @return int
+     */
+    public function getCompressTypeHint()
+    {
+        return $this->compress_type_hint;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.CompressType compress_type_hint = 17 [default = CPT_NONE];</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setCompressTypeHint($var)
+    {
+        GPBUtil::checkEnum($var, \Aliyun\OTS\ProtoBuffer\Protocol\CompressType::class);
+        $this->compress_type_hint = $var;
+        $this->has_compress_type_hint = true;
+
+        return $this;
+    }
+
+    public function hasCompressTypeHint()
+    {
+        return $this->has_compress_type_hint;
     }
 
 }

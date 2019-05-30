@@ -23,11 +23,6 @@ class GetShardIteratorRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $shard_id = '';
     private $has_shard_id = false;
-    /**
-     * Generated from protobuf field <code>optional int64 timestamp = 3;</code>
-     */
-    private $timestamp = 0;
-    private $has_timestamp = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -88,34 +83,6 @@ class GetShardIteratorRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasShardId()
     {
         return $this->has_shard_id;
-    }
-
-    /**
-     * Generated from protobuf field <code>optional int64 timestamp = 3;</code>
-     * @return int|string
-     */
-    public function getTimestamp()
-    {
-        return $this->timestamp;
-    }
-
-    /**
-     * Generated from protobuf field <code>optional int64 timestamp = 3;</code>
-     * @param int|string $var
-     * @return $this
-     */
-    public function setTimestamp($var)
-    {
-        GPBUtil::checkInt64($var);
-        $this->timestamp = $var;
-        $this->has_timestamp = true;
-
-        return $this;
-    }
-
-    public function hasTimestamp()
-    {
-        return $this->has_timestamp;
     }
 
 }

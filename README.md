@@ -1,4 +1,4 @@
-Aliyun TableStore SDK for PHP - Version 4
+Aliyun TableStore SDK for PHP - Version 5
 ==================================
 
 # 说明

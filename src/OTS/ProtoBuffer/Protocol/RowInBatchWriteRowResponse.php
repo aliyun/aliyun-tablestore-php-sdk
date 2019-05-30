@@ -29,8 +29,6 @@ class RowInBatchWriteRowResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Messag
     private $consumed = null;
     private $has_consumed = false;
     /**
-     * encoded as InplaceRowChangeSet
-     *
      * Generated from protobuf field <code>optional bytes row = 4;</code>
      */
     private $row = '';
@@ -126,8 +124,6 @@ class RowInBatchWriteRowResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Messag
     }
 
     /**
-     * encoded as InplaceRowChangeSet
-     *
      * Generated from protobuf field <code>optional bytes row = 4;</code>
      * @return string
      */
@@ -137,8 +133,6 @@ class RowInBatchWriteRowResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Messag
     }
 
     /**
-     * encoded as InplaceRowChangeSet
-     *
      * Generated from protobuf field <code>optional bytes row = 4;</code>
      * @param string $var
      * @return $this

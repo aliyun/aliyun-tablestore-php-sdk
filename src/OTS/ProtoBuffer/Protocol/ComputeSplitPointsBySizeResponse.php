@@ -29,7 +29,6 @@ class ComputeSplitPointsBySizeResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\
      * A split is a consecutive range of primary keys,
      * whose data size is about split_size specified in the request.
      * The size could be hard to be precise.
-     * 
      * A split point is an array of primary-key column w.r.t. table schema,
      * which is never longer than that of table schema.
      * Tailing -inf will be omitted to reduce transmission payloads.
@@ -111,7 +110,6 @@ class ComputeSplitPointsBySizeResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\
      * A split is a consecutive range of primary keys,
      * whose data size is about split_size specified in the request.
      * The size could be hard to be precise.
-     * 
      * A split point is an array of primary-key column w.r.t. table schema,
      * which is never longer than that of table schema.
      * Tailing -inf will be omitted to reduce transmission payloads.
@@ -130,7 +128,6 @@ class ComputeSplitPointsBySizeResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\
      * A split is a consecutive range of primary keys,
      * whose data size is about split_size specified in the request.
      * The size could be hard to be precise.
-     * 
      * A split point is an array of primary-key column w.r.t. table schema,
      * which is never longer than that of table schema.
      * Tailing -inf will be omitted to reduce transmission payloads.

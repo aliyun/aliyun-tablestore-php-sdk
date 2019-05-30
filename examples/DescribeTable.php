@@ -18,7 +18,7 @@ $request = array (
         'primary_key_schema' => array (
             array('PK0', PrimaryKeyTypeConst::CONST_INTEGER), // 第一个主键列（又叫分片键）名称为PK0, 类型为 INTEGER
             array('PK1', PrimaryKeyTypeConst::CONST_STRING)
-        ) // 第二个主键列名称为PK1, 类型为STRING
+        ), // 第二个主键列名称为PK1, 类型为STRING
 
     ),
     'reserved_throughput' => array (
@@ -33,12 +33,12 @@ $request = array (
         'deviation_cell_version_in_sec' => 86400  // 数据有效版本偏差，单位秒
     )
 );
-$otsClient->createTable ($request);
+//$otsClient->createTable ($request);
 
 $response = $otsClient->describeTable (array (
     'table_name' => 'MyTable'
 ));
-print json_encode ($response);
+print json_encode ($response, JSON_PRETTY_PRINT);
 
 /* 样例输出：
 

@@ -19,8 +19,6 @@ class PutRowResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     private $consumed = null;
     private $has_consumed = false;
     /**
-     * encoded as InplaceRowChangeSet
-     *
      * Generated from protobuf field <code>optional bytes row = 2;</code>
      */
     private $row = '';
@@ -60,8 +58,6 @@ class PutRowResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * encoded as InplaceRowChangeSet
-     *
      * Generated from protobuf field <code>optional bytes row = 2;</code>
      * @return string
      */
@@ -71,8 +67,6 @@ class PutRowResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
-     * encoded as InplaceRowChangeSet
-     *
      * Generated from protobuf field <code>optional bytes row = 2;</code>
      * @param string $var
      * @return $this

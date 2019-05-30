@@ -17,5 +17,9 @@ class ReturnType
      * Generated from protobuf enum <code>RT_PK = 1;</code>
      */
     const RT_PK = 1;
+    /**
+     * Generated from protobuf enum <code>RT_AFTER_MODIFY = 2;</code>
+     */
+    const RT_AFTER_MODIFY = 2;
 }
 

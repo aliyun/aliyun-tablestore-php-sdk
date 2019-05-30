@@ -23,6 +23,16 @@ class TableMeta extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $primary_key;
     private $has_primary_key = false;
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.DefinedColumnSchema defined_column = 3;</code>
+     */
+    private $defined_column;
+    private $has_defined_column = false;
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.IndexMeta index_meta = 4;</code>
+     */
+    private $index_meta;
+    private $has_index_meta = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -83,6 +93,62 @@ class TableMeta extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasPrimaryKey()
     {
         return $this->has_primary_key;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.DefinedColumnSchema defined_column = 3;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getDefinedColumn()
+    {
+        return $this->defined_column;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.DefinedColumnSchema defined_column = 3;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\DefinedColumnSchema[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setDefinedColumn($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Aliyun\OTS\ProtoBuffer\Protocol\DefinedColumnSchema::class);
+        $this->defined_column = $arr;
+        $this->has_defined_column = true;
+
+        return $this;
+    }
+
+    public function hasDefinedColumn()
+    {
+        return $this->has_defined_column;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.IndexMeta index_meta = 4;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getIndexMeta()
+    {
+        return $this->index_meta;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.IndexMeta index_meta = 4;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\IndexMeta[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setIndexMeta($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Aliyun\OTS\ProtoBuffer\Protocol\IndexMeta::class);
+        $this->index_meta = $arr;
+        $this->has_index_meta = true;
+
+        return $this;
+    }
+
+    public function hasIndexMeta()
+    {
+        return $this->has_index_meta;
     }
 
 }

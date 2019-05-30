@@ -27,6 +27,11 @@ class ComputeSplitPointsBySizeRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\M
      */
     private $split_size = 0;
     private $has_split_size = false;
+    /**
+     * Generated from protobuf field <code>optional int64 split_size_unit_in_byte = 3;</code>
+     */
+    private $split_size_unit_in_byte = 0;
+    private $has_split_size_unit_in_byte = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -91,6 +96,34 @@ class ComputeSplitPointsBySizeRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\M
     public function hasSplitSize()
     {
         return $this->has_split_size;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int64 split_size_unit_in_byte = 3;</code>
+     * @return int|string
+     */
+    public function getSplitSizeUnitInByte()
+    {
+        return $this->split_size_unit_in_byte;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int64 split_size_unit_in_byte = 3;</code>
+     * @param int|string $var
+     * @return $this
+     */
+    public function setSplitSizeUnitInByte($var)
+    {
+        GPBUtil::checkInt64($var);
+        $this->split_size_unit_in_byte = $var;
+        $this->has_split_size_unit_in_byte = true;
+
+        return $this;
+    }
+
+    public function hasSplitSizeUnitInByte()
+    {
+        return $this->has_split_size_unit_in_byte;
     }
 
 }
