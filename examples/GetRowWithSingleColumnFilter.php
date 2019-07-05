@@ -74,7 +74,8 @@ $request = array (
     'column_filter' => array ( // 对返回的数据进行判断，只有当attr0项不为456的时候才返回数据
         'column_name' => 'attr0',
         'value' => 456,
-        'comparator' => ComparatorTypeConst::CONST_NOT_EQUAL
+        'comparator' => ComparatorTypeConst::CONST_NOT_EQUAL,
+        'latest_version_only' => true
     )
 );
 $response = $otsClient->getRow ($request);
