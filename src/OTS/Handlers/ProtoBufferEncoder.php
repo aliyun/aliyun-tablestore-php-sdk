@@ -389,7 +389,7 @@ class ProtoBufferEncoder
     				}
     				$ret = array_merge( $ret, array( 'sub_conditions' => $sub_conditions ) );
     			}
-    		} else if ( strcmp( $name, 'column_name' ) == 0 || strcmp( $name, 'value' ) == 0 || strcmp( $name, 'comparator' ) == 0 || strcmp( $name, 'pass_if_missing')  || strcmp( $name, 'latest_version_only' ) == 0 ) {
+    		} else if ( strcmp( $name, 'column_name' ) == 0 || strcmp( $name, 'value' ) == 0 || strcmp( $name, 'comparator' ) == 0 || strcmp( $name, 'pass_if_missing') == 0 || strcmp( $name, 'latest_version_only' ) == 0 ) {
     			// a relation condition
     			if ( strcmp( $name, 'value' ) == 0 ) {
     			    if(is_array($value)) {
