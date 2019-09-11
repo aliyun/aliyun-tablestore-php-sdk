@@ -22,7 +22,7 @@ class OTSClientConfig
      * Error级别日志处理函数，默认处理函数为 defaultOTSErrorLogHandler，行为是打印到屏幕
      */
     public $errorLogHandler;
-    
+
     /**
      * Debug级别日志处理函数，默认处理函数为 defaultOTSDebugLogHandler，行为是打印到屏幕
      */
@@ -43,15 +43,15 @@ class OTSClientConfig
         if (!isset($args['EndPoint'])) {
             throw new OTSClientException("Missing EndPoint in client config.");
         }
-        
+
         if (!isset($args['AccessKeyID'])) {
             throw new OTSClientException("Missing AccessKeyID in client config.");
         }
-        
+
         if (!isset($args['AccessKeySecret'])) {
             throw new OTSClientException("Missing AccessKeySecret in client config.");
         }
-        
+
         if (!isset($args['InstanceName'])) {
             throw new OTSClientException("Missing InstanceName in client config.");
         }
@@ -72,19 +72,19 @@ class OTSClientConfig
             $this->socketTimeout = $args['SocketTimeout'];
         }
 
-        if (!isset($args['RetryPolicy'])) {
+        if (!array_key_exists('RetryPolicy', $args)) {
             $this->retryPolicy = new DefaultRetryPolicy();
         } else {
             $this->retryPolicy = $args['RetryPolicy'];
         }
-        
-        if (!isset($args['ErrorLogHandler'])) {
+
+        if (!array_key_exists('ErrorLogHandler', $args)) {
             $this->errorLogHandler = "defaultOTSErrorLogHandler";
         } else {
             $this->errorLogHandler = $args['ErrorLogHandler'];
         }
 
-        if (!isset($args['DebugLogHandler'])) {
+        if (!array_key_exists('DebugLogHandler', $args)) {
             $this->debugLogHandler = 'defaultOTSDebugLogHandler';
         } else {
             $this->debugLogHandler = $args['DebugLogHandler'];
