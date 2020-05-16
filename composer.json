@@ -8,12 +8,6 @@
 			"homepage" : "http://www.aliyun.com/product/ots"
 		}
 	],
-	"repositories": {
-		"packagist": {
-			"type": "composer",
-			"url": "https://packagist.phpcomposer.com"
-		}
-	},
 	"support" : {
 		"forum" : "http://bbs.aliyun.com/thread/226.html"
 	},
