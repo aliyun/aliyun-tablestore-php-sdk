@@ -18,8 +18,8 @@
 		"forum" : "http://bbs.aliyun.com/thread/226.html"
 	},
 	"require" : {
-		"php" : ">=5.5",
-		"guzzlehttp/guzzle": "^5.3.1|^6.2.1",
+		"php": ">=7.2",
+		"hyperf/guzzle": "~2.1.0",
 		"guzzlehttp/psr7": "^1.4.1",
 		"guzzlehttp/promises": "~1.0",
 		"google/protobuf": "^3.5"
