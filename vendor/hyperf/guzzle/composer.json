@@ -1,0 +1,49 @@
+{
+    "name": "hyperf/guzzle",
+    "description": "Swoole coroutine handler for guzzle",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "php",
+        "swoole",
+        "guzzle",
+        "handler"
+    ],
+    "require": {
+        "php": ">=7.0",
+        "guzzlehttp/guzzle": "^6.3|^7.0",
+        "hyperf/utils": "~2.1.0",
+        "psr/container": "^1.0",
+        "psr/http-message": "^1.0"
+    },
+    "require-dev": {
+        "ezimuel/ringphp": "~1.0"
+    },
+    "suggest": {
+        "hyperf/pool": "Required to use pool handler."
+    },
+    "autoload": {
+        "psr-4": {
+            "Hyperf\\Guzzle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HyperfTest\\Guzzle\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        },
+        "hyperf": {
+            "config": "Hyperf\\Guzzle\\ConfigProvider"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always"
+    }
+}
