@@ -21,5 +21,9 @@ class ColumnReturnType
      * Generated from protobuf enum <code>RETURN_NONE = 3;</code>
      */
     const RETURN_NONE = 3;
+    /**
+     * Generated from protobuf enum <code>RETURN_ALL_FROM_INDEX = 4;</code>
+     */
+    const RETURN_ALL_FROM_INDEX = 4;
 }
 

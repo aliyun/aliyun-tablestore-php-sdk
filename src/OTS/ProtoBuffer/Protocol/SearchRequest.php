@@ -38,6 +38,11 @@ class SearchRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $routing_values;
     private $has_routing_values = false;
+    /**
+     * Generated from protobuf field <code>optional int32 timeout_ms = 6;</code>
+     */
+    private $timeout_ms = 0;
+    private $has_timeout_ms = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -182,6 +187,34 @@ class SearchRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasRoutingValues()
     {
         return $this->has_routing_values;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int32 timeout_ms = 6;</code>
+     * @return int
+     */
+    public function getTimeoutMs()
+    {
+        return $this->timeout_ms;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int32 timeout_ms = 6;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setTimeoutMs($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->timeout_ms = $var;
+        $this->has_timeout_ms = true;
+
+        return $this;
+    }
+
+    public function hasTimeoutMs()
+    {
+        return $this->has_timeout_ms;
     }
 
 }

@@ -23,6 +23,11 @@ class MatchPhraseQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $text = '';
     private $has_text = false;
+    /**
+     * Generated from protobuf field <code>optional float weight = 3;</code>
+     */
+    private $weight = 0.0;
+    private $has_weight = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -83,6 +88,34 @@ class MatchPhraseQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasText()
     {
         return $this->has_text;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional float weight = 3;</code>
+     * @return float
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional float weight = 3;</code>
+     * @param float $var
+     * @return $this
+     */
+    public function setWeight($var)
+    {
+        GPBUtil::checkFloat($var);
+        $this->weight = $var;
+        $this->has_weight = true;
+
+        return $this;
+    }
+
+    public function hasWeight()
+    {
+        return $this->has_weight;
     }
 
 }

@@ -11,4 +11,5 @@ class FieldTypeConst {
     const TEXT = 'TEXT';
     const NESTED = 'NESTED';
     const GEO_POINT = 'GEO_POINT';
+    const DATE = 'DATE';
 }

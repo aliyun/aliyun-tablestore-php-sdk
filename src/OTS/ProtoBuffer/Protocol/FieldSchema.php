@@ -60,6 +60,26 @@ class FieldSchema extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $is_array = false;
     private $has_is_array = false;
+    /**
+     * Generated from protobuf field <code>optional bytes analyzer_parameter = 10;</code>
+     */
+    private $analyzer_parameter = '';
+    private $has_analyzer_parameter = false;
+    /**
+     * Generated from protobuf field <code>optional bool is_virtual_field = 11;</code>
+     */
+    private $is_virtual_field = false;
+    private $has_is_virtual_field = false;
+    /**
+     * Generated from protobuf field <code>repeated string source_field_names = 12;</code>
+     */
+    private $source_field_names;
+    private $has_source_field_names = false;
+    /**
+     * Generated from protobuf field <code>repeated string date_formats = 13;</code>
+     */
+    private $date_formats;
+    private $has_date_formats = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -320,6 +340,118 @@ class FieldSchema extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasIsArray()
     {
         return $this->has_is_array;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes analyzer_parameter = 10;</code>
+     * @return string
+     */
+    public function getAnalyzerParameter()
+    {
+        return $this->analyzer_parameter;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes analyzer_parameter = 10;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setAnalyzerParameter($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->analyzer_parameter = $var;
+        $this->has_analyzer_parameter = true;
+
+        return $this;
+    }
+
+    public function hasAnalyzerParameter()
+    {
+        return $this->has_analyzer_parameter;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool is_virtual_field = 11;</code>
+     * @return bool
+     */
+    public function getIsVirtualField()
+    {
+        return $this->is_virtual_field;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool is_virtual_field = 11;</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setIsVirtualField($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->is_virtual_field = $var;
+        $this->has_is_virtual_field = true;
+
+        return $this;
+    }
+
+    public function hasIsVirtualField()
+    {
+        return $this->has_is_virtual_field;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated string source_field_names = 12;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getSourceFieldNames()
+    {
+        return $this->source_field_names;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated string source_field_names = 12;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setSourceFieldNames($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
+        $this->source_field_names = $arr;
+        $this->has_source_field_names = true;
+
+        return $this;
+    }
+
+    public function hasSourceFieldNames()
+    {
+        return $this->has_source_field_names;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated string date_formats = 13;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getDateFormats()
+    {
+        return $this->date_formats;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated string date_formats = 13;</code>
+     * @param string[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setDateFormats($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::STRING);
+        $this->date_formats = $arr;
+        $this->has_date_formats = true;
+
+        return $this;
+    }
+
+    public function hasDateFormats()
+    {
+        return $this->has_date_formats;
     }
 
 }

@@ -53,7 +53,8 @@ class DescribeTableTest extends SDKTestBase {
             'primary_key_schema' => array (
                 array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
                 array('PK2', PrimaryKeyTypeConst::CONST_INTEGER)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
@@ -92,7 +93,8 @@ class DescribeTableTest extends SDKTestBase {
             'primary_key_schema' => array (
                 array('PK1', PrimaryKeyTypeConst::CONST_STRING),
                 array('PK2', PrimaryKeyTypeConst::CONST_STRING)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);

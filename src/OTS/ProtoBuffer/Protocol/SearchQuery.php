@@ -48,6 +48,16 @@ class SearchQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $token = '';
     private $has_token = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.Aggregations aggs = 10;</code>
+     */
+    private $aggs = null;
+    private $has_aggs = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.GroupBys group_bys = 11;</code>
+     */
+    private $group_bys = null;
+    private $has_group_bys = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -248,6 +258,62 @@ class SearchQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasToken()
     {
         return $this->has_token;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.Aggregations aggs = 10;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\Aggregations
+     */
+    public function getAggs()
+    {
+        return $this->aggs;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.Aggregations aggs = 10;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\Aggregations $var
+     * @return $this
+     */
+    public function setAggs($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\Aggregations::class);
+        $this->aggs = $var;
+        $this->has_aggs = true;
+
+        return $this;
+    }
+
+    public function hasAggs()
+    {
+        return $this->has_aggs;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.GroupBys group_bys = 11;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\GroupBys
+     */
+    public function getGroupBys()
+    {
+        return $this->group_bys;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.GroupBys group_bys = 11;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\GroupBys $var
+     * @return $this
+     */
+    public function setGroupBys($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\GroupBys::class);
+        $this->group_bys = $var;
+        $this->has_group_bys = true;
+
+        return $this;
+    }
+
+    public function hasGroupBys()
+    {
+        return $this->has_group_bys;
     }
 
 }

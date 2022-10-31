@@ -33,6 +33,16 @@ class SearchResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $next_token = '';
     private $has_next_token = false;
+    /**
+     * Generated from protobuf field <code>optional bytes aggs = 7;</code>
+     */
+    private $aggs = '';
+    private $has_aggs = false;
+    /**
+     * Generated from protobuf field <code>optional bytes group_bys = 8;</code>
+     */
+    private $group_bys = '';
+    private $has_group_bys = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -149,6 +159,62 @@ class SearchResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasNextToken()
     {
         return $this->has_next_token;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes aggs = 7;</code>
+     * @return string
+     */
+    public function getAggs()
+    {
+        return $this->aggs;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes aggs = 7;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setAggs($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->aggs = $var;
+        $this->has_aggs = true;
+
+        return $this;
+    }
+
+    public function hasAggs()
+    {
+        return $this->has_aggs;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes group_bys = 8;</code>
+     * @return string
+     */
+    public function getGroupBys()
+    {
+        return $this->group_bys;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes group_bys = 8;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setGroupBys($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->group_bys = $var;
+        $this->has_group_bys = true;
+
+        return $this;
+    }
+
+    public function hasGroupBys()
+    {
+        return $this->has_group_bys;
     }
 
 }

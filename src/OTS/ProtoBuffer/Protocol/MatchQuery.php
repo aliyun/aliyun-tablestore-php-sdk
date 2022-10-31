@@ -33,6 +33,11 @@ class MatchQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $operator = 0;
     private $has_operator = false;
+    /**
+     * Generated from protobuf field <code>optional float weight = 5;</code>
+     */
+    private $weight = 0.0;
+    private $has_weight = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -149,6 +154,34 @@ class MatchQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasOperator()
     {
         return $this->has_operator;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional float weight = 5;</code>
+     * @return float
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional float weight = 5;</code>
+     * @param float $var
+     * @return $this
+     */
+    public function setWeight($var)
+    {
+        GPBUtil::checkFloat($var);
+        $this->weight = $var;
+        $this->has_weight = true;
+
+        return $this;
+    }
+
+    public function hasWeight()
+    {
+        return $this->has_weight;
     }
 
 }

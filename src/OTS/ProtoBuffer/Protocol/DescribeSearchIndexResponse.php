@@ -23,6 +23,26 @@ class DescribeSearchIndexResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Messa
      */
     private $sync_stat = null;
     private $has_sync_stat = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.MeteringInfo metering_info = 3;</code>
+     */
+    private $metering_info = null;
+    private $has_metering_info = false;
+    /**
+     * Generated from protobuf field <code>optional string brother_index_name = 4;</code>
+     */
+    private $brother_index_name = '';
+    private $has_brother_index_name = false;
+    /**
+     * Generated from protobuf field <code>optional int64 create_time = 6;</code>
+     */
+    private $create_time = 0;
+    private $has_create_time = false;
+    /**
+     * Generated from protobuf field <code>optional int32 time_to_live = 7;</code>
+     */
+    private $time_to_live = 0;
+    private $has_time_to_live = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -83,6 +103,118 @@ class DescribeSearchIndexResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Messa
     public function hasSyncStat()
     {
         return $this->has_sync_stat;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.MeteringInfo metering_info = 3;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\MeteringInfo
+     */
+    public function getMeteringInfo()
+    {
+        return $this->metering_info;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.MeteringInfo metering_info = 3;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\MeteringInfo $var
+     * @return $this
+     */
+    public function setMeteringInfo($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\MeteringInfo::class);
+        $this->metering_info = $var;
+        $this->has_metering_info = true;
+
+        return $this;
+    }
+
+    public function hasMeteringInfo()
+    {
+        return $this->has_metering_info;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string brother_index_name = 4;</code>
+     * @return string
+     */
+    public function getBrotherIndexName()
+    {
+        return $this->brother_index_name;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string brother_index_name = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setBrotherIndexName($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->brother_index_name = $var;
+        $this->has_brother_index_name = true;
+
+        return $this;
+    }
+
+    public function hasBrotherIndexName()
+    {
+        return $this->has_brother_index_name;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int64 create_time = 6;</code>
+     * @return int|string
+     */
+    public function getCreateTime()
+    {
+        return $this->create_time;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int64 create_time = 6;</code>
+     * @param int|string $var
+     * @return $this
+     */
+    public function setCreateTime($var)
+    {
+        GPBUtil::checkInt64($var);
+        $this->create_time = $var;
+        $this->has_create_time = true;
+
+        return $this;
+    }
+
+    public function hasCreateTime()
+    {
+        return $this->has_create_time;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int32 time_to_live = 7;</code>
+     * @return int
+     */
+    public function getTimeToLive()
+    {
+        return $this->time_to_live;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional int32 time_to_live = 7;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setTimeToLive($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->time_to_live = $var;
+        $this->has_time_to_live = true;
+
+        return $this;
+    }
+
+    public function hasTimeToLive()
+    {
+        return $this->has_time_to_live;
     }
 
 }

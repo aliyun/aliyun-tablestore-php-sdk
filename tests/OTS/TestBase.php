@@ -4,12 +4,22 @@ namespace Aliyun\OTS\Tests;
 
 include "TestConfig.php";
 
+/**
+ PHP 8 need use phpunit >= 8.X, and PHPUnit_Framework_TestCase must be replaced by \PHPUnit_Framework_TestCase
+
+ New TestCase has interface api with [setUp(): void], [tearDown(): void] ...
+ if fix, lower php version < 7 can't compile or run, keep the test as it was.
+ */
+if (!class_exists('\PHPUnit_Framework_TestCase') && class_exists('\PHPUnit\Framework\TestCase')) {
+    class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
+}
 use Aliyun\OTS;
+use \PHPUnit\Framework\TestCase;
 
 date_default_timezone_set ('Asia/Shanghai');
 
-// require(__DIR__ . "/../../../vendor/autoload.php");
-abstract class SDKTestBase extends \PHPUnit_Framework_TestCase {
+
+abstract class SDKTestBase extends TestCase {
     protected $otsClient;
     public function __construct() {
         parent::__construct ();
@@ -88,15 +98,13 @@ abstract class SDKTestBase extends \PHPUnit_Framework_TestCase {
         sleep (10);
     }
     public static function waitForAvoidFrequency() {
-        sleep (1);
+        sleep (5);
     }
     public static function waitForCUAdjustmentInterval() {
         sleep (125);
     }
     public static function waitForSearchIndexSync() {
-        sleep (25);
-    }
-    public function tearDown() {
+        sleep (40);
     }
 
     public function assertRowEquals($expect, $actual) {

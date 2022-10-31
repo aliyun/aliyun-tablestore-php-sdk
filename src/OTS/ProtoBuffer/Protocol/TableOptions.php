@@ -48,6 +48,11 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $deviation_cell_version_in_sec = 0;
     private $has_deviation_cell_version_in_sec = false;
+    /**
+     * Generated from protobuf field <code>optional bool allow_update = 6;</code>
+     */
+    private $allow_update = false;
+    private $has_allow_update = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -212,6 +217,34 @@ class TableOptions extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasDeviationCellVersionInSec()
     {
         return $this->has_deviation_cell_version_in_sec;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool allow_update = 6;</code>
+     * @return bool
+     */
+    public function getAllowUpdate()
+    {
+        return $this->allow_update;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool allow_update = 6;</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setAllowUpdate($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->allow_update = $var;
+        $this->has_allow_update = true;
+
+        return $this;
+    }
+
+    public function hasAllowUpdate()
+    {
+        return $this->has_allow_update;
     }
 
 }

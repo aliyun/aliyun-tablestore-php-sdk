@@ -33,6 +33,13 @@ class FieldSort extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $nested_filter = null;
     private $has_nested_filter = false;
+    /**
+     *encoded as SQLVariant
+     *
+     * Generated from protobuf field <code>optional bytes missing = 5;</code>
+     */
+    private $missing = '';
+    private $has_missing = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -149,6 +156,38 @@ class FieldSort extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasNestedFilter()
     {
         return $this->has_nested_filter;
+    }
+
+    /**
+     *encoded as SQLVariant
+     *
+     * Generated from protobuf field <code>optional bytes missing = 5;</code>
+     * @return string
+     */
+    public function getMissing()
+    {
+        return $this->missing;
+    }
+
+    /**
+     *encoded as SQLVariant
+     *
+     * Generated from protobuf field <code>optional bytes missing = 5;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setMissing($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->missing = $var;
+        $this->has_missing = true;
+
+        return $this;
+    }
+
+    public function hasMissing()
+    {
+        return $this->has_missing;
     }
 
 }

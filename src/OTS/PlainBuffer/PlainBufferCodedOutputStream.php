@@ -361,6 +361,30 @@ class PlainBufferCodedOutputStream
         return PlainBufferCrc8::crcInt8($rowChecksum, 1);
     }
 
+    public function writeSearchValue($searchValue)
+    {
+        $value = $searchValue["value"];
+        if ($searchValue['type'] == ColumnTypeConst::CONST_BOOLEAN) {
+            $this->output->writeRawByte(PlainBufferConsts::VT_BOOLEAN);
+            $this->output->writeBoolean($value);
+        }
+        else if ($searchValue['type'] == ColumnTypeConst::CONST_INTEGER) {
+            $this->output->writeRawByte(PlainBufferConsts::VT_INTEGER);
+            $this->output->writeRawLittleEndian64($value);
+        }
+        else if ($searchValue['type'] == ColumnTypeConst::CONST_STRING) {
+            $this->output->writeRawByte(PlainBufferConsts::VT_STRING);
+            $this->output->writeRawLittleEndian32(strlen($value));
+            $this->output->writeBytes($value);
+        }
+        else if ($searchValue['type'] == ColumnTypeConst::CONST_DOUBLE) {
+            $this->output->writeRawByte(PlainBufferConsts::VT_DOUBLE);
+            $this->output->writeDouble($value);
+        } else {
+            throw new \Aliyun\OTS\OTSClientException("Unsupported searchValue type:" . gettype($value));
+        }
+    }
+
     // just for test
     public function toString()
     {

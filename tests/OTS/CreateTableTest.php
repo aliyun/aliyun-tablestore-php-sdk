@@ -4,6 +4,8 @@ namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
+use Aliyun\OTS\Consts\RowExistenceExpectationConst;
+
 
 require_once __DIR__ . '/TestBase.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -17,7 +19,9 @@ class CreateTableTest extends SDKTestBase {
         'test3',
         'test4',
         'test',
-        'test5'
+        'test5',
+        'testAllowUpdateTrue',
+        'testAllowUpdateFalse'
     );
 
     public function setup() {
@@ -66,7 +70,7 @@ class CreateTableTest extends SDKTestBase {
                     array('PK2', PrimaryKeyTypeConst::CONST_INTEGER),
                     array('PK3', PrimaryKeyTypeConst::CONST_STRING),
                     array('PK4', PrimaryKeyTypeConst::CONST_INTEGER)
-                )
+                ),
             ),
             'reserved_throughput' => array (
                 'capacity_unit' => array (
@@ -96,7 +100,8 @@ class CreateTableTest extends SDKTestBase {
                 array('PK2', PrimaryKeyTypeConst::CONST_INTEGER),
                 array('PK3', PrimaryKeyTypeConst::CONST_STRING),
                 array('PK4', PrimaryKeyTypeConst::CONST_INTEGER)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($table_name);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
@@ -171,9 +176,9 @@ class CreateTableTest extends SDKTestBase {
      * 1KBTableName
      * 表名长度为1KB，期望返回错误信息：Invalid table name: '{TableName}'. 中包含的TableName与输入一致
      */
-    public function testTableName1KB() {
+    public function testTableName1KB() { // 1kb is too long for monitor data pk
         $name = '';
-        for($i = 1; $i < 1025; $i ++) {
+        for($i = 1; $i < 300; $i ++) {
             $name .= 'a';
         }
         $tablebody = array (
@@ -256,7 +261,8 @@ class CreateTableTest extends SDKTestBase {
             'table_name' => $tablebody['table_meta']['table_name'],
             'primary_key_schema' => array (
                 array('PK1', PrimaryKeyTypeConst::CONST_STRING)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
@@ -295,7 +301,8 @@ class CreateTableTest extends SDKTestBase {
                 array('PK2', PrimaryKeyTypeConst::CONST_INTEGER),
                 array('PK3', PrimaryKeyTypeConst::CONST_STRING),
                 array('PK4', PrimaryKeyTypeConst::CONST_INTEGER)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
@@ -361,7 +368,8 @@ class CreateTableTest extends SDKTestBase {
             'primary_key_schema' => array (
                 array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
                 array('PK2', PrimaryKeyTypeConst::CONST_INTEGER)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
@@ -395,9 +403,155 @@ class CreateTableTest extends SDKTestBase {
             'primary_key_schema' => array (
                 array('PK1', PrimaryKeyTypeConst::CONST_STRING),
                 array('PK2', PrimaryKeyTypeConst::CONST_STRING)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
+    }
+
+    /*
+     * 测试CreateTable时主动允许更新，默认True
+     */
+    public function testAllowUpdateDefaultTrue() {
+        $tablebody = array (
+            'table_meta' => array (
+                'table_name' => self::$usedTables[7],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_STRING),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
+                )
+            ),
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 1,
+                'deviation_cell_version_in_sec' => 86400,
+//                'allow_update' => true  // 默认不指定：true
+            ),
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
+                )
+            )
+        );
+        $this->assertEmpty ($this->otsClient->createTable ($tablebody));
+        SDKTestBase::waitForAvoidFrequency();
+        $tablename['table_name'] = $tablebody['table_meta']['table_name'];
+        $table_meta = $this->otsClient->describeTable ($tablename);
+        $this->assertTrue($table_meta['table_options']['allow_update']);
+
+        try {
+            $putRow = array(
+                'table_name' => self::$usedTables[7],
+                'primary_key' => array ( // 主键
+                    array('PK1', '123'),
+                    array('PK2', 'abc')
+                ),
+                'attribute_columns' => array( // 属性
+                    array('attr0', 456), // INTEGER类型
+                    array('attr1', 'Hangzhou'), // STRING类型
+                    array('attr2', 3.14), // DOUBLE类型
+                    array('attr3', true), // BOOLEAN类型
+                    array('attr4', false), // BOOLEAN类型
+                )
+            );
+            $this->otsClient->putRow($putRow);
+        } catch (OTS\OTSServerException $exec) {
+            $this->fail('PutRow should succeed', $exec);
+        }
+
+        try {
+            $updateRow = array(
+                'table_name' => self::$usedTables[7],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array ( // 主键
+                    array('PK1', '123'),
+                    array('PK2', 'abc')
+                ),
+                'update_of_attribute_columns' => array( // 属性
+                    'PUT' => array(
+                        array('attr5', 456), // INTEGER类型
+                    ),
+                )
+            );
+            $this->otsClient->updateRow($updateRow);
+        } catch (OTS\OTSServerException $exec) {
+            $this->fail('UpdateRow should succeed', $exec);
+        }
+    }
+
+    /*
+     * 测试CreateTable时主动指定禁止更新，数据写入报错
+     */
+    public function testAllowUpdateFalse() {
+        $tablebody = array (
+            'table_meta' => array (
+                'table_name' => self::$usedTables[8],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_STRING),
+                    array('PK2', PrimaryKeyTypeConst::CONST_STRING)
+                )
+            ),
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 1,
+                'deviation_cell_version_in_sec' => 86400,
+                'allow_update' => false
+            ),
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
+                )
+            )
+        );
+        $this->assertEmpty ($this->otsClient->createTable ($tablebody));
+        SDKTestBase::waitForAvoidFrequency();
+        $tablename['table_name'] = $tablebody['table_meta']['table_name'];
+        $table_meta = $this->otsClient->describeTable ($tablename);
+        $this->assertFalse($table_meta['table_options']['allow_update']);
+
+        try {
+            $putRow = array(
+                'table_name' => self::$usedTables[8],
+                'primary_key' => array ( // 主键
+                    array('PK1', '123'),
+                    array('PK2', 'abc')
+                ),
+                'attribute_columns' => array( // 属性
+                    array('attr0', 456), // INTEGER类型
+                    array('attr1', 'Hangzhou'), // STRING类型
+                    array('attr2', 3.14), // DOUBLE类型
+                    array('attr3', true), // BOOLEAN类型
+                    array('attr4', false), // BOOLEAN类型
+                )
+            );
+            $this->otsClient->putRow($putRow);
+        } catch (OTS\OTSServerException $exec) {
+            $this->fail('PutRow should succeed', $exec);
+        }
+
+        try {
+            $updateRow = array(
+                'table_name' => self::$usedTables[8],
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array ( // 主键
+                    array('PK1', '123'),
+                    array('PK2', 'abc')
+                ),
+                'update_of_attribute_columns' => array( // 属性
+                    'PUT' => array(
+                        array('attr5', 456), // INTEGER类型
+                    ),
+                )
+            );
+            $this->otsClient->updateRow($updateRow);
+            $this->fail('UpdateRow should failed');
+        } catch (OTS\OTSServerException $exec) {
+            print $exec;
+            $this->assertEquals($exec->getOTSErrorCode(), "OTSParameterInvalid");
+            $this->assertEquals($exec->getOTSErrorMessage(), "Update operation is not allowed in this table");
+        }
     }
 }

@@ -115,6 +115,8 @@ class listTableTest extends SDKTestBase {
         for($i = 0; $i < 40; $i ++) {
             $this->otsClient->listTable (array () );
         }
+        // add assert for higher phpunit require else Fatal [This test did not perform any assertions]
+        $this->assertTrue(true);
     }
 }
 

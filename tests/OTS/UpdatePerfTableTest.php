@@ -136,4 +136,20 @@ class UpdatePerfTableTest extends SDKTestBase {
         $this->assertEquals ($capacity_unit['capacity_unit_details']['capacity_unit']['read'], 10);
         $this->assertEquals ($capacity_unit['capacity_unit_details']['capacity_unit'] ['write'], 300 );
     }
+
+    public function testAllowUpdate() {
+        $name['table_name'] = self::$usedTables[2];
+        $describeTableResp = $this->otsClient->describeTable ($name);
+        $this->assertTrue($describeTableResp['table_options']['allow_update']);
+
+        $tablename = array (
+            'table_name' => self::$usedTables[2],
+            'table_options' => array(
+                'allow_update' => false
+            )
+        );
+        $this->otsClient->updateTable ($tablename);
+        $describeTableResp = $this->otsClient->describeTable ($name);
+        $this->assertFalse($describeTableResp['table_options']['allow_update']);
+    }
 }

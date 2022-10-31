@@ -113,7 +113,7 @@ class SearchIndexDescribeTest extends SDKTestBase {
                         'field_sort' => array(
                             'field_name' => 'keyword',
                             'order' => SortOrderConst::SORT_ORDER_ASC,
-                            'mode' => SortModeConst::SORT_MODE_AVG,
+                            'mode' => SortModeConst::SORT_MODE_MIN,
                         )
                     ),
                     array(
@@ -151,7 +151,7 @@ class SearchIndexDescribeTest extends SDKTestBase {
         $fieldSort = $response['index_schema']['index_sort'][0]['field_sort'];
         $this->assertEquals($fieldSort['field_name'], 'keyword');
         $this->assertEquals($fieldSort['order'], SortOrderConst::SORT_ORDER_ASC);
-        $this->assertEquals($fieldSort['mode'], SortModeConst::SORT_MODE_AVG);
+        $this->assertEquals($fieldSort['mode'], SortModeConst::SORT_MODE_MIN);
 
         $this->assertNotEmpty($response['index_schema']['index_sort'][1]['pk_sort']);
         $sortSort = $response['index_schema']['index_sort'][1]['pk_sort'];

@@ -98,6 +98,17 @@ class PlainBufferBuilder
         $codedOutputStream->writeRowChecksum($rowChecksum);
         return $outputStream->getBuffer();
     }
+
+    public static function serializeSearchValue($value)
+    {
+        $bufSize = PlainBufferBuilder::computeVariantValueSize($value);
+        $outputStream = new PlainBufferOutputStream($bufSize);
+        $codedOutputStream = new PlainBufferCodedOutputStream($outputStream);
+
+        $codedOutputStream->writeSearchValue($value);
+        return $outputStream->getBuffer();
+    }
+
     /*
      * cell_value = tag_cell_value value_type formated_value
      * formated_value =  value_len value_data

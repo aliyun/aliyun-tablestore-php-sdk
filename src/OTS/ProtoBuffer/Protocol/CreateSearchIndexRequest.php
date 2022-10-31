@@ -28,6 +28,18 @@ class CreateSearchIndexRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $schema = null;
     private $has_schema = false;
+    /**
+     * Generated from protobuf field <code>optional string source_index_name = 4;</code>
+     */
+    private $source_index_name = '';
+    private $has_source_index_name = false;
+    /**
+     * unit is seconds
+     *
+     * Generated from protobuf field <code>optional int32 time_to_live = 5;</code>
+     */
+    private $time_to_live = 0;
+    private $has_time_to_live = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -116,6 +128,66 @@ class CreateSearchIndexRequest extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasSchema()
     {
         return $this->has_schema;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string source_index_name = 4;</code>
+     * @return string
+     */
+    public function getSourceIndexName()
+    {
+        return $this->source_index_name;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string source_index_name = 4;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setSourceIndexName($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->source_index_name = $var;
+        $this->has_source_index_name = true;
+
+        return $this;
+    }
+
+    public function hasSourceIndexName()
+    {
+        return $this->has_source_index_name;
+    }
+
+    /**
+     * unit is seconds
+     *
+     * Generated from protobuf field <code>optional int32 time_to_live = 5;</code>
+     * @return int
+     */
+    public function getTimeToLive()
+    {
+        return $this->time_to_live;
+    }
+
+    /**
+     * unit is seconds
+     *
+     * Generated from protobuf field <code>optional int32 time_to_live = 5;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setTimeToLive($var)
+    {
+        GPBUtil::checkInt32($var);
+        $this->time_to_live = $var;
+        $this->has_time_to_live = true;
+
+        return $this;
+    }
+
+    public function hasTimeToLive()
+    {
+        return $this->has_time_to_live;
     }
 
 }

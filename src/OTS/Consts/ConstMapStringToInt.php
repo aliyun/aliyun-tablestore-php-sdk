@@ -3,12 +3,16 @@
 
 namespace Aliyun\OTS\Consts;
 
+use Aliyun\OTS\ProtoBuffer\Protocol\AggregationType;
 use Aliyun\OTS\ProtoBuffer\Protocol\GeoDistanceType;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByType;
 use Aliyun\OTS\ProtoBuffer\Protocol\IndexOptions;
 use Aliyun\OTS\ProtoBuffer\Protocol\QueryType;
 use Aliyun\OTS\ProtoBuffer\Protocol\SortMode;
 use Aliyun\OTS\ProtoBuffer\Protocol\SortOrder;
 use Aliyun\OTS\ProtoBuffer\Protocol\FieldType;
+use Aliyun\OTS\ProtoBuffer\Protocol\SQLPayloadVersion;
+use Aliyun\OTS\ProtoBuffer\Protocol\SQLStatementType;
 use Aliyun\OTS\ProtoBuffer\Protocol\SyncPhase;
 use Aliyun\OTS\ProtoBuffer\Protocol\ColumnReturnType;
 use Aliyun\OTS\ProtoBuffer\Protocol\QueryOperator;
@@ -113,6 +117,8 @@ class ConstMapStringToInt
                 return FieldType::NESTED;
             case FieldTypeConst::GEO_POINT:
                 return FieldType::GEO_POINT;
+            case FieldTypeConst::DATE:
+                return FieldType::DATE;
             default:
                 throw new \Aliyun\OTS\OTSClientException("field_type should be FieldTypeConst::XXX");
         }
@@ -155,8 +161,10 @@ class ConstMapStringToInt
                 return ColumnReturnType::RETURN_SPECIFIED;
             case ColumnReturnTypeConst::RETURN_NONE:
                 return ColumnReturnType::RETURN_NONE;
+            case ColumnReturnTypeConst::RETURN_ALL_FROM_INDEX:
+                return ColumnReturnType::RETURN_ALL_FROM_INDEX;
             default:
-                throw new \Aliyun\OTS\OTSClientException("return_type should be ColumnReturnTypeMap::XXX");
+                throw new \Aliyun\OTS\OTSClientException("return_type should be ColumnReturnTypeConst::XXX");
         }
     }
 
@@ -205,6 +213,80 @@ class ConstMapStringToInt
                 return DefinedColumnType::DCT_BLOB;
             default:
                 throw new \Aliyun\OTS\OTSClientException("defined_column_type should be DefinedColumnTypeConst::XXX");
+        }
+    }
+
+    public static function SQLStatementTypeMap($key)
+    {
+        switch ($key) {
+            case SQLStatementTypeConst::DCT_SQL_SELECT:
+                return SQLStatementType::SQL_SELECT;
+            case SQLStatementTypeConst::DCT_SQL_CREATE_TABLE:
+                return SQLStatementType::SQL_CREATE_TABLE;
+            case SQLStatementTypeConst::DCT_SQL_SHOW_TABLE:
+                return SQLStatementType::SQL_SHOW_TABLE;
+            case SQLStatementTypeConst::DCT_SQL_DESCRIBE_TABLE:
+                return SQLStatementType::SQL_DESCRIBE_TABLE;
+            case SQLStatementTypeConst::DCT_SQL_DROP_TABLE:
+                return SQLStatementType::SQL_DROP_TABLE;
+            case SQLStatementTypeConst::DCT_SQL_ALTER_TABLE:
+                return SQLStatementType::SQL_ALTER_TABLE;
+            default:
+                return null;
+        }
+    }
+
+    public static function SQLPayloadVersionMap($key)
+    {
+        switch ($key) {
+            case SQLPayloadVersionConst::SQL_PLAIN_BUFFER:
+                return SQLPayloadVersion::SQL_PLAIN_BUFFER;
+            case SQLPayloadVersionConst::SQL_FLAT_BUFFERS:
+                return SQLPayloadVersion::SQL_FLAT_BUFFERS;
+            default:
+                return null;
+        }
+    }
+
+    public static function AggregationTypeMap($key)
+    {
+        switch ($key) {
+            case AggregationTypeConst::AGG_AVG:
+                return AggregationType::AGG_AVG;
+            case AggregationTypeConst::AGG_MAX:
+                return AggregationType::AGG_MAX;
+            case AggregationTypeConst::AGG_MIN:
+                return AggregationType::AGG_MIN;
+            case AggregationTypeConst::AGG_SUM:
+                return AggregationType::AGG_SUM;
+            case AggregationTypeConst::AGG_COUNT:
+                return AggregationType::AGG_COUNT;
+            case AggregationTypeConst::AGG_DISTINCT_COUNT:
+                return AggregationType::AGG_DISTINCT_COUNT;
+            case AggregationTypeConst::AGG_TOP_ROWS:
+                return AggregationType::AGG_TOP_ROWS;
+            case AggregationTypeConst::AGG_PERCENTILES:
+                return AggregationType::AGG_PERCENTILES;
+            default:
+                return null;
+        }
+    }
+
+    public static function GroupByTypeMap($key)
+    {
+        switch ($key) {
+            case GroupByTypeConst::GROUP_BY_FIELD:
+                return GroupByType::GROUP_BY_FIELD;
+            case GroupByTypeConst::GROUP_BY_RANGE:
+                return GroupByType::GROUP_BY_RANGE;
+            case GroupByTypeConst::GROUP_BY_FILTER:
+                return GroupByType::GROUP_BY_FILTER;
+            case GroupByTypeConst::GROUP_BY_GEO_DISTANCE:
+                return GroupByType::GROUP_BY_GEO_DISTANCE;
+            case GroupByTypeConst::GROUP_BY_HISTOGRAM:
+                return GroupByType::GROUP_BY_HISTOGRAM;
+            default:
+                return null;
         }
     }
 }

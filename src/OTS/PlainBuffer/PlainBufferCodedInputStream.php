@@ -301,6 +301,24 @@ class PlainBufferCodedInputStream
         return $rowList;
     }
 
+    public function readSearchVariant()
+    {
+        $searchVariantType = ord($this->input->readRawByte());
+        switch ($searchVariantType) {
+            case PlainBufferConsts::VT_INTEGER:
+                return $this->input->readInt64();
+            case PlainBufferConsts::VT_STRING:
+                $size = $this->input->readInt32();
+                return $this->input->readUtfString($size);
+            case PlainBufferConsts::VT_BOOLEAN:
+                return $this->input->readBoolean();
+            case PlainBufferConsts::VT_DOUBLE:
+                return $this->input->readDouble();
+            default:
+                throw new OTSClientException("Unsupported SearchVariantType " . $searchVariantType);
+        }
+    }
+
     private function readHeader()
     {
         $ret = $this->input->readInt32();

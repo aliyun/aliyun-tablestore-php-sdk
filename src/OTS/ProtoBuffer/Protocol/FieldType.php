@@ -37,5 +37,9 @@ class FieldType
      * Generated from protobuf enum <code>GEO_POINT = 7;</code>
      */
     const GEO_POINT = 7;
+    /**
+     * Generated from protobuf enum <code>DATE = 8;</code>
+     */
+    const DATE = 8;
 }
 
