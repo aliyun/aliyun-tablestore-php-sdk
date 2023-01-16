@@ -337,24 +337,25 @@ class PlainBufferCodedInputStream
         $primaryKey = [];
         $attributes = [];
 
-        if (!self::checkLastTagWas(PlainBufferConsts::TAG_ROW_PK)) {
-            throw new OTSClientException("Expect TAG_ROW_PK but it was " . PlainBufferConsts::printTag(self::getLastTag()));
-        }
+        // update return row may not have pk
+        if (self::checkLastTagWas(PlainBufferConsts::TAG_ROW_PK)) {
 
-        self::readTag();
+            self::readTag();
 
-        while (self::checkLastTagWas(PlainBufferConsts::TAG_CELL)) {
-            $primaryKeyValue = self::readPrimaryKeyColumn($rowCheckSum);
-            $name = $primaryKeyValue['column_name'];
-            $value = $primaryKeyValue['primary_key_value'];
-            $type = $primaryKeyValue['primary_key_type'];
-            $rowCheckSum = $primaryKeyValue['row_check_sum'];
-            if($type != PrimaryKeyTypeConst::CONST_BINARY) {
-                $primaryKey[] = array($name, $value);
-            }else {
-                $primaryKey[] = array($name, $value, $type);
+            while (self::checkLastTagWas(PlainBufferConsts::TAG_CELL)) {
+                $primaryKeyValue = self::readPrimaryKeyColumn($rowCheckSum);
+                $name = $primaryKeyValue['column_name'];
+                $value = $primaryKeyValue['primary_key_value'];
+                $type = $primaryKeyValue['primary_key_type'];
+                $rowCheckSum = $primaryKeyValue['row_check_sum'];
+                if ($type != PrimaryKeyTypeConst::CONST_BINARY) {
+                    $primaryKey[] = array($name, $value);
+                } else {
+                    $primaryKey[] = array($name, $value, $type);
+                }
             }
         }
+
         if(self::checkLastTagWas(PlainBufferConsts::TAG_ROW_DATA)) {
             self::readTag();
             while (self::checkLastTagWas(PlainBufferConsts::TAG_CELL)) {

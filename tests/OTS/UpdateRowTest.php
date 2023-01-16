@@ -4,6 +4,7 @@ namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS\Consts\ComparatorTypeConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
+use Aliyun\OTS\Consts\ReturnTypeConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
 
 require_once __DIR__ . '/TestBase.php';
@@ -165,6 +166,48 @@ class UpdateRowTest extends SDKTestBase {
             $c = 'Attribute column is missing.';
             $this->assertEquals ($c, $exc->getOTSErrorMessage ());
         }
+    }
+
+    /*
+     *
+     * UpdateIncreaseInUpdateRow
+     * UpdateRow包含1个属性列的Increment操作的情况。
+     */
+    public function testUpdateIncreaseInUpdateRow() {
+        $origin = array (
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'inc')
+            ),
+            'attribute_columns' => array (
+                array('inc', 1)
+            )
+        );
+        $this->otsClient->putRow ($origin);
+
+        $updateRow = array (
+            'table_name' => self::$usedTables[0],
+            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+            'primary_key' => array (
+                array('PK1', 1),
+                array('PK2', 'inc')
+            ),
+            'update_of_attribute_columns'=> array(
+                'INCREMENT' => array (
+                    array('inc', 1)
+                )
+            ),
+            'return_content' => array(
+                'return_type' => ReturnTypeConst::CONST_AFTER_MODIFY,
+                'return_column_names' => array('inc')
+            )
+        );
+        $response = $this->otsClient->updateRow ($updateRow);
+
+        $this->assertEquals($response['attribute_columns'][0][0], 'inc');
+        $this->assertEquals($response['attribute_columns'][0][1], 2);
     }
     
     /*

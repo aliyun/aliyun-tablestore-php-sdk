@@ -198,6 +198,7 @@ class ProtoBufferEncoder
         switch ($type) {
             case ReturnTypeConst::CONST_PK: return ReturnType::RT_PK;
             case ReturnTypeConst::CONST_NONE: return ReturnType::RT_NONE;
+            case ReturnTypeConst::CONST_AFTER_MODIFY: return ReturnType::RT_AFTER_MODIFY;
             default:
                 throw new \Aliyun\OTS\OTSClientException("return type must be one of 'ReturnTypeConst::CONST_PK', 'ReturnTypeConst::CONST_NONE");
         }
@@ -338,6 +339,10 @@ class ProtoBufferEncoder
         $ret = array();
 
         $ret['return_type'] = $this->preprocessReturnType($content['return_type']);
+        $ret['return_column_names'] = [];
+        if (isset($content['return_column_names']) && is_array($content['return_column_names'])) {
+            $ret['return_column_names'] = $content['return_column_names'];
+        }
 
         return $ret;
     }
@@ -657,6 +662,12 @@ class ProtoBufferEncoder
         }
         return array(UpdateTypeConst::CONST_DELETE_ALL => $columns);
     }
+
+    private function preprocessIncreaseInUpdateRowRequest($columnsToIncrease)
+    {
+        $columns = $this->preprocessColumns($columnsToIncrease);
+        return array(UpdateTypeConst::CONST_INCREMENT => $columns);
+    }
     
     private function preprocessUpdateRowRequest($request)
     {
@@ -680,6 +691,11 @@ class ProtoBufferEncoder
         if (!empty($request['update_of_attribute_columns']['DELETE_ALL'])) {
             $columnsToDelete = $this->preprocessDeleteAllInUpdateRowRequest($request['update_of_attribute_columns']['DELETE_ALL']);
             $attributeColumns = array_merge($attributeColumns, $columnsToDelete);
+        }
+
+        if (!empty($request['update_of_attribute_columns']['INCREMENT'])) {
+            $columnsToIncrease = $this->preprocessIncreaseInUpdateRowRequest($request['update_of_attribute_columns']['INCREMENT']);
+            $attributeColumns = array_merge($attributeColumns, $columnsToIncrease);
         }
 
         $ret['attribute_columns'] = $attributeColumns;
@@ -1055,6 +1071,9 @@ class ProtoBufferEncoder
         $returnContent = new ReturnContent();
         if(isset($request['return_type'])) {
             $returnContent->setReturnType($request['return_type']);
+        }
+        if(isset($request['return_column_names'])) {
+            $returnContent->setReturnColumnNames($request['return_column_names']);
         }
         return $returnContent;
     }

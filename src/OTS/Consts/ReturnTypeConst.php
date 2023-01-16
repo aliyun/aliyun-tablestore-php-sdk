@@ -7,12 +7,14 @@ class ReturnTypeConst
 {
     const CONST_NONE = 'NONE';
     const CONST_PK = 'PK';
+    const CONST_AFTER_MODIFY = 'AFTER_MODIFY';
 
     public static function values()
     {
         return array(
             ReturnTypeConst::CONST_NONE,
-            ReturnTypeConst::CONST_PK
+            ReturnTypeConst::CONST_PK,
+            ReturnTypeConst::CONST_AFTER_MODIFY,
         );
     }
 
@@ -20,7 +22,8 @@ class ReturnTypeConst
     {
         return array(
             'ReturnTypeConst::CONST_NONE',
-            'ReturnTypeConst::CONST_PK'
+            'ReturnTypeConst::CONST_PK',
+            'ReturnTypeConst::CONST_AFTER_MODIFY'
         );
     }
 }

@@ -4,6 +4,7 @@ namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS;
 use Aliyun\OTS\Consts\OperationTypeConst;
+use Aliyun\OTS\Consts\ReturnTypeConst;
 use Aliyun\OTS\Consts\RowExistenceExpectationConst;
 use Aliyun\OTS\Consts\ComparatorTypeConst;
 use Aliyun\OTS\Consts\LogicalOperatorConst;
@@ -363,6 +364,67 @@ class BatchWriteRowTest extends SDKTestBase {
             $this->assertEquals ($a[$c]['primary_key'], $batchWrite['tables'][0]['rows'][$c]['primary_key']);
             $this->assertColumnEquals($batchWrite1['tables'][0]['rows'][$c]['update_of_attribute_columns']['PUT'], $a[$c]['attribute_columns']);
         }
+    }
+
+    /*
+     * UpdateOnlyWithIncrementInBatchWriteRow
+     * BatchWriteRow包含Increment\Put操作
+     */
+    public function testUpdateOnlyWithIncrementInBatchWriteRow() {
+        $batchWrite = array (
+            'tables' => array (
+                array (
+                    'table_name' => self::$usedTables[0],
+                    'rows' => array (
+                        array (
+                            'operation_type' => OperationTypeConst::CONST_PUT,
+                            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                            'primary_key' => array (
+                                array('PK1',  1),
+                                array('PK2', 'inc')
+                            ),
+                            'attribute_columns' => array (
+                                array('inc', 1),
+                                array('normal', 0)
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        $this->otsClient->batchWriteRow ($batchWrite);
+        $batchWrite1 = array (
+            'tables' => array (
+                array (
+                    'table_name' => self::$usedTables[0],
+                    'rows' => array (
+                        array (
+                            'operation_type' => OperationTypeConst::CONST_UPDATE,
+                            'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                            'primary_key' => array (
+                                array('PK1',  1),
+                                array('PK2', 'inc')
+                            ),
+                            'update_of_attribute_columns'=> array(
+                                'INCREMENT' => array (
+                                    array('inc', 1)
+                                ),
+                                'PUT' => array(
+                                    array('normal', 1)
+                                )
+                            ),
+                            'return_content' => array(
+                                'return_type' => ReturnTypeConst::CONST_AFTER_MODIFY,
+                                'return_column_names' => array('inc')
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        $response = $this->otsClient->batchWriteRow ($batchWrite1);
+        $this->assertEquals($response['tables'][0]['rows'][0]['attribute_columns'][0][0], 'inc');
+        $this->assertEquals($response['tables'][0]['rows'][0]['attribute_columns'][0][0], 'inc');
     }
     
     /*

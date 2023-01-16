@@ -184,7 +184,10 @@ class PlainBufferBuilder
     private static function computeColumnSize2($columnName, $columnValue, $updateType)
     {
         $size = PlainBufferBuilder::computeColumnSize($columnName, $columnValue, $columnValue['timestamp']);
-        if ($updateType == UpdateTypeConst::CONST_DELETE || $updateType == UpdateTypeConst::CONST_DELETE_ALL)
+        if ($updateType == UpdateTypeConst::CONST_DELETE
+            || $updateType == UpdateTypeConst::CONST_DELETE_ALL
+            || $updateType == UpdateTypeConst::CONST_INCREMENT
+        )
             $size += 2;
         return $size;
     }

@@ -8,13 +8,15 @@ class UpdateTypeConst
     const CONST_PUT = 'PUT';
     const CONST_DELETE = 'DELETE';
     const CONST_DELETE_ALL = 'DELETE_ALL';
+    const CONST_INCREMENT = 'INCREMENT';
 
     public static function values()
     {
         return array(
             UpdateTypeConst::CONST_PUT,
             UpdateTypeConst::CONST_DELETE,
-            UpdateTypeConst::CONST_DELETE_ALL
+            UpdateTypeConst::CONST_DELETE_ALL,
+            UpdateTypeConst::CONST_INCREMENT
         );
     }
 
