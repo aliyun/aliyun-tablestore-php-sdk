@@ -7,6 +7,8 @@ use Aliyun\OTS\ProtoBuffer\Protocol\AggregationType;
 use Aliyun\OTS\ProtoBuffer\Protocol\GeoDistanceType;
 use Aliyun\OTS\ProtoBuffer\Protocol\GroupByType;
 use Aliyun\OTS\ProtoBuffer\Protocol\IndexOptions;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexType;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexUpdateMode;
 use Aliyun\OTS\ProtoBuffer\Protocol\QueryType;
 use Aliyun\OTS\ProtoBuffer\Protocol\SortMode;
 use Aliyun\OTS\ProtoBuffer\Protocol\SortOrder;
@@ -285,6 +287,30 @@ class ConstMapStringToInt
                 return GroupByType::GROUP_BY_GEO_DISTANCE;
             case GroupByTypeConst::GROUP_BY_HISTOGRAM:
                 return GroupByType::GROUP_BY_HISTOGRAM;
+            default:
+                return null;
+        }
+    }
+
+    public static function IndexTypeMap($key)
+    {
+        switch ($key) {
+            case IndexTypeConst::GLOBAL_INDEX:
+                return IndexType::IT_GLOBAL_INDEX;
+            case IndexTypeConst::LOCAL_INDEX:
+                return IndexType::IT_LOCAL_INDEX;
+            default:
+                return null;
+        }
+    }
+
+    public static function IndexUpdateModeMap($key)
+    {
+        switch ($key) {
+            case IndexUpdateModeConst::ASYNC_INDEX:
+                return IndexUpdateMode::IUM_ASYNC_INDEX;
+            case IndexUpdateModeConst::SYNC_INDEX:
+                return IndexUpdateMode::IUM_SYNC_INDEX;
             default:
                 return null;
         }

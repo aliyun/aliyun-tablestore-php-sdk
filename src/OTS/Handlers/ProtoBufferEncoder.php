@@ -987,10 +987,18 @@ class ProtoBufferEncoder
             foreach ($request["index_metas"] as $item) {
                 $indexMeta = new IndexMeta();
                 $indexMeta->setName($item["name"]);
-                $indexMeta->setIndexType(IndexType::IT_GLOBAL_INDEX);//only globalIndex for now
-                $indexMeta->setIndexUpdateMode(IndexUpdateMode::IUM_ASYNC_INDEX);//default for now
                 $indexMeta->setPrimaryKey($item["primary_key"]);
                 $indexMeta->setDefinedColumn($item["defined_column"]);
+                $indexType = IndexType::IT_GLOBAL_INDEX; // default globalIndex
+                if (!empty($item["index_type"])) {
+                    $indexType = ConstMapStringToInt::IndexTypeMap($item["index_type"]);
+                }
+                $indexMeta->setIndexType($indexType); //support globalIndex/localIndex
+                $indexUpdateMode = IndexUpdateMode::IUM_ASYNC_INDEX; // default asyncIndex
+                if (!empty($item["index_update_mode"])) {
+                    $indexUpdateMode = ConstMapStringToInt::IndexUpdateModeMap($item["index_update_mode"]);
+                }
+                $indexMeta->setIndexUpdateMode($indexUpdateMode);
 
                 array_push($indexMetas, $indexMeta);
             }
@@ -2268,12 +2276,23 @@ class ProtoBufferEncoder
 
         $indexMeta = new IndexMeta();
         $indexMeta->setName($request["index_meta"]["name"]);
-        $indexMeta->setIndexType(IndexType::IT_GLOBAL_INDEX);//only globalIndex for now
-        $indexMeta->setIndexUpdateMode(IndexUpdateMode::IUM_ASYNC_INDEX);//default for now
         $indexMeta->setPrimaryKey($request["index_meta"]["primary_key"]);
         $indexMeta->setDefinedColumn($request["index_meta"]["defined_column"]);
-
+        $indexType = IndexType::IT_GLOBAL_INDEX; // default globalIndex
+        if (!empty($request["index_meta"]["index_type"])) {
+            $indexType = ConstMapStringToInt::IndexTypeMap($request["index_meta"]["index_type"]);
+        }
+        $indexMeta->setIndexType($indexType); //support globalIndex/localIndex
+        $indexUpdateMode = IndexUpdateMode::IUM_ASYNC_INDEX; // default asyncIndex
+        if (!empty($request["index_meta"]["index_update_mode"])) {
+            $indexUpdateMode = ConstMapStringToInt::IndexUpdateModeMap($request["index_meta"]["index_update_mode"]);
+        }
+        $indexMeta->setIndexUpdateMode($indexUpdateMode);
         $pbMessage->setIndexMeta($indexMeta);
+
+        if (!empty($request["include_base_data"])) {
+            $pbMessage->setIncludeBaseData($request["include_base_data"]);
+        }
 
         return $pbMessage->serializeToString();
     }

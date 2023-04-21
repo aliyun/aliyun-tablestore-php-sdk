@@ -100,6 +100,9 @@ abstract class SDKTestBase extends TestCase {
     public static function waitForAvoidFrequency() {
         sleep (5);
     }
+    public static function waitForSecondaryIndexSync() {
+        sleep (90);
+    }
     public static function waitForCUAdjustmentInterval() {
         sleep (125);
     }

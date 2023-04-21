@@ -251,6 +251,12 @@ class ProtoBufferDecoder
                     'primary_key' => $primaryKeyNameList,
                     'defined_column' => $definedColumnNameList
                 );
+                if ($item->hasIndexType()) {
+                    $indexMeta["index_type"] = ConstMapIntToString::IndexTypeMap($item->getIndexType());
+                }
+                if ($item->hasIndexUpdateMode()) {
+                    $indexMeta["index_update_mode"] = ConstMapIntToString::IndexUpdateModeMap($item->getIndexUpdateMode());
+                }
                 array_push($indexMetas, $indexMeta);
             }
             $response["index_metas"] = $indexMetas;

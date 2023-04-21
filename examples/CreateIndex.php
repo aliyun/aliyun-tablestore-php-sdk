@@ -15,10 +15,35 @@ $otsClient = new OTSClient (array (
 $request = array (
     'table_name' => 'MyTable', // 表名为 MyTable
     'index_meta' => array (
-        'name' => 'CreateIndex',
+        'name' => 'CreateDefaultGlobalIndex',
+        'primary_key' => array('col1', 'PK1'),
+        'defined_column' => array('col2'),
+        'index_type' => IndexTypeConst::GLOBAL_INDEX,
+        'index_update_mode' => IndexUpdateModeConst::ASYNC_INDEX
+    ),
+    'include_base_data' => true // false-仅增量（缺省默认）；true-包含存量；
+);
+$otsClient->createIndex ( $request );
+
+$createGlobalequest = array (
+    'table_name' => 'MyTable', // 表名为 MyTable
+    'index_meta' => array (
+        'name' => 'CreateGlobalIndex',
+        'primary_key' => array('PK0', 'col1'),
+        'defined_column' => array('col2'),
+        'index_type' => IndexTypeConst::LOCAL_INDEX,
+        'index_update_mode' => IndexUpdateModeConst::SYNC_INDEX
+    )
+);
+$otsClient->createIndex ( $createGlobalequest );
+
+$createLocalRequest = array (
+    'table_name' => 'MyTable', // 表名为 MyTable
+    'index_meta' => array (
+        'name' => 'CreateLocalIndex',
         'primary_key' => array('col1', 'PK1'),
         'defined_column' => array('col2')
     )
 );
-$otsClient->createIndex ( $request );
+$otsClient->createIndex ( $createLocalRequest );
 

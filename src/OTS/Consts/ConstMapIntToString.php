@@ -5,6 +5,8 @@ namespace Aliyun\OTS\Consts;
 
 use Aliyun\OTS\ProtoBuffer\Protocol\DefinedColumnType;
 use Aliyun\OTS\ProtoBuffer\Protocol\IndexOptions;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexType;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexUpdateMode;
 use Aliyun\OTS\ProtoBuffer\Protocol\QueryType;
 use Aliyun\OTS\ProtoBuffer\Protocol\SortMode;
 use Aliyun\OTS\ProtoBuffer\Protocol\SortOrder;
@@ -236,6 +238,30 @@ class ConstMapIntToString
                 return GroupByTypeConst::GROUP_BY_GEO_DISTANCE;
             case GroupByType::GROUP_BY_HISTOGRAM:
                 return GroupByTypeConst::GROUP_BY_HISTOGRAM;
+            default:
+                return null;
+        }
+    }
+
+    public static function IndexTypeMap($key)
+    {
+        switch ($key) {
+            case IndexType::IT_GLOBAL_INDEX:
+                return IndexTypeConst::GLOBAL_INDEX;
+            case IndexType::IT_LOCAL_INDEX:
+                return IndexTypeConst::LOCAL_INDEX;
+            default:
+                return null;
+        }
+    }
+
+    public static function IndexUpdateModeMap($key)
+    {
+        switch ($key) {
+            case IndexUpdateMode::IUM_ASYNC_INDEX:
+                return IndexUpdateModeConst::ASYNC_INDEX;
+            case IndexUpdateMode::IUM_SYNC_INDEX:
+                return IndexUpdateModeConst::SYNC_INDEX;
             default:
                 return null;
         }
