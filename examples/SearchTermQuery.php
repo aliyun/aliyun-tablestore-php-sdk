@@ -41,6 +41,12 @@ $response = $otsClient->search(array(
     'columns_to_get' => array(
         'return_type' => ColumnReturnTypeConst::RETURN_ALL,
         'return_names' => array('keyword', 'long')
+    ),
+    'routing_values' => array(
+        array(
+            array('pk1', 'pk1'),
+            array('pk2', 11)
+        )
     )
 ));
 

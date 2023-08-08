@@ -1743,6 +1743,15 @@ class ProtoBufferEncoder
         if (isset($request["timeout_ms"])) {
             $pbMessage->setTimeoutMs($request["timeout_ms"]);
         }
+        if (isset($request["routing_values"]) && is_array($request["routing_values"])) {
+            $routingValues = array();
+            foreach ($request["routing_values"] as $routingValue) {
+                $primaryKey = $this->preprocessPrimaryKey($routingValue);
+                $aRoutingValue = PlainBufferBuilder::serializePrimaryKey($primaryKey);
+                $routingValues[] = $aRoutingValue;
+            }
+            $pbMessage->setRoutingValues($routingValues);
+        }
 
         return $pbMessage->serializeToString();
     }
