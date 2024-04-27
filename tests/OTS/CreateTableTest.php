@@ -24,7 +24,8 @@ class CreateTableTest extends SDKTestBase {
         'testAllowUpdateFalse'
     );
 
-    public function setup() {
+    public function setup(): void
+    {
         $table_name = self::$usedTables;
         for($i = 0; $i < count ($table_name); $i ++) {
             $request = array (
@@ -40,7 +41,8 @@ class CreateTableTest extends SDKTestBase {
         }
     }
 
-    public function tearDown() {
+    public function tearDown(): void
+    {
         $table_name = self::$usedTables;
         for($i = 0; $i < count ($table_name); $i ++) {
             $request = array (

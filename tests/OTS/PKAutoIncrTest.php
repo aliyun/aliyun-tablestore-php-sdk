@@ -20,12 +20,12 @@ class PKAutoIncrTest extends SDKTestBase {
         'OTSPkAutoIncrSimpleExample'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }

@@ -23,7 +23,7 @@ class SearchIndexGroupBysTest extends SDKTestBase {
     private static $tableName = 'testSearchTableName';
     private static $indexName = 'testSearchIndexName';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
 
         $createTableRequest = array (
@@ -53,7 +53,7 @@ class SearchIndexGroupBysTest extends SDKTestBase {
         self::waitForSearchIndexSync();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUpSearchIndex(self::$tableName);
         SDKTestBase::cleanUp(array(self::$tableName));

@@ -18,7 +18,7 @@ class GlobalIndexCreate3Test extends SDKTestBase {
     private static $indexName1 = 'testIndexLocalIndex';
     private static $indexName2 = 'testIndexGlobalIndex';
     private static $indexName3 = 'testIndexDefaultIndex';
-    public function setup()
+    public function setup(): void
     {
 
     }
@@ -90,7 +90,7 @@ class GlobalIndexCreate3Test extends SDKTestBase {
         $this->assertEquals($response['index_metas'][2]['index_update_mode'], IndexUpdateModeConst::ASYNC_INDEX);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         try {
             $this->otsClient->dropIndex(array('table_name' => self::$tableName, 'index_name' => self::$indexName1));

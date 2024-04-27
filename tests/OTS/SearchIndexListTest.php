@@ -14,7 +14,7 @@ class SearchIndexListTest extends SDKTestBase {
     private static $tableName = 'testSearchTableName';
     private static $indexName = 'testSearchIndexName';
 
-    public function setup()
+    public function setup(): void
     {
 
         $request = array (
@@ -40,7 +40,7 @@ class SearchIndexListTest extends SDKTestBase {
         SDKTestBase::createInitialTable($request);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         SDKTestBase::cleanUpSearchIndex(self::$tableName);
         SDKTestBase::cleanUp(array(self::$tableName));

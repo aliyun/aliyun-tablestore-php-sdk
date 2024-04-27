@@ -22,7 +22,7 @@ class GetRangeTest extends SDKTestBase {
         'myTable1'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -92,7 +92,7 @@ class GetRangeTest extends SDKTestBase {
         SDKTestBase::waitForTableReady ();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }

@@ -19,7 +19,7 @@ class SQLQueryTest extends SDKTestBase {
     private static $sqlTableName = 'testSearchTableName';
     private static $createSqlTableSql = 'CREATE TABLE `testSearchTableName` (`PK0` BIGINT(20),`PK1` VARCHAR(1024),`geo` MEDIUMTEXT,`boolean` BOOL,`array` MEDIUMTEXT,`double` DOUBLE,`text` MEDIUMTEXT,`keyword` MEDIUMTEXT,`nested` MEDIUMTEXT,`long` BIGINT(20),PRIMARY KEY(`PK0`,`PK1`));';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
 
         $createTableRequest = array (
@@ -49,7 +49,7 @@ class SQLQueryTest extends SDKTestBase {
         self::waitForSearchIndexSync();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUpSearchIndex(self::$tableName);
         SDKTestBase::cleanUp(array(self::$tableName));

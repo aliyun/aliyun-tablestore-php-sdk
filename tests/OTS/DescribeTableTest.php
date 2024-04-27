@@ -16,7 +16,8 @@ class DescribeTableTest extends SDKTestBase {
         'test'
     );
 
-    public function setup() {
+    public function setup(): void
+    {
        $this->cleanUp (self::$usedTables);
     }
     
@@ -100,7 +101,7 @@ class DescribeTableTest extends SDKTestBase {
         $this->assertEquals ($teturn, $table_meta['table_meta']);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $table_name = self::$usedTables;
         for($i = 0; $i < count ($table_name); $i ++) {

@@ -8,19 +8,13 @@
 			"homepage" : "http://www.aliyun.com/product/ots"
 		}
 	],
-	"repositories": {
-		"packagist": {
-			"type": "composer",
-			"url": "https://packagist.phpcomposer.com"
-		}
-	},
 	"support" : {
 		"forum" : "http://bbs.aliyun.com/thread/226.html"
 	},
 	"require" : {
-		"php" : ">=5.5",
+		"php" : ">=7.1",
 		"guzzlehttp/guzzle": "^5.3.1|^6.2.1|^7.2.0",
-		"guzzlehttp/psr7": "^1.4.1",
+		"guzzlehttp/psr7": "^2.6.0",
 		"guzzlehttp/promises": "~1.0",
 		"google/protobuf": "^3.5",
 		"google/flatbuffers": "22.9.29"

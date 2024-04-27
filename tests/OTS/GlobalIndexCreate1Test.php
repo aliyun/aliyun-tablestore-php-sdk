@@ -15,7 +15,7 @@ class GlobalIndexCreate1Test extends SDKTestBase {
     private static $tableName = 'testGlobalTableName';
     private static $indexName1 = 'testGlobalTableWithIndex1';
     private static $indexName2 = 'testGlobalTableWithIndex2';
-    public function setup()
+    public function setup(): void
     {
 
     }
@@ -77,7 +77,7 @@ class GlobalIndexCreate1Test extends SDKTestBase {
         $this->otsClient->deleteTable(array('table_name' => self::$tableName));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         try {
             $this->otsClient->dropIndex(array('table_name' => self::$tableName, 'index_name' => self::$indexName1));

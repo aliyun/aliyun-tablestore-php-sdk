@@ -15,12 +15,12 @@ class listTableTest extends SDKTestBase {
         'myTable1'
     );
 
-    public function setup()
+    public function setup(): void
     {
         $this->cleanUp (self::$usedTables);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->cleanUp (self::$usedTables);
     }

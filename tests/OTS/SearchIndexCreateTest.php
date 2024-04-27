@@ -13,7 +13,7 @@ class SearchIndexCreateTest extends SDKTestBase {
 
     private static $tableName = 'testSearchTableName';
 
-    public function setup()
+    public function setup(): void
     {
 
         $request = array (
@@ -39,7 +39,7 @@ class SearchIndexCreateTest extends SDKTestBase {
         SDKTestBase::createInitialTable($request);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         SDKTestBase::cleanUpSearchIndex(self::$tableName);
         SDKTestBase::cleanUp(array(self::$tableName));

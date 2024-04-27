@@ -17,7 +17,7 @@ class GetRowTest extends SDKTestBase {
         'myTable'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -62,7 +62,7 @@ class GetRowTest extends SDKTestBase {
         ));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
     }
