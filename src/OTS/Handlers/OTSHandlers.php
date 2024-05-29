@@ -8,28 +8,28 @@ use Aliyun\OTS;
 class OTSHandlers
 {
     /** var OTSClientConfig */
-    private $clientConfig;
+    protected $clientConfig;
 
     /** var GuzzleHttp\Client */
-    private $httpClient;
+    protected $httpClient;
 
     /** var RetryHandler */
-    private $retryHandler;
+    protected $retryHandler;
 
     /** var ProtoBufferDecoder */
-    private $protoBufferDecoder;
+    protected $protoBufferDecoder;
 
     /** var ProtoBufferEncoder */
-    private $protoBufferEncoder;
+    protected $protoBufferEncoder;
 
     /** var ErrorHandler */
-    private $errorHandler;
+    protected $errorHandler;
 
     /** var HttpHeaderHandler */
-    private $httpHeaderHandler;
+    protected $httpHeaderHandler;
 
     /** var HttpHandler */
-    private $httpHandler;
+    protected $httpHandler;
 
     public function __construct(\Aliyun\OTS\OTSClientConfig $config)
     {

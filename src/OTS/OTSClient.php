@@ -20,7 +20,11 @@ use Aliyun\OTS\Handlers;
 class OTSClient
 {
     /** @var OTSClientConfig */
-    private $config;
+    protected $config;
+    /**
+     * @var Handlers\OTSHandlers
+     */
+    protected $handlers;
 
     /**
      * OTSClient的构造函数
