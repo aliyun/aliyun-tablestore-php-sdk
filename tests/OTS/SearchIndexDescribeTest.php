@@ -4,6 +4,7 @@ namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS;
 use Aliyun\OTS\Consts\FieldTypeConst;
+use Aliyun\OTS\Consts\IndexStatusConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\SortOrderConst;
 use Aliyun\OTS\Consts\SortModeConst;
@@ -157,6 +158,8 @@ class SearchIndexDescribeTest extends SDKTestBase {
         $sortSort = $response['index_schema']['index_sort'][1]['pk_sort'];
         $this->assertEquals($sortSort['order'], SortOrderConst::SORT_ORDER_ASC);
 
+        $indexStatus = $response['index_status'];
+        $this->assertEquals($indexStatus['status'], IndexStatusConst::RUNNING);
 
     }
 }

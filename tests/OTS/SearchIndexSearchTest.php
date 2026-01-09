@@ -3,7 +3,15 @@
 namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS\Consts\ColumnReturnTypeConst;
+use Aliyun\OTS\Consts\DecayMathFunctionConst;
+use Aliyun\OTS\Consts\DecayParamTypeConst;
 use Aliyun\OTS\Consts\FieldTypeConst;
+use Aliyun\OTS\Consts\FunctionCombineModeConst;
+use Aliyun\OTS\Consts\FunctionModifierConst;
+use Aliyun\OTS\Consts\FunctionScoreModeConst;
+use Aliyun\OTS\Consts\HighlightEncoderConst;
+use Aliyun\OTS\Consts\HighlightFragmentOrderConst;
+use Aliyun\OTS\Consts\MultiValueModeConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\QueryOperatorConst;
 use Aliyun\OTS\Consts\QueryTypeConst;
@@ -12,6 +20,9 @@ use Aliyun\OTS\Consts\ScoreModeConst;
 use Aliyun\OTS\Consts\SortModeConst;
 use Aliyun\OTS\Consts\SortOrderConst;
 use Aliyun\OTS\Consts\GeoDistanceTypeConst;
+use Aliyun\OTS\Consts\VectorDataTypeConst;
+use Aliyun\OTS\Consts\VectorMetricTypeConst;
+use Aliyun\OTS\ProtoBuffer\Protocol\HighlightFragmentOrder;
 
 require_once __DIR__ . '/TestBase.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -350,7 +361,7 @@ class SearchIndexSearchTest extends SDKTestBase {
 
 //        print json_encode($response, JSON_PRETTY_PRINT);
         $this->assertTrue($response['is_all_succeeded']);
-        $this->assertEquals($response['total_hits'], 3);
+        $this->assertEquals($response['total_hits'], 8);
         $this->assertEquals(count($response['rows']), 2);
         $this->assertNotEmpty($response['next_token']);
     }
@@ -721,7 +732,7 @@ class SearchIndexSearchTest extends SDKTestBase {
 
 //        print json_encode($response, JSON_PRETTY_PRINT);
         $this->assertTrue($response['is_all_succeeded']);
-        $this->assertEquals($response['total_hits'], 4);
+        $this->assertEquals($response['total_hits'], 9);
         $this->assertEquals(count($response['rows']), 2);
         $this->assertNotEmpty($response['next_token']);
     }
@@ -863,7 +874,7 @@ class SearchIndexSearchTest extends SDKTestBase {
         $this->assertTrue($response['is_all_succeeded']);
         $this->assertEquals($response['total_hits'], 5);
         $this->assertEquals(count($response['rows']), 2);
-        $this->assertEquals($response['rows'][0]['attribute_columns'][1][1], 4);//score_sort DESC
+        $this->assertEquals($response['rows'][0]['attribute_columns'][1][1], 3);//score_sort DESC
         $this->assertNotEmpty($response['next_token']);
     }
 
@@ -1031,7 +1042,7 @@ class SearchIndexSearchTest extends SDKTestBase {
 
 //        print json_encode($response, JSON_PRETTY_PRINT);
         $this->assertTrue($response['is_all_succeeded']);
-        $this->assertEquals($response['total_hits'], 5);
+        $this->assertEquals($response['total_hits'], 10);
         $this->assertEquals(count($response['rows']), 3);
         $this->assertNotEmpty($response['next_token']);
     }
@@ -1239,13 +1250,194 @@ class SearchIndexSearchTest extends SDKTestBase {
         $this->assertNotEmpty($response['next_token']);
     }
 
+    public function testKnnVectorQuery() {//16
+        $response = $this->otsClient->search(array(
+            'table_name' => self::$tableName,
+            'index_name' => self::$indexName,
+            'search_query' => array(
+                'offset' => 0,
+                'limit' => 3,
+                'get_total_count' => false,
+                'query' => array(
+                    'query_type' => QueryTypeConst::KNN_VECTOR_QUERY,
+                    'query' => array(
+                        'field_name' => 'vector',
+                        'filter' => array(
+                            'query_type' => QueryTypeConst::MATCH_ALL_QUERY
+                        ),
+                        'top_k' => 100,
+                        'weight' => 1,
+                        'float32_query_vector' => array(0.1, 1.2, 0.6, 1)
+                    )
+                ),
+            ),
+            'columns_to_get' => array(
+                'return_type' => ColumnReturnTypeConst::RETURN_SPECIFIED,
+                'return_names' => array('vector')
+            )
+        ));
+
+//        print json_encode($response, JSON_PRETTY_PRINT);
+        $this->assertTrue($response['is_all_succeeded']);
+        $this->assertEquals($response['total_hits'], -1);
+        $this->assertEquals(count($response['rows']), 3);
+        $this->assertEquals($response['rows'][0]['primary_key'][0][1], 1);
+    }
+
+    public function testFunctionsScoreQuery() {//18
+        $response = $this->otsClient->search(array(
+            'table_name' => self::$tableName,
+            'index_name' => self::$indexName,
+            'search_query' => array(
+                'offset' => 0,
+                'limit' => 2,
+                'get_total_count' => true,
+                'query' => array(
+                    'query_type' => QueryTypeConst::FUNCTIONS_SCORE_QUERY,
+                    'query' => array(
+                        'query' => array(
+                            'query_type' => QueryTypeConst::EXISTS_QUERY,
+                            'query' => array(
+                                'field_name' => 'keyword'
+                            )
+
+                        ),
+                        'min_score'=> 1,
+                        'max_score' => 1000,
+                        'score_mode' => FunctionScoreModeConst::SUM,
+                        'combine_mode' => FunctionCombineModeConst::SUM,
+                        'functions' => array(
+                            array(
+                                'weight' => 1,
+                                'filter' => array(
+                                    'query_type' => QueryTypeConst::MATCH_ALL_QUERY
+                                ),
+                                'decay_function' => array(
+                                    'field_name' => 'double',
+                                    'math_function' => DecayMathFunctionConst::LINEAR,
+                                    'decay' => 0.5,
+                                    'decay_param' => array(
+                                        'type' => DecayParamTypeConst::NUMERIC,
+                                        'origin' => 1.3,
+                                        'scale' => 1,
+                                        'offset' => 0.5
+                                    ),
+                                    'multi_value_mode' => MultiValueModeConst::MIN
+                                )
+                            )
+                        ),
+                    )
+                ),
+            ),
+            'columns_to_get' => array(
+                'return_type' => ColumnReturnTypeConst::RETURN_SPECIFIED,
+                'return_names' => array('double')
+            )
+        ));
+
+        //print json_encode($response, JSON_PRETTY_PRINT);
+        $this->assertTrue($response['is_all_succeeded']);
+        $this->assertEquals($response['rows'][0]["attribute_columns"][0][1], 1.1);
+
+        $response = $this->otsClient->search(array(
+            'table_name' => self::$tableName,
+            'index_name' => self::$indexName,
+            'search_query' => array(
+                'offset' => 0,
+                'limit' => 2,
+                'get_total_count' => true,
+                'query' => array(
+                    'query_type' => QueryTypeConst::FUNCTIONS_SCORE_QUERY,
+                    'query' => array(
+                        'query' => array(
+                            'query_type' => QueryTypeConst::EXISTS_QUERY,
+                            'query' => array(
+                                'field_name' => 'keyword'
+                            )
+
+                        ),
+                        'min_score'=> 1,
+                        'max_score' => 1000,
+                        'score_mode' => FunctionScoreModeConst::SUM,
+                        'combine_mode' => FunctionCombineModeConst::SUM,
+                        'functions' => array(
+                            array(
+                                'weight' => 1,
+                                'filter' => array(
+                                    'query_type' => QueryTypeConst::MATCH_ALL_QUERY
+                                ),
+                                'random_function' => array()
+                            )
+                        ),
+                    )
+                ),
+            ),
+            'columns_to_get' => array(
+                'return_type' => ColumnReturnTypeConst::RETURN_SPECIFIED,
+                'return_names' => array('double')
+            )
+        ));
+
+        //print json_encode($response, JSON_PRETTY_PRINT);
+        $this->assertTrue($response['is_all_succeeded']);
+        $this->assertEquals(count($response['rows']), 2);
+
+        $response = $this->otsClient->search(array(
+            'table_name' => self::$tableName,
+            'index_name' => self::$indexName,
+            'search_query' => array(
+                'offset' => 0,
+                'limit' => 2,
+                'get_total_count' => true,
+                'query' => array(
+                    'query_type' => QueryTypeConst::FUNCTIONS_SCORE_QUERY,
+                    'query' => array(
+                        'query' => array(
+                            'query_type' => QueryTypeConst::EXISTS_QUERY,
+                            'query' => array(
+                                'field_name' => 'keyword'
+                            )
+
+                        ),
+                        'min_score'=> 1,
+                        'max_score' => 1000,
+                        'score_mode' => FunctionScoreModeConst::SUM,
+                        'combine_mode' => FunctionCombineModeConst::SUM,
+                        'functions' => array(
+                            array(
+                                'weight' => 1,
+                                'filter' => array(
+                                    'query_type' => QueryTypeConst::MATCH_ALL_QUERY
+                                ),
+                                'field_value_factor_function' => array(
+                                    'field_name' => 'double',
+                                    'factor' => 0.5,
+                                    'modifier' => FunctionModifierConst::LOG1P,
+                                    'missing' => 1.1
+                                )
+                            )
+                        ),
+                    )
+                ),
+            ),
+            'columns_to_get' => array(
+                'return_type' => ColumnReturnTypeConst::RETURN_SPECIFIED,
+                'return_names' => array('double')
+            )
+        ));
+
+        //print json_encode($response, JSON_PRETTY_PRINT);
+        $this->assertTrue($response['is_all_succeeded']);
+        $this->assertEquals(count($response['rows']), 2);
+    }
+
     public function testNotReturnAllWithNoToken() {
         $response = $this->otsClient->search(array(
             'table_name' => self::$tableName,
             'index_name' => self::$indexName,
             'search_query' => array(
                 'offset' => 0,
-                'limit' => 10,
+                'limit' => 11,
                 'get_total_count' => false,
                 'query' => array(
                     'query_type' => QueryTypeConst::MATCH_ALL_QUERY
@@ -1270,6 +1462,195 @@ class SearchIndexSearchTest extends SDKTestBase {
         $this->assertTrue($response['is_all_succeeded']);
         $this->assertEquals($response['total_hits'], -1);
         $this->assertEmpty($response['next_token']);
+    }
+
+    public function testMatchQueryWithHighlighting()
+    {
+        $response = $this->otsClient->search(array(
+            'table_name' => self::$tableName,
+            'index_name' => self::$indexName,
+            'search_query' => array(
+                'offset' => 0,
+                'limit' => 5,
+                'get_total_count' => true,
+                'query' => array(
+                    'query_type' => QueryTypeConst::BOOL_QUERY,
+                    'query' => array(
+                        'should_queries' => array(
+                            array(
+                                'query_type' => QueryTypeConst::MATCH_QUERY,
+                                'query' => array(
+                                    'field_name' => 'col_text',
+                                    'text' => 'hangzhou shanghai',
+                                    'weight' => 1
+                                )
+                            ),
+                            array(
+                                'query_type' => QueryTypeConst::NESTED_QUERY,
+                                'query' => array(
+                                    'path' => 'col_nested',
+                                    'score_mode' => ScoreModeConst::SCORE_MODE_MIN,
+                                    'weight' => 1,
+                                    'query' => array(
+                                        'query_type' => QueryTypeConst::BOOL_QUERY,
+                                        'query' => array(
+                                            'should_queries' => array(
+                                                array(
+                                                    'query_type' => QueryTypeConst::MATCH_QUERY,
+                                                    'query' => array(
+                                                        'field_name' => 'col_nested.level1_col1_text',
+                                                        'text' => 'hangzhou shanghai',
+                                                        'weight' => 1
+                                                    )
+                                                ),
+                                                array(
+                                                    'query_type' => QueryTypeConst::NESTED_QUERY,
+                                                    'query' => array(
+                                                        'path' => 'col_nested.level1_col2_nested',
+                                                        'score_mode' => ScoreModeConst::SCORE_MODE_MIN,
+                                                        'weight' => 1,
+                                                        'query' => array(
+                                                            'query_type' => QueryTypeConst::MATCH_QUERY,
+                                                            'query' => array(
+                                                                'field_name' => 'col_nested.level1_col2_nested.level2_col1_text',
+                                                                'text' => 'hangzhou shanghai',
+                                                                'weight' => 1
+                                                            )
+                                                        ),
+                                                        'inner_hits' => array(
+                                                            'sort' => array(
+                                                                array(
+                                                                    'doc_sort' => array(
+                                                                        'order' => SortOrderConst::SORT_ORDER_ASC
+                                                                    )
+                                                                ),
+                                                            ),
+                                                            'highlight' => array(
+                                                                'field_highlight_params' => array(
+                                                                    'col_nested.level1_col2_nested.level2_col1_text' => array()
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            ),
+                                            'minimum_should_match' => 0
+                                        )
+                                    ),
+                                    'inner_hits' => array(
+                                        'sort' => array(
+                                            array(
+                                                'doc_sort' => array(
+                                                    'order' => SortOrderConst::SORT_ORDER_ASC
+                                                ),
+                                                'score_sore' => array(
+                                                    'order' => SortOrderConst::SORT_ORDER_DESC
+                                                )
+                                            ),
+                                        ),
+                                        'highlight' => array(
+                                            'field_highlight_params' => array(
+                                                'col_nested.level1_col1_text' => array()
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        'minimum_should_match' => 0
+                    )
+                ),
+                'highlight' => array(
+                    'highlight_encode' => HighlightEncoderConst::PLAIN,
+                    'field_highlight_params' => array(
+                        'col_text' => array(
+                            'pre_tag' => '<b>',
+                            'post_tag' => '</b>',
+                            'highlight_fragment_order' => HighlightFragmentOrderConst::TEXT_SEQUENCE,
+                            'fragment_size' => 20,
+                            'number_of_fragments' => 3
+                        )
+                    )
+                )
+            ),
+            'columns_to_get' => array(
+                'return_type' => ColumnReturnTypeConst::RETURN_ALL
+            )
+        ));
+
+//        print json_encode($response, JSON_PRETTY_PRINT);
+        $this->printSearchHit($response["search_hits"],"");
+        $this->assertTrue($response['is_all_succeeded']);
+        $this->assertEquals($response['total_hits'], 4);
+        $this->assertEquals(count($response['rows']), 4);
+    }
+
+    private function printSearchHit($searchHits, $prefix)
+    {
+        foreach ($searchHits as $searchHit) {
+            if (!empty($searchHit["score"])) {
+                print($prefix . " Score: " . $searchHit["score"] . "\n");
+            }
+            if (!empty($searchHit["offset"])) {
+                print($prefix . " Offset: " . $searchHit["offset"] . "\n");
+            }
+            if (!empty($searchHit["row"])) {
+                print ($prefix . " Row: " );
+                print json_encode($searchHit["row"]);
+                print ("\n");
+            }
+            if (!empty($searchHit["highlight_result_item"])) {
+                print($prefix . " Highlight: \n");
+                $string = "";
+                foreach ($searchHit["highlight_result_item"]["highlight_fields"] as $key => $value) {
+                    $string = $string . $key .":[" . join(",", $value["fragments"]) . "]\n";
+                }
+                print($prefix . " " . $string);
+            }
+            foreach ($searchHit["search_inner_hits"] as $searchInnerHit) {
+                print($prefix . " Path: " . $searchInnerHit["path"] . "\n");
+                print($prefix . " InnerHit: \n");
+                $this->printSearchHit($searchInnerHit["sub_search_hits"], $prefix . "    ");
+            }
+            print("\n");
+        }
+    }
+
+    public function testFieldSortMissing() {
+        $response = $this->otsClient->search(array(
+            'table_name' => self::$tableName,
+            'index_name' => self::$indexName,
+            'search_query' => array(
+                'offset' => 0,
+                'limit' => 10,
+                'get_total_count' => true,
+                'query' => array(
+                    'query_type' => QueryTypeConst::MATCH_ALL_QUERY
+                ),
+                'sort' => array(
+                    array(
+                        'field_sort' => array(
+                            'field_name' => 'double',
+                            'order' => SortOrderConst::SORT_ORDER_DESC,
+                            'missing_value' => 1.1,
+                            'missing_field' => 'double_sec'
+                        )
+                    ),
+                ),
+                'token' => null,
+            ),
+            'columns_to_get' => array(
+                'return_type' => ColumnReturnTypeConst::RETURN_SPECIFIED,
+                'return_names' => array('double', 'double_sec')
+            )
+        ));
+
+//        print json_encode($response['rows'], JSON_PRETTY_PRINT);
+        $this->assertTrue($response['is_all_succeeded']);
+        $this->assertEquals($response['total_hits'], 10);
+        $this->assertEquals(count($response['rows']), 10);
+        $this->assertEquals($response["rows"][0]["attribute_columns"][0][0], "double_sec");
+        $this->assertEquals($response["rows"][5]["attribute_columns"][0][0], "double");
     }
 
     public static function createIndex() {
@@ -1361,6 +1742,65 @@ class SearchIndexSearchTest extends SDKTestBase {
                             ),
                         )
                     ),
+                    array(
+                        'field_name' => 'vector',
+                        'field_type' => FieldTypeConst::VECTOR,
+                        'index' => true,
+                        'vector_options' => array(
+                            'data_type' => VectorDataTypeConst::FLOAT_32,
+                            'metric_type' => VectorMetricTypeConst::COSINE,
+                            'dimension' => 4
+                        )
+                    ),
+                    array(
+                        'field_name' => 'col_text',
+                        'field_type' => FieldTypeConst::TEXT,
+                        'index' => true,
+                        'enable_highlighting' => true
+                    ),
+                    array(
+                        'field_name' => 'col_nested',
+                        'field_type' => FieldTypeConst::NESTED,
+                        'index' => false,
+                        'enable_sort_and_agg' => false,
+                        'store' => false,
+                        'field_schemas' => array(
+                            array(
+                                'field_name' => 'level1_col1_text',
+                                'field_type' => FieldTypeConst::TEXT,
+                                'index' => true,
+                                'enable_highlighting' => true,
+                                'enable_sort_and_agg' => false,
+                                'store' => true,
+                                'is_array' => false
+                            ),
+                            array(
+                                'field_name' => 'level1_col2_nested',
+                                'field_type' => FieldTypeConst::NESTED,
+                                'index' => false,
+                                'enable_sort_and_agg' => false,
+                                'store' => false,
+                                'is_array' => false,
+                                'field_schemas' => array(
+                                    array(
+                                        'field_name' => 'level2_col1_text',
+                                        'field_type' => FieldTypeConst::TEXT,
+                                        'index' => true,
+                                        'enable_highlighting' => true,
+                                        'enable_sort_and_agg' => false,
+                                        'store' => true,
+                                        'is_array' => false
+                                    )
+                                )
+                            ),
+                        )
+                    ),
+                    array(
+                        'field_name' => 'double_sec',
+                        'field_type' => FieldTypeConst::DOUBLE,
+                        'index' => true,
+                        'enable_sort_and_agg' => true
+                    )
                 ),
                 'index_setting' => array(
                     'routing_fields' => array("PK0")
@@ -1372,11 +1812,20 @@ class SearchIndexSearchTest extends SDKTestBase {
     }
 
     private static function insertData() {
+        $keywords = ["hangzhou", "beijing", "shanghai", "hangzhou shanghai", "hangzhou beijing shanghai"];
         for ($i = 0; $i < 5; $i++) {
+            $stringBuilder = "[{" .
+                "\"level1_col1_text\":\"" . $keywords[$i] . " " . $i . "_1" . "\"," .
+                "\"level1_col2_nested\":" . "[{" .
+                "\"level2_col1_text\":\"" . $keywords[$i] . " " . $i . "_1" . "\"" . "}]}," .
+                "{" .
+                "\"level1_col1_text\":\"" . $keywords[$i] . " " . $i . "_2" . "\"," .
+                "\"level1_col2_nested\":" . "[{" .
+                "\"level2_col1_text\":\"" . $keywords[$i] . " " . $i . "_2" . "\"" . "}]}]";
             $request = array(
                 'table_name' => self::$tableName,
                 'condition' => RowExistenceExpectationConst::CONST_IGNORE,
-                'primary_key' => array ( // 主键
+                'primary_key' => array( // 主键
                     array('PK0', $i),
                     array('PK1', 'search')
                 ),
@@ -1388,7 +1837,26 @@ class SearchIndexSearchTest extends SDKTestBase {
                     array('double', $i + 0.1),
                     array('boolean', $i % 2 == 0),
                     array('array', '["search","index' . $i . '"]'),
-                    array('nested', '[{"nested_keyword":"sub","nested_long":' . $i . '}]')
+                    array('nested', '[{"nested_keyword":"sub","nested_long":' . $i . '}]'),
+                    array('vector', '[0.1, 1.2, 0.6,' . $i . ']'),
+                    array("col_text", $keywords[$i]),
+                    array("col_nested", $stringBuilder)
+                )
+            );
+
+            SDKTestBase::putInitialData($request);
+        }
+        for ($i = 5; $i < 10; $i++) {
+            $request = array(
+                'table_name' => self::$tableName,
+                'condition' => RowExistenceExpectationConst::CONST_IGNORE,
+                'primary_key' => array( // 主键
+                    array('PK0', $i),
+                    array('PK1', 'search')
+                ),
+                'attribute_columns' => array(
+                    array("boolean", true),
+                    array("double_sec", $i + 0.1)
                 )
             );
 

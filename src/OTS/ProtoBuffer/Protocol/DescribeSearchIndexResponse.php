@@ -43,6 +43,11 @@ class DescribeSearchIndexResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Messa
      */
     private $time_to_live = 0;
     private $has_time_to_live = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.IndexStatus index_status = 8;</code>
+     */
+    private $index_status = null;
+    private $has_index_status = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -215,6 +220,34 @@ class DescribeSearchIndexResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Messa
     public function hasTimeToLive()
     {
         return $this->has_time_to_live;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.IndexStatus index_status = 8;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\IndexStatus
+     */
+    public function getIndexStatus()
+    {
+        return $this->index_status;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.IndexStatus index_status = 8;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\IndexStatus $var
+     * @return $this
+     */
+    public function setIndexStatus($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\IndexStatus::class);
+        $this->index_status = $var;
+        $this->has_index_status = true;
+
+        return $this;
+    }
+
+    public function hasIndexStatus()
+    {
+        return $this->has_index_status;
     }
 
 }

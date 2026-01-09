@@ -36,10 +36,15 @@ class FieldSort extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     /**
      *encoded as SQLVariant
      *
-     * Generated from protobuf field <code>optional bytes missing = 5;</code>
+     * Generated from protobuf field <code>optional bytes missing_value = 5;</code>
      */
-    private $missing = '';
-    private $has_missing = false;
+    private $missing_value = '';
+    private $has_missing_value = false;
+    /**
+     * Generated from protobuf field <code>optional string missing_field = 6;</code>
+     */
+    private $missing_field = '';
+    private $has_missing_field = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -161,34 +166,61 @@ class FieldSort extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     /**
      *encoded as SQLVariant
      *
-     * Generated from protobuf field <code>optional bytes missing = 5;</code>
+     * Generated from protobuf field <code>optional bytes missing_value = 5;</code>
      * @return string
      */
-    public function getMissing()
+    public function getMissingValue()
     {
-        return $this->missing;
+        return $this->missing_value;
     }
 
     /**
      *encoded as SQLVariant
      *
-     * Generated from protobuf field <code>optional bytes missing = 5;</code>
+     * Generated from protobuf field <code>optional bytes missing_value = 5;</code>
      * @param string $var
      * @return $this
      */
-    public function setMissing($var)
+    public function setMissingValue($var)
     {
         GPBUtil::checkString($var, False);
-        $this->missing = $var;
-        $this->has_missing = true;
+        $this->missing_value = $var;
+        $this->has_missing_value = true;
 
         return $this;
     }
 
-    public function hasMissing()
+    public function hasMissingValue()
     {
-        return $this->has_missing;
+        return $this->has_missing_value;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string missing_field = 6;</code>
+     * @return string
+     */
+    public function getMissingField()
+    {
+        return $this->missing_field;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional string missing_field = 6;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setMissingField($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->missing_field = $var;
+        $this->has_missing_field = true;
+
+        return $this;
+    }
+
+    public function hasMissingField()
+    {
+        return $this->has_missing_field;
     }
 
 }
-

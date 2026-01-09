@@ -3,6 +3,7 @@
 namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS;
+use Aliyun\OTS\Consts\DefinedColumnTypeConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 
 require_once __DIR__ . '/TestBase.php';
@@ -54,7 +55,6 @@ class DescribeTableTest extends SDKTestBase {
                 array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
                 array('PK2', PrimaryKeyTypeConst::CONST_INTEGER)
             ),
-            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
@@ -98,6 +98,46 @@ class DescribeTableTest extends SDKTestBase {
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
+    }
+
+    public function testIndexSyncPhase() {
+
+        $tablebody = array (
+            'table_meta' => array (
+                'table_name' => self::$usedTables[0],
+                'primary_key_schema' => array (
+                    array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
+                    array('PK2', PrimaryKeyTypeConst::CONST_INTEGER)
+                ),
+                'defined_column' => array(
+                    array('COL1', DefinedColumnTypeConst::DCT_INTEGER),
+                    array('COL2', DefinedColumnTypeConst::DCT_INTEGER)
+                )
+            ),
+            'reserved_throughput' => array (
+                'capacity_unit' => array (
+                    'read' => 0,
+                    'write' => 0
+                )
+            ),
+            'table_options' => array(
+                'time_to_live' => -1,
+                'max_versions' => 1,
+                'deviation_cell_version_in_sec' => 86400
+            ),
+            'index_metas' => array(
+                array(
+                    'name' => 'test5Index1',
+                    'primary_key' => array('PK2'),
+                    'defined_column' => array('COL1', 'COL2')
+                )
+            )
+        );
+        $this->assertEmpty ($this->otsClient->createTable ($tablebody));
+        $tablename['table_name'] = $tablebody['table_meta']['table_name'];
+        $table_meta = $this->otsClient->describeTable ($tablename);
+        $index_sync_phase = $table_meta['index_metas'][0]['index_sync_phase'];
+        $this->assertEquals (OTS\Consts\SyncPhaseConst::INCR, $index_sync_phase);
     }
 
     public function tearDown()

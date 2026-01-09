@@ -15,6 +15,7 @@ class RequestContext
     public $responseHeaders;
     public $responseHttpStatus;
     public $responseBody;
+    public $responseReasonPhrase;
     public $otsServerException;
 
     public $clientConfig;

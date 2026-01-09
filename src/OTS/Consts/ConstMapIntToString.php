@@ -5,6 +5,8 @@ namespace Aliyun\OTS\Consts;
 
 use Aliyun\OTS\ProtoBuffer\Protocol\DefinedColumnType;
 use Aliyun\OTS\ProtoBuffer\Protocol\IndexOptions;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexStatusEnum;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexSyncPhase;
 use Aliyun\OTS\ProtoBuffer\Protocol\IndexType;
 use Aliyun\OTS\ProtoBuffer\Protocol\IndexUpdateMode;
 use Aliyun\OTS\ProtoBuffer\Protocol\QueryType;
@@ -56,6 +58,10 @@ class ConstMapIntToString
                 return QueryTypeConst::TERMS_QUERY;
             case QueryType::EXISTS_QUERY:
                 return QueryTypeConst::EXISTS_QUERY;
+            case QueryType::KNN_VECTOR_QUERY:
+                return QueryTypeConst::KNN_VECTOR_QUERY;
+            case QueryType::FUNCTIONS_SCORE_QUERY:
+                return QueryTypeConst::FUNCTIONS_SCORE_QUERY;
             default:
                 return null;
         }
@@ -106,6 +112,8 @@ class ConstMapIntToString
                 return FieldTypeConst::GEO_POINT;
             case FieldType::DATE:
                 return FieldTypeConst::DATE;
+            case FieldType::VECTOR:
+                return FieldTypeConst::VECTOR;
             default:
                 return null;
         }
@@ -238,6 +246,12 @@ class ConstMapIntToString
                 return GroupByTypeConst::GROUP_BY_GEO_DISTANCE;
             case GroupByType::GROUP_BY_HISTOGRAM:
                 return GroupByTypeConst::GROUP_BY_HISTOGRAM;
+            case GroupByType::GROUP_BY_DATE_HISTOGRAM:
+                return GroupByTypeConst::GROUP_BY_DATE_HISTOGRAM;
+            case GroupByType::GROUP_BY_GEO_GRID:
+                return GroupByTypeConst::GROUP_BY_GEO_GRID;
+            case GroupByType::GROUP_BY_COMPOSITE:
+                return GroupByTypeConst::GROUP_BY_COMPOSITE;
             default:
                 return null;
         }
@@ -264,6 +278,30 @@ class ConstMapIntToString
                 return IndexUpdateModeConst::SYNC_INDEX;
             default:
                 return null;
+        }
+    }
+
+    public static function IndexSyncPhaseMap($getIndexSyncPhase)
+    {
+        switch ($getIndexSyncPhase) {
+            case IndexSyncPhase::ISP_INCR:
+                return SyncPhaseConst::INCR;
+            default:
+                return SyncPhaseConst::FULL;
+        }
+    }
+
+    public static function IndexStatusMap($key)
+    {
+        switch ($key) {
+            case IndexStatusEnum::PENDING:
+                return IndexStatusConst::PENDING;
+            case IndexStatusEnum::FAILED:
+                return IndexStatusConst::FAILED;
+            case IndexStatusEnum::RUNNING:
+                return IndexStatusConst::RUNNING;
+            default:
+                return IndexStatusConst::UNKNOWN;
         }
     }
 }

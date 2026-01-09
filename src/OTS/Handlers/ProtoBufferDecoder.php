@@ -22,6 +22,14 @@ use Aliyun\OTS\ProtoBuffer\Protocol\AggregationResult;
 use Aliyun\OTS\ProtoBuffer\Protocol\AggregationsResult;
 use Aliyun\OTS\ProtoBuffer\Protocol\AggregationType;
 use Aliyun\OTS\ProtoBuffer\Protocol\AvgAggregationResult;
+use Aliyun\OTS\ProtoBuffer\Protocol\GeoGrid;
+use Aliyun\OTS\ProtoBuffer\Protocol\GeoPoint;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByCompositeResult;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByDateHistogramResult;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByGeoGridResult;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByGeoGridResultItem;
+use Aliyun\OTS\ProtoBuffer\Protocol\IndexStatusEnum;
+use Aliyun\OTS\ProtoBuffer\Protocol\SearchHit;
 use Aliyun\OTS\ProtoBuffer\Protocol\TopRowsAggregationResult;
 use Aliyun\OTS\ProtoBuffer\Protocol\PercentilesAggregationResult;
 use Aliyun\OTS\ProtoBuffer\Protocol\PercentilesAggregationItem;
@@ -256,6 +264,9 @@ class ProtoBufferDecoder
                 }
                 if ($item->hasIndexUpdateMode()) {
                     $indexMeta["index_update_mode"] = ConstMapIntToString::IndexUpdateModeMap($item->getIndexUpdateMode());
+                }
+                if ($item->hasIndexSyncPhase()) {
+                    $indexMeta["index_sync_phase"] = ConstMapIntToString::IndexSyncPhaseMap($item->getIndexSyncPhase());
                 }
                 array_push($indexMetas, $indexMeta);
             }
@@ -718,6 +729,7 @@ class ProtoBufferDecoder
         $indexSchema = $pbMessage->getSchema();
         $syncStat = $pbMessage->getSyncStat();
         $meteringInfo = $pbMessage->getMeteringInfo();
+        $indexStatusInfo = $pbMessage->getIndexStatus();
 
         $response = array(
             "index_schema" => $this->parseIndexSchema($indexSchema),
@@ -725,7 +737,8 @@ class ProtoBufferDecoder
             "metering_info" => $this->parseMeteringInfo($meteringInfo),
             "brother_index_name" => $pbMessage->getBrotherIndexName(),
             "create_time" => $pbMessage->getCreateTime(),
-            "time_to_live" => $pbMessage->getTimeToLive()
+            "time_to_live" => $pbMessage->getTimeToLive(),
+            "index_status" =>  $this->parseIndexStatus($indexStatusInfo)
         );
 
         return $response;
@@ -764,6 +777,15 @@ class ProtoBufferDecoder
             "field_schemas" => $fieldSchemas,
             "index_setting" => $indexSetting,
             "index_sort" => $indexSort
+        );
+    }
+
+    private function parseIndexStatus($indexStatus)
+    {
+        $status = ConstMapIntToString::IndexStatusMap($indexStatus->getStatus());
+        return array(
+            "status" => $status,
+            "status_description" => $indexStatus->getStatusDescription()
         );
     }
 
@@ -997,6 +1019,32 @@ class ProtoBufferDecoder
         if ($pbMessage->hasGroupBys()) {
             $groupBys = $this->parseGroupBys($pbMessage->getGroupBys());
         }
+        $searchHits = array();
+        if ($pbMessage->getRows()->count() != $pbMessage->getSearchHits()->count() && $pbMessage->getSearchHits()->count() != 0) {
+            print_r("the row count is not equal to search extra result item count in server response body, ignore the search extra result items.");
+        } else {
+            for ($i = 0; $i < $pbMessage->getSearchHits()->count(); $i++) {
+                $searchHits[] = $this->parseSearchHit($pbMessage->getSearchHits()[$i], $rows[$i]);
+            }
+        }
+        $consumed = array();
+        if ($pbMessage->hasConsumed() && $pbMessage->getConsumed()->hasCapacityUnit()) {
+            if ($pbMessage->getConsumed()->getCapacityUnit()->hasRead()) {
+                $consumed["capacity_unit"]["read_capacity_unit"] = $pbMessage->getConsumed()->getCapacityUnit()->getRead();
+            }
+            if ($pbMessage->getConsumed()->getCapacityUnit()->hasWrite()) {
+                $consumed["capacity_unit"]["write_capacity_unit"] = $pbMessage->getConsumed()->getCapacityUnit()->getWrite();
+            }
+        }
+        $reservedConsumed = array();
+        if ($pbMessage->hasReservedConsumed() && $pbMessage->getReservedConsumed()->hasCapacityUnit()) {
+            if ($pbMessage->getReservedConsumed()->getCapacityUnit()->hasRead()) {
+                $reservedConsumed["capacity_unit"]["read_capacity_unit"] = $pbMessage->getReservedConsumed()->getCapacityUnit()->getRead();
+            }
+            if ($pbMessage->getReservedConsumed()->getCapacityUnit()->hasWrite()) {
+                $reservedConsumed["capacity_unit"]["write_capacity_unit"] = $pbMessage->getReservedConsumed()->getCapacityUnit()->getWrite();
+            }
+        }
 
         $response = array(
             'is_all_succeeded' => $pbMessage->getIsAllSucceeded(),
@@ -1004,10 +1052,74 @@ class ProtoBufferDecoder
             'next_token' => $nextToken,
             'rows' => $rows,
             'aggs' => $aggs,
-            'group_bys' => $groupBys
+            'group_bys' => $groupBys,
+            'search_hits' => $searchHits,
+            'consumed' => $consumed,
+            'reserved_consumed' => $reservedConsumed
         );
 
         return $response;
+    }
+
+    private function parseSearchHit($searchHit, $row)
+    {
+        $parseSearchHit = array();
+        $parseSearchHit["row"] = $row;
+        $parseSearchHit["highlight_result_item"] = $this->parseHighlightResultItem($searchHit);
+        if ($searchHit->hasNestedDocOffset()) {
+            $parseSearchHit["offset"] = $searchHit->getNestedDocOffset();
+        }
+        if ($searchHit->hasScore() && !is_nan($searchHit->getScore())) {
+            $parseSearchHit["score"] = $searchHit->getScore();
+        }
+        $parseSearchHit["search_inner_hits"] = array();
+        if ($searchHit->hasSearchInnerHits()) {
+            foreach ($searchHit->getSearchInnerHits() as $item) {
+                $parseSearchInnerHit = $this->parseSearchInnerHit($item);
+                $parseSearchHit["search_inner_hits"][$item->getPath()] = $parseSearchInnerHit;
+            }
+        }
+
+        return $parseSearchHit;
+    }
+
+    private function parseSearchInnerHit($searchInnerHit)
+    {
+        $parseSearchInnerHit = array();
+        if ($searchInnerHit->hasPath()) {
+            $parseSearchInnerHit["path"] = $searchInnerHit->getPath();
+        }
+        if ($searchInnerHit->hasSearchHits()) {
+            $parseSearchInnerHit["sub_search_hits"] = array();
+            foreach ($searchInnerHit->getSearchHits() as $item) {
+                $parseSearchHit = $this->parseSearchHit($item, null);
+                $parseSearchInnerHit["sub_search_hits"][] = $parseSearchHit;
+            }
+        }
+
+        return $parseSearchInnerHit;
+    }
+
+    private function parseHighlightResultItem($searchHit)
+    {
+        $parseResult = array();
+        if ($searchHit->hasHighlightResult()) {
+            $highlightResult = $searchHit->getHighlightResult();
+            $parseHighlightFields = [];
+            foreach ($highlightResult->getHighlightFields() as $item){
+                $parseFragments = [];
+                foreach ($item->getFieldFragments() as $string){
+                    $parseFragments[] = $string;
+                }
+                $highlightField = array(
+                    'fragments' => $parseFragments
+                );
+                $parseHighlightFields[$item->getFieldName()] = $highlightField;
+            }
+            $parseResult["highlight_fields"] = $parseHighlightFields;
+        }
+
+        return $parseResult;
     }
 
     private function parseAggs($bytes)
@@ -1211,9 +1323,80 @@ class ProtoBufferDecoder
                 }
                 return array("items" => $items);
 
+            case GroupByType::GROUP_BY_DATE_HISTOGRAM:
+                $result = new GroupByDateHistogramResult();
+                $result->mergeFromString($bytes);
+                $items = array();
+                foreach ($result->getGroupByDateHistogramItems() as $resultItem) {
+                    $item = array(
+                        "timestamp" => $resultItem->getTimestamp(),
+                        "row_count" => $resultItem->getRowCount()
+                    );
+                    $item = $this->addSubResultIfHas($resultItem, $item);
+                    $items[] = $item;
+                }
+                return array("items" => $items);
+
+            case GroupByType::GROUP_BY_GEO_GRID:
+                $result = new GroupByGeoGridResult();
+                $result->mergeFromString($bytes);
+                $items = array();
+                foreach ($result->getGroupByGeoGridResultItems() as $resultItem) {
+                    $item = array(
+                        "key" => $resultItem->getKey(),
+                        "geo_grid" => $this->parseGeoGrid($resultItem->getGeoGrid()),
+                        "row_count" => $resultItem->getRowCount()
+                    );
+                    $item = $this->addSubResultIfHas($resultItem, $item);
+                    $items[] = $item;
+                }
+                return array("items" => $items);
+
+            case GroupByType::GROUP_BY_COMPOSITE:
+                $result = new GroupByCompositeResult();
+                $result->mergeFromString($bytes);
+                $items = array();
+                foreach ($result->getGroupByCompositeResultItems() as $resultItem) {
+                    $keys = array();
+                    foreach ($resultItem->getKeys() as $key) {
+                        $keys[] = $key;
+                    }
+                    $item = array(
+                        "keys" => $keys,
+                        "row_count" => $resultItem->getRowCount(),
+                    );
+                    $item = $this->addSubResultIfHas($resultItem, $item);
+                    $items[] = $item;
+                }
+                $sourceNames = array();
+                foreach ($result->getSourceGroupByNames() as $sourceGroupByName) {
+                    $sourceNames[] = $sourceGroupByName;
+                }
+                return array(
+                    "items" => $items,
+                    "source_names" => $sourceNames,
+                    "next_token" => $result->getNextToken()
+                    );
+
             default:
                 throw new OTSClientException('Invalid GroupByType [' . $type . '] in response.');
         }
+    }
+
+    private function parseGeoGrid($getGeoGrid)
+    {
+        $topLeft = $getGeoGrid->getTopLeft();
+        $bottomRight = $getGeoGrid->getBottomRight();
+        return array(
+            "top_left" => array(
+                "lat" => $topLeft->getLat(),
+                "lon" => $topLeft->getLon()
+            ),
+            "bottom_right" => array(
+                "lat" => $bottomRight->getLat(),
+                "lon" => $bottomRight->getLon()
+            )
+        );
     }
 
     private function addSubResultIfHas($result ,$item)

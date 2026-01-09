@@ -33,6 +33,11 @@ class Sorter extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $pk_sort = null;
     private $has_pk_sort = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DocSort doc_sort = 5;</code>
+     */
+    private $doc_sort = null;
+    private $has_doc_sort = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -149,6 +154,34 @@ class Sorter extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasPkSort()
     {
         return $this->has_pk_sort;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DocSort doc_sort = 5;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\DocSort
+     */
+    public function getDocSort()
+    {
+        return $this->doc_sort;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.DocSort doc_sort = 5;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\DocSort $var
+     * @return $this
+     */
+    public function setDocSort($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\DocSort::class);
+        $this->doc_sort = $var;
+        $this->has_doc_sort = true;
+
+        return $this;
+    }
+
+    public function hasDocSort()
+    {
+        return $this->has_doc_sort;
     }
 
 }

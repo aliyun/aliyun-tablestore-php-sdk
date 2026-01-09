@@ -80,6 +80,16 @@ class FieldSchema extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $date_formats;
     private $has_date_formats = false;
+    /**
+     * Generated from protobuf field <code>optional bool enable_highlighting = 14;</code>
+     */
+    private $enable_highlighting = false;
+    private $has_enable_highlighting = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.VectorOptions vector_options = 15;</code>
+     */
+    private $vector_options = null;
+    private $has_vector_options = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -452,6 +462,62 @@ class FieldSchema extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasDateFormats()
     {
         return $this->has_date_formats;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool enable_highlighting = 14;</code>
+     * @return bool
+     */
+    public function getEnableHighlighting()
+    {
+        return $this->enable_highlighting;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bool enable_highlighting = 14;</code>
+     * @param bool $var
+     * @return $this
+     */
+    public function setEnableHighlighting($var)
+    {
+        GPBUtil::checkBool($var);
+        $this->enable_highlighting = $var;
+        $this->has_enable_highlighting = true;
+
+        return $this;
+    }
+
+    public function hasEnableHighlighting()
+    {
+        return $this->has_enable_highlighting;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.VectorOptions vector_options = 15;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\VectorOptions
+     */
+    public function getVectorOptions()
+    {
+        return $this->vector_options;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.VectorOptions vector_options = 15;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\VectorOptions $var
+     * @return $this
+     */
+    public function setVectorOptions($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\VectorOptions::class);
+        $this->vector_options = $var;
+        $this->has_vector_options = true;
+
+        return $this;
+    }
+
+    public function hasVectorOptions()
+    {
+        return $this->has_vector_options;
     }
 
 }

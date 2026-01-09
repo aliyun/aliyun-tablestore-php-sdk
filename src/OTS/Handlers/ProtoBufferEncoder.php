@@ -5,6 +5,7 @@ use Aliyun\OTS;
 use Aliyun\OTS\Consts\AggregationTypeConst;
 use Aliyun\OTS\Consts\ColumnTypeConst;
 use Aliyun\OTS\Consts\ComparatorTypeConst;
+use Aliyun\OTS\Consts\DecayParamTypeConst;
 use Aliyun\OTS\Consts\GroupByTypeConst;
 use Aliyun\OTS\Consts\LogicalOperatorConst;
 use Aliyun\OTS\Consts\OperationTypeConst;
@@ -22,22 +23,38 @@ use Aliyun\OTS\ProtoBuffer\Protocol\CompositeColumnValueFilter;
 use Aliyun\OTS\ProtoBuffer\Protocol\ComputeSplitPointsBySizeRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\Condition;
 use Aliyun\OTS\ProtoBuffer\Protocol\CreateTableRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\DateTimeValue;
+use Aliyun\OTS\ProtoBuffer\Protocol\DecayFuncDateParam;
+use Aliyun\OTS\ProtoBuffer\Protocol\DecayFuncGeoParam;
+use Aliyun\OTS\ProtoBuffer\Protocol\DecayFuncNumericParam;
+use Aliyun\OTS\ProtoBuffer\Protocol\DecayFuncParamType;
+use Aliyun\OTS\ProtoBuffer\Protocol\DecayFunction;
 use Aliyun\OTS\ProtoBuffer\Protocol\DeleteRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\DeleteTableRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\DescribeStreamRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\DescribeTableRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\Direction;
+use Aliyun\OTS\ProtoBuffer\Protocol\DocSort;
+use Aliyun\OTS\ProtoBuffer\Protocol\FieldValueFactorFunction;
 use Aliyun\OTS\ProtoBuffer\Protocol\Filter;
 use Aliyun\OTS\ProtoBuffer\Protocol\FilterType;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetRangeRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetRowRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetShardIteratorRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\GetStreamRecordRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByComposite;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByDateHistogram;
+use Aliyun\OTS\ProtoBuffer\Protocol\GroupByGeoGrid;
+use Aliyun\OTS\ProtoBuffer\Protocol\Highlight;
+use Aliyun\OTS\ProtoBuffer\Protocol\HighlightParameter;
+use Aliyun\OTS\ProtoBuffer\Protocol\InnerHits;
 use Aliyun\OTS\ProtoBuffer\Protocol\ListStreamRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\OperationType;
+use Aliyun\OTS\ProtoBuffer\Protocol\PBFunction;
 use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeySchema;
 use Aliyun\OTS\ProtoBuffer\Protocol\PrimaryKeyType;
 use Aliyun\OTS\ProtoBuffer\Protocol\PutRowRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\RandomScoreFunction;
 use Aliyun\OTS\ProtoBuffer\Protocol\ReservedThroughput;
 use Aliyun\OTS\ProtoBuffer\Protocol\ReturnContent;
 use Aliyun\OTS\ProtoBuffer\Protocol\ReturnType;
@@ -127,7 +144,7 @@ use Aliyun\OTS\ProtoBuffer\Protocol\SQLStatementType;
 
 
 use Aliyun\OTS\Consts\ConstMapStringToInt;
-
+use Aliyun\OTS\ProtoBuffer\Protocol\VectorOptions;
 
 class ProtoBufferEncoder
 {
@@ -171,9 +188,9 @@ class ProtoBufferEncoder
     {
         switch ($option) {
             case PrimaryKeyOptionConst::CONST_PK_AUTO_INCR:
-                {
-                    return OTS\ProtoBuffer\Protocol\PrimaryKeyOption::AUTO_INCREMENT;
-                }
+            {
+                return OTS\ProtoBuffer\Protocol\PrimaryKeyOption::AUTO_INCREMENT;
+            }
             default:
                 throw new \Aliyun\OTS\OTSClientException("PrimaryKey option must be one of 'PK_AUTO_INCR");
         }
@@ -346,43 +363,43 @@ class ProtoBufferEncoder
 
         return $ret;
     }
-    
+
     private function preprocessLogicalOperator($logical_operator)
     {
-    	if ( !is_int($logical_operator) ||
-    	        ( $logical_operator != LogicalOperatorConst::CONST_AND && $logical_operator != LogicalOperatorConst::CONST_OR && $logical_operator != LogicalOperatorConst::CONST_NOT ) )
-    	    throw new \Aliyun\OTS\OTSClientException("LogicalOperator must be one of 'LogicalOperatorConst::CONST_AND', 'LogicalOperatorConst::CONST_OR' or 'LogicalOperatorConst::CONST_NOT'.");
+        if ( !is_int($logical_operator) ||
+            ( $logical_operator != LogicalOperatorConst::CONST_AND && $logical_operator != LogicalOperatorConst::CONST_OR && $logical_operator != LogicalOperatorConst::CONST_NOT ) )
+            throw new \Aliyun\OTS\OTSClientException("LogicalOperator must be one of 'LogicalOperatorConst::CONST_AND', 'LogicalOperatorConst::CONST_OR' or 'LogicalOperatorConst::CONST_NOT'.");
 
-    	return $logical_operator;
+        return $logical_operator;
     }
-    
+
     private function preprocessComparatorType($comparator_type)
     {
-    	if ( !is_int($comparator_type) ||
-    	        ( $comparator_type != ComparatorTypeConst::CONST_EQUAL &&
-    	                $comparator_type != ComparatorTypeConst::CONST_NOT_EQUAL &&
-    	                $comparator_type != ComparatorTypeConst::CONST_GREATER_THAN &&
-    	                $comparator_type != ComparatorTypeConst::CONST_GREATER_EQUAL &&
-    	                $comparator_type != ComparatorTypeConst::CONST_LESS_THAN &&
-    	                $comparator_type != ComparatorTypeConst::CONST_LESS_EQUAL ) )
-    	    throw new \Aliyun\OTS\OTSClientException("Comparator must be one of 'ComparatorTypeConst::CONST_EQUAL', 'ComparatorTypeConst::CONST_NOT_EQUAL', 'ComparatorTypeConst::CONST_LESS_THAN', 'ComparatorTypeConst::CONST_LESS_EQUAL', 'ComparatorTypeConst::CONST_GREATER_THAN' or 'ComparatorTypeConst::CONST_GREATER_EQUAL'.");
+        if ( !is_int($comparator_type) ||
+            ( $comparator_type != ComparatorTypeConst::CONST_EQUAL &&
+                $comparator_type != ComparatorTypeConst::CONST_NOT_EQUAL &&
+                $comparator_type != ComparatorTypeConst::CONST_GREATER_THAN &&
+                $comparator_type != ComparatorTypeConst::CONST_GREATER_EQUAL &&
+                $comparator_type != ComparatorTypeConst::CONST_LESS_THAN &&
+                $comparator_type != ComparatorTypeConst::CONST_LESS_EQUAL ) )
+            throw new \Aliyun\OTS\OTSClientException("Comparator must be one of 'ComparatorTypeConst::CONST_EQUAL', 'ComparatorTypeConst::CONST_NOT_EQUAL', 'ComparatorTypeConst::CONST_LESS_THAN', 'ComparatorTypeConst::CONST_LESS_EQUAL', 'ComparatorTypeConst::CONST_GREATER_THAN' or 'ComparatorTypeConst::CONST_GREATER_EQUAL'.");
 
-    	return $comparator_type;
+        return $comparator_type;
     }
-    
+
     private function preprocessRowExistence($condition)
     {
-    	$value=null;
-    	if ( strcmp($condition, RowExistenceExpectationConst::CONST_IGNORE) == 0 )
-    		$value = RowExistenceExpectation::IGNORE;
-    	else if ( strcmp($condition, RowExistenceExpectationConst::CONST_EXPECT_EXIST) == 0 )
-    		$value = RowExistenceExpectation::EXPECT_EXIST;
-    	else if ( strcmp($condition, RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST) == 0 )
-    		$value = RowExistenceExpectation::EXPECT_NOT_EXIST;
-    	else {
-    		throw new \Aliyun\OTS\OTSClientException("Condition must be one of 'RowExistenceExpectationConst::CONST_IGNORE', 'RowExistenceExpectationConst::CONST_EXPECT_EXIST' or 'RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST'.");
-    	}
-    	return $value;
+        $value=null;
+        if ( strcmp($condition, RowExistenceExpectationConst::CONST_IGNORE) == 0 )
+            $value = RowExistenceExpectation::IGNORE;
+        else if ( strcmp($condition, RowExistenceExpectationConst::CONST_EXPECT_EXIST) == 0 )
+            $value = RowExistenceExpectation::EXPECT_EXIST;
+        else if ( strcmp($condition, RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST) == 0 )
+            $value = RowExistenceExpectation::EXPECT_NOT_EXIST;
+        else {
+            throw new \Aliyun\OTS\OTSClientException("Condition must be one of 'RowExistenceExpectationConst::CONST_IGNORE', 'RowExistenceExpectationConst::CONST_EXPECT_EXIST' or 'RowExistenceExpectationConst::CONST_EXPECT_NOT_EXIST'.");
+        }
+        return $value;
     }
 
     /**
@@ -416,83 +433,83 @@ class ProtoBufferEncoder
         }
         return $ret;
     }
-    
+
     private function preprocessColumnCondition($column_filters)
     {
-    	$ret = array();
+        $ret = array();
 
-    	foreach ($column_filters as $name => $value)
-    	{
-    		if ( strcmp( $name, 'logical_operator' ) == 0 || strcmp( $name, 'sub_conditions' ) == 0 || strcmp( $name, 'sub_filters' ) == 0 ) {
-    			// a composite condition
-    			if ( strcmp( $name, 'logical_operator' ) == 0 ) {
-    				$value = $this->preprocessLogicalOperator($value);
-    				$ret = array_merge( $ret, array( $name => $value ) );
-    			} else if ( strcmp( $name, 'sub_conditions' ) == 0 || strcmp( $name, 'sub_filters' ) == 0) {
-    				$sub_conditions = array();
-    				foreach( $value as $cond ) {
-    					if ( is_array( $cond ) )
-    						array_push( $sub_conditions, $this->preprocessColumnCondition( $cond ) );
-    					else
-    						throw new \Aliyun\OTS\OTSClientException( "The value of sub_conditions field should be array of array." );
-    				}
-    				$ret = array_merge( $ret, array( 'sub_conditions' => $sub_conditions ) );
-    			}
-    		} else if ( strcmp( $name, 'column_name' ) == 0 || strcmp( $name, 'value' ) == 0 || strcmp( $name, 'comparator' ) == 0 || strcmp( $name, 'pass_if_missing') == 0 || strcmp( $name, 'latest_version_only' ) == 0 ) {
-    			// a relation condition
-    			if ( strcmp( $name, 'value' ) == 0 ) {
-    			    if(is_array($value)) {
-    			        $value = array(
-    			          'value' => $value[0],
-                          'type' => $value[1]
+        foreach ($column_filters as $name => $value)
+        {
+            if ( strcmp( $name, 'logical_operator' ) == 0 || strcmp( $name, 'sub_conditions' ) == 0 || strcmp( $name, 'sub_filters' ) == 0 ) {
+                // a composite condition
+                if ( strcmp( $name, 'logical_operator' ) == 0 ) {
+                    $value = $this->preprocessLogicalOperator($value);
+                    $ret = array_merge( $ret, array( $name => $value ) );
+                } else if ( strcmp( $name, 'sub_conditions' ) == 0 || strcmp( $name, 'sub_filters' ) == 0) {
+                    $sub_conditions = array();
+                    foreach( $value as $cond ) {
+                        if ( is_array( $cond ) )
+                            array_push( $sub_conditions, $this->preprocessColumnCondition( $cond ) );
+                        else
+                            throw new \Aliyun\OTS\OTSClientException( "The value of sub_conditions field should be array of array." );
+                    }
+                    $ret = array_merge( $ret, array( 'sub_conditions' => $sub_conditions ) );
+                }
+            } else if ( strcmp( $name, 'column_name' ) == 0 || strcmp( $name, 'value' ) == 0 || strcmp( $name, 'comparator' ) == 0 || strcmp( $name, 'pass_if_missing') == 0 || strcmp( $name, 'latest_version_only' ) == 0 ) {
+                // a relation condition
+                if ( strcmp( $name, 'value' ) == 0 ) {
+                    if(is_array($value)) {
+                        $value = array(
+                            'value' => $value[0],
+                            'type' => $value[1]
                         );
                     }
-    				$ret = array_merge( $ret, array(
-    						$name => $this->preprocessColumnValue( $value )
-    				) );
-    			} else if ( strcmp( $name, 'comparator' ) == 0 ) {
-    				$ret = array_merge( $ret, array(
-    						$name => $this->preprocessComparatorType( $value ) ) );
-    			} else {
+                    $ret = array_merge( $ret, array(
+                        $name => $this->preprocessColumnValue( $value )
+                    ) );
+                } else if ( strcmp( $name, 'comparator' ) == 0 ) {
+                    $ret = array_merge( $ret, array(
+                        $name => $this->preprocessComparatorType( $value ) ) );
+                } else {
                     $ret = array_merge($ret, array($name => $value));
                 }
-    		} else if(strcmp($name, 'column_pagination') == 0) {
-    		    // a column pagination
-    		    $ret = array_merge($ret, array(
-    		        $name => $this->preprocessPagination($value)
+            } else if(strcmp($name, 'column_pagination') == 0) {
+                // a column pagination
+                $ret = array_merge($ret, array(
+                    $name => $this->preprocessPagination($value)
                 ));
             }
-    		else {
+            else {
                 throw new \Aliyun\OTS\OTSClientException("Invalid argument name in column filter -" . $name);
             }
-    	}
+        }
 
-    	return $ret;
+        return $ret;
     }
 
     private function preprocessCondition($condition)
     {
-    	$res = null;
-    	if ( is_string($condition) ) {
+        $res = null;
+        if ( is_string($condition) ) {
 
-    		$value = $this->preprocessRowExistence($condition);
-	        $res = array( 'row_existence' => $value );
-    	} else if ( is_array( $condition ) ) {
-    		if ( isset($condition['row_existence']) && !empty($condition['row_existence']) ) {
+            $value = $this->preprocessRowExistence($condition);
+            $res = array( 'row_existence' => $value );
+        } else if ( is_array( $condition ) ) {
+            if ( isset($condition['row_existence']) && !empty($condition['row_existence']) ) {
 
-    			$value = $this->preprocessRowExistence($condition['row_existence']);
-    			$res = array( 'row_existence' => $value );
-    			if ( isset($condition['column_filter']) ) {
-    				$res = array_merge( $res, array( 'column_filter' => $this->preprocessColumnCondition($condition['column_filter']) ) );
-    			}
+                $value = $this->preprocessRowExistence($condition['row_existence']);
+                $res = array( 'row_existence' => $value );
+                if ( isset($condition['column_filter']) ) {
+                    $res = array_merge( $res, array( 'column_filter' => $this->preprocessColumnCondition($condition['column_filter']) ) );
+                }
                 if ( isset($condition['column_condition']) ) {
                     $res = array_merge( $res, array( 'column_filter' => $this->preprocessColumnCondition($condition['column_condition']) ) );
                 }
-    		} else
-    			throw new \Aliyun\OTS\OTSClientException("Row existence is compulsory for Condition.");
-    	}
+            } else
+                throw new \Aliyun\OTS\OTSClientException("Row existence is compulsory for Condition.");
+        }
 
-    	return $res;
+        return $res;
     }
 
     private function preprocessDeleteRowRequest($request)
@@ -601,7 +618,7 @@ class ProtoBufferEncoder
             $ret['columns_to_get'] = $request['columns_to_get'];
         }
         if (isset($request['column_filter'])) {
-        	$ret['column_filter'] = $this->preprocessColumnCondition($request['column_filter']);
+            $ret['column_filter'] = $this->preprocessColumnCondition($request['column_filter']);
         }
         if(isset($request['max_versions'])) {
             $ret['max_versions'] = $request['max_versions'];
@@ -668,7 +685,7 @@ class ProtoBufferEncoder
         $columns = $this->preprocessColumns($columnsToIncrease);
         return array(UpdateTypeConst::CONST_INCREMENT => $columns);
     }
-    
+
     private function preprocessUpdateRowRequest($request)
     {
         $ret = array();
@@ -739,7 +756,7 @@ class ProtoBufferEncoder
         $ret['inclusive_start_primary_key'] = $this->preprocessPrimaryKey($request['inclusive_start_primary_key']);
         $ret['exclusive_end_primary_key'] = $this->preprocessPrimaryKey($request['exclusive_end_primary_key']);
         if (isset($request['column_filter'])) {
-        	$ret['column_filter'] = $this->preprocessColumnCondition($request['column_filter']);
+            $ret['column_filter'] = $this->preprocessColumnCondition($request['column_filter']);
         }
         if(isset($request['max_versions'])) {
             $ret['max_versions'] = $request['max_versions'];
@@ -858,7 +875,7 @@ class ProtoBufferEncoder
     {
         return '';
     }
-    
+
     private function encodeDeleteTableRequest($request)
     {
         $pbMessage = new DeleteTableRequest();
@@ -871,7 +888,7 @@ class ProtoBufferEncoder
     {
         $pbMessage = new DescribeTableRequest();
         $pbMessage->setTableName($request['table_name']);
-                                          
+
         return $pbMessage->serializeToString();
     }
 
@@ -967,7 +984,7 @@ class ProtoBufferEncoder
                 $tableMeta->getDefinedColumn()[] = $definedColumnSchema;
             }
         }
-         
+
         $reservedThroughput = new ReservedThroughput();
         $capacityUnit = new CapacityUnit();
         $capacityUnit->setRead($request['reserved_throughput']['capacity_unit']['read']);
@@ -1024,26 +1041,26 @@ class ProtoBufferEncoder
 
     private function encodeColumnCondition($column_filter)
     {
-    	$res = null;
-    	if ( isset($column_filter['logical_operator']) && isset($column_filter['sub_conditions']) ) {
-    		$compositeCondition = new CompositeColumnValueFilter();
-    		$compositeCondition->setCombinator( $column_filter['logical_operator'] );
-    		for ($i=0; $i < count($column_filter['sub_conditions']); $i++) {
-    			$sub_cond = $column_filter['sub_conditions'][$i];
-    			$compositeCondition->getSubFilters()[] = $this->encodeColumnCondition( $sub_cond );
-    		}
+        $res = null;
+        if ( isset($column_filter['logical_operator']) && isset($column_filter['sub_conditions']) ) {
+            $compositeCondition = new CompositeColumnValueFilter();
+            $compositeCondition->setCombinator( $column_filter['logical_operator'] );
+            for ($i=0; $i < count($column_filter['sub_conditions']); $i++) {
+                $sub_cond = $column_filter['sub_conditions'][$i];
+                $compositeCondition->getSubFilters()[] = $this->encodeColumnCondition( $sub_cond );
+            }
 
-    		$columnCondition = new Filter();
-    		$columnCondition->setType( FilterType::FT_COMPOSITE_COLUMN_VALUE );
-    		$columnCondition->setFilter( $compositeCondition->serializeToString() );
-    		$res = $columnCondition;
-    	} else if ( isset($column_filter['column_name']) && isset($column_filter['value']) && isset($column_filter['comparator']) ) {
-    		$relationCondition = new SingleColumnValueFilter();
-    		$relationCondition->setColumnName($column_filter['column_name']);
-    		$relationCondition->setComparator($column_filter['comparator']);
+            $columnCondition = new Filter();
+            $columnCondition->setType( FilterType::FT_COMPOSITE_COLUMN_VALUE );
+            $columnCondition->setFilter( $compositeCondition->serializeToString() );
+            $res = $columnCondition;
+        } else if ( isset($column_filter['column_name']) && isset($column_filter['value']) && isset($column_filter['comparator']) ) {
+            $relationCondition = new SingleColumnValueFilter();
+            $relationCondition->setColumnName($column_filter['column_name']);
+            $relationCondition->setComparator($column_filter['comparator']);
             $columnValue = PlainBufferBuilder::serializeColumnValue($column_filter['value']);
             $relationCondition->setColumnValue($columnValue);
-    		if ( !isset($column_filter['pass_if_missing']) ) {
+            if ( !isset($column_filter['pass_if_missing']) ) {
                 $relationCondition->setFilterIfMissing(FALSE);
             } else {
                 $relationCondition->setFilterIfMissing( !$column_filter['pass_if_missing']);
@@ -1053,12 +1070,12 @@ class ProtoBufferEncoder
             } else {
                 $relationCondition->setLatestVersionOnly($column_filter['latest_version_only']);
             }
-    		$columnCondition = new Filter();
-    		$columnCondition->setType( FilterType::FT_SINGLE_COLUMN_VALUE );
+            $columnCondition = new Filter();
+            $columnCondition->setType( FilterType::FT_SINGLE_COLUMN_VALUE );
 
-    		$columnCondition->setFilter( $relationCondition->serializeToString() );
-    		$res = $columnCondition;
-    	} else if(isset($column_filter['column_pagination'])) {
+            $columnCondition->setFilter( $relationCondition->serializeToString() );
+            $res = $columnCondition;
+        } else if(isset($column_filter['column_pagination'])) {
             $columnCondition = new Filter();
             $pagiNation = new ColumnPaginationFilter();
             if(isset($column_filter['column_pagination']['limit'])) {
@@ -1071,7 +1088,7 @@ class ProtoBufferEncoder
             $columnCondition->setFilter( $pagiNation->serializeToString() );
             $res = $columnCondition;
         }
-    	return $res;
+        return $res;
     }
 
     private function encodeReturnContent($request)
@@ -1232,7 +1249,7 @@ class ProtoBufferEncoder
                         $primaryKey = PlainBufferBuilder::serializePrimaryKey($table['primary_key'][$i]);
                         $tableInBatchGetRowRequest->getPrimaryKey()[] = $primaryKey;
                     }
-                 }
+                }
 
                 if (!empty($table['columns_to_get']))
                 {
@@ -1541,6 +1558,12 @@ class ProtoBufferEncoder
         if (!empty($schema["date_formats"])) {
             $fieldSchema->setDateFormats($schema["date_formats"]);
         }
+        if (!empty($schema["vector_options"])) {
+            $fieldSchema->setVectorOptions($this->parseVectorOptions($schema["vector_options"]));
+        }
+        if (!empty($schema["enable_highlighting"])){
+            $fieldSchema->setEnableHighlighting($schema["enable_highlighting"]);
+        }
 
         return $fieldSchema;
     }
@@ -1589,6 +1612,13 @@ class ProtoBufferEncoder
 
                     $fieldSort->setNestedFilter($nestedFilter);
                 }
+                if (isset($sorter["field_sort"]["missing_value"])) {
+                    $valueWithType = $this->preprocessColumnValue($sorter["field_sort"]["missing_value"]);
+                    $fieldSort->setMissingValue(PlainBufferBuilder::serializeSearchValue($valueWithType));
+                }
+                if (isset($sorter["field_sort"]["missing_field"])) {
+                    $fieldSort->setMissingField($sorter["field_sort"]["missing_field"]);
+                }
 
                 $aSorter->setFieldSort($fieldSort);
             } else if (isset($sorter["pk_sort"])) {
@@ -1635,6 +1665,14 @@ class ProtoBufferEncoder
                 }
 
                 $aSorter->setScoreSort($scoreSort);
+            } else if (isset($sorter["doc_sort"])) {
+                $docSort = new DocSort();
+                if (isset($sorter["doc_sort"]["order"])) {
+                    $order = ConstMapStringToInt::SortOrderMap($sorter["doc_sort"]["order"]);
+                    $docSort->setOrder($order);
+                }
+
+                $aSorter->setDocSort($docSort);
             }
 
             array_push($sorterList, $aSorter);
@@ -1766,6 +1804,10 @@ class ProtoBufferEncoder
         $query = $this->parseQuery($searchQuery["query"]);
         $aSearchQuery->setQuery($query);
 
+        if (isset($searchQuery["highlight"])) {
+            $highlight = $this->parseHighlight($searchQuery["highlight"]);
+            $aSearchQuery->setHighlight($highlight);
+        }
         if (isset($searchQuery["sort"])) {
             $sort = $this->parseSort($searchQuery["sort"]);
             $aSearchQuery->setSort($sort);
@@ -1915,7 +1957,9 @@ class ProtoBufferEncoder
             case GroupByTypeConst::GROUP_BY_FIELD:
                 $body = new GroupByField();
                 $body->setFieldName($param["field_name"]);
-                $body->setSize($param["size"]);
+                if (isset($param["size"])) {
+                    $body->setSize($param["size"]);
+                }
                 if (isset($param["min_doc_count"])) {
                     $body->setMinDocCount($param["min_doc_count"]);
                 }
@@ -1964,7 +2008,9 @@ class ProtoBufferEncoder
             case GroupByTypeConst::GROUP_BY_HISTOGRAM:
                 $body = new GroupByHistogram();
                 $body->setFieldName($param["field_name"]);
-                $body->setMinDocCount($param["min_doc_count"]);
+                if (isset($param["min_doc_count"])) {
+                    $body->setMinDocCount($param["min_doc_count"]);
+                }
                 if (isset($param["sort"])) {
                     $sort = $this->parseGroupBySort($param["sort"]);
                     $body->setSort($sort);
@@ -1985,11 +2031,88 @@ class ProtoBufferEncoder
                     $valueWithType = $this->preprocessColumnValue($param["missing"]);
                     $body->setMissing(PlainBufferBuilder::serializeSearchValue($valueWithType));
                 }
+                if (isset($param["offset"])) {
+                    $valueWithType = $this->preprocessColumnValue($param["offset"]);
+                    $body->setOffset(PlainBufferBuilder::serializeSearchValue($valueWithType));
+                }
+                $body = $this->addSubAggsAndGroupBysIfHas($body, $param);
+                return $body->serializeToString();
+
+            case GroupByTypeConst::GROUP_BY_DATE_HISTOGRAM:
+                $body = new GroupByDateHistogram();
+                $body->setFieldName($param["field_name"]);
+                if (isset($param["min_doc_count"])) {
+                    $body->setMinDocCount($param["min_doc_count"]);
+                }
+                if (isset($param["sort"])) {
+                    $sort = $this->parseGroupBySort($param["sort"]);
+                    $body->setSort($sort);
+                }
+                if (isset($param["field_range"])) {
+                    $fieldRange = new FieldRange();
+                    $minWithType = $this->preprocessColumnValue($param["field_range"]["min"]);
+                    $fieldRange->setMin(PlainBufferBuilder::serializeSearchValue($minWithType));
+                    $maxWithType = $this->preprocessColumnValue($param["field_range"]["max"]);
+                    $fieldRange->setMax(PlainBufferBuilder::serializeSearchValue($maxWithType));
+                    $body->setFieldRange($fieldRange);
+                }
+                if (isset($param["interval"])) {
+                    $interval = $this->preprocessDateTimeValue($param["interval"]);
+                    $body->setInterval($interval);
+                }
+                if (isset($param["missing"])) {
+                    $valueWithType = $this->preprocessColumnValue($param["missing"]);
+                    $body->setMissing(PlainBufferBuilder::serializeSearchValue($valueWithType));
+                }
+                if (isset($param["offset"])) {
+                    $offset = $this->preprocessDateTimeValue($param["offset"]);
+                    $body->setOffset($offset);
+                }
+                if (isset($param["time_zone"])) {
+                    $body->setTimeZone($param["time_zone"]);
+                }
+                $body = $this->addSubAggsAndGroupBysIfHas($body, $param);
+                return $body->serializeToString();
+
+            case GroupByTypeConst::GROUP_BY_GEO_GRID:
+                $body = new GroupByGeoGrid();
+                $body->setFieldName($param["field_name"]);
+                if (isset($param["precision"])) {
+                    $precision = ConstMapStringToInt::GeoHashPrecisionMap($param["precision"]);
+                    $body->setPrecision($precision);
+                }
+                if (isset($param["size"])) {
+                    $body->setSize($param["size"]);
+                }
+                $body = $this->addSubAggsAndGroupBysIfHas($body, $param);
+                return $body->serializeToString();
+
+            case GroupByTypeConst::GROUP_BY_COMPOSITE:
+                $body = new GroupByComposite();
+                if (isset($param["sources"])) {
+                    $sources = $this->parseGroupBys($param["sources"]);
+                    $body->setSources($sources);
+                }
+                if (isset($param["next_token"])) {
+                    $body->setNextToken($param["next_token"]);
+                }
+                if (isset($param["size"])) {
+                    $body->setSize($param["size"]);
+                }
+                $body = $this->addSubAggsAndGroupBysIfHas($body, $param);
                 return $body->serializeToString();
 
             default:
                 throw new \Aliyun\OTS\OTSClientException("group_bys[].type must be GroupByTypeConst::XXX");
         }
+    }
+
+    private function preprocessDateTimeValue($columnValue)
+    {
+        $dateTimeValue = new DateTimeValue();
+        $dateTimeValue->setValue($columnValue["value"]);
+        $dateTimeValue->setUnit(ConstMapStringToInt::DateTimeUnitMap($columnValue["unit"]));
+        return $dateTimeValue;
     }
 
     private function parseGroupBySort($sort)
@@ -2208,6 +2331,9 @@ class ProtoBufferEncoder
                 if (isset($query["weight"])) {
                     $nestedQuery->setWeight($query["weight"]);
                 }
+                if (isset($query["inner_hits"])) {
+                    $nestedQuery->setInnerHits($this->parseInnerHits($query["inner_hits"]));
+                }
 
                 return $nestedQuery;
 
@@ -2271,11 +2397,163 @@ class ProtoBufferEncoder
 
                 return $existsQuery;
 
+            case QueryType::KNN_VECTOR_QUERY://17
+                $knnVectorQuery = new OTS\ProtoBuffer\Protocol\KnnVectorQuery();
+                $knnVectorQuery->setFieldName($query["field_name"]);
+                if (isset($query["top_k"])) {
+                    $knnVectorQuery->setTopK($query["top_k"]);
+                }
+                if (isset($query["float32_query_vector"])) {
+                    $knnVectorQuery->setFloat32QueryVector($query["float32_query_vector"]);
+                }
+                if (isset($query["filter"])) {
+                    $knnVectorQuery->setFilter($this->parseQuery($query["filter"]));
+                }
+                if (isset($query["weight"])) {
+                    $knnVectorQuery->setWeight($query["weight"]);
+                }
+
+                return $knnVectorQuery;
+
+            case QueryType::FUNCTIONS_SCORE_QUERY://18
+                $functionsScoreQuery = new OTS\ProtoBuffer\Protocol\FunctionsScoreQuery();
+                if (isset($query["query"])) {
+                    $functionsScoreQuery->setQuery($this->parseQuery($query["query"]));
+                }
+                if (isset($query["score_mode"])) {
+                    $functionsScoreQuery->setScoreMode(ConstMapStringToInt::FunctionScoreModeMap($query["score_mode"]));
+                }
+                if (isset($query["combine_mode"])) {
+                    $functionsScoreQuery->setCombineMode(ConstMapStringToInt::FunctionCombineModeMap($query["combine_mode"]));
+                }
+                if (isset($query["min_score"])) {
+                    $functionsScoreQuery->setMinScore($query["min_score"]);
+                }
+                if (isset($query["max_score"])) {
+                    $functionsScoreQuery->setMaxScore($query["max_score"]);
+                }
+                if (isset($query["functions"])) {
+                    $functions = array();
+                    foreach ($query["functions"] as $function)
+                    {
+                        $PBFunction = $this->parseFunction($function);
+                        $functions[] = $PBFunction;
+                    }
+                    $functionsScoreQuery->setFunctions($functions);
+                }
+
+                return $functionsScoreQuery;
+
             default:
                 throw new \Aliyun\OTS\OTSClientException("query_type must be QueryTypeConst::XXX");
         }
 
         return null;
+    }
+
+
+    private function parseFunction($function)
+    {
+        $PBFunction = new PBFunction();
+        if (isset($function["weight"])) {
+            $PBFunction->setWeight($function["weight"]);
+        }
+        if (isset($function["filter"])) {
+            $PBFunction->setFilter($this->parseQuery($function["filter"]));
+        }
+        if (isset($function["field_value_factor_function"])) {
+            $fieldValueFactor = new FieldValueFactorFunction();
+            if (isset($function["field_value_factor_function"]["field_name"])) {
+                $fieldValueFactor->setFieldName($function["field_value_factor_function"]["field_name"]);
+            }
+            if (isset($function["field_value_factor_function"]["factor"])) {
+                $fieldValueFactor->setFactor($function["field_value_factor_function"]["factor"]);
+            }
+            if (isset($function["field_value_factor_function"]["modifier"])) {
+                $fieldValueFactor->setModifier(ConstMapStringToInt::FunctionModifierMap($function["field_value_factor_function"]["modifier"]));
+            }
+            if (isset($function["field_value_factor_function"]["missing"])) {
+                $fieldValueFactor->setMissing($function["field_value_factor_function"]["missing"]);
+            }
+            $PBFunction->setFieldValueFactor($fieldValueFactor);
+        }
+        if (isset($function["decay_function"])) {
+            $decayFunction = new DecayFunction();
+            if (!isset($function["decay_function"]["decay_param"])) {
+                throw new \Aliyun\OTS\OTSClientException("decay_param should not be empty");
+            }
+            if (!isset($function["decay_function"]["decay_param"]["type"])) {
+                throw new \Aliyun\OTS\OTSClientException("decay_param_type should not be empty");
+            }
+            $paramType = $function["decay_function"]["decay_param"]["type"];
+            switch ($paramType) {
+                case DecayParamTypeConst::DATE:
+                    $decayDateParam = new DecayFuncDateParam();
+                    if (isset($function["decay_function"]["decay_param"]["origin_long"])) {
+                        $decayDateParam->setOriginLong($function["decay_function"]["decay_param"]["origin_long"]);
+                    }
+                    if (isset($function["decay_function"]["decay_param"]["origin_string"])) {
+                        $decayDateParam->setOriginString($function["decay_function"]["decay_param"]["origin_string"]);
+                    }
+                    if (isset($function["decay_function"]["decay_param"]["scale"])) {
+                        $decayDateParam->setScale($this->preprocessDateTimeValue($function["decay_function"]["decay_param"]["scale"]));
+                    }
+                    if (isset($function["decay_function"]["decay_param"]["offset"])) {
+                        $decayDateParam->setOffset($this->preprocessDateTimeValue($function["decay_function"]["decay_param"]["offset"]));
+                    }
+                    $decayFunction->setParam($decayDateParam->serializeToString());
+                    $decayFunction->setParamType(DecayFuncParamType::DF_DATE_PARAM);
+                    break;
+                case DecayParamTypeConst::GEO:
+                    $decayGeoParam = new DecayFuncGeoParam();
+                    if (isset($function["decay_function"]["decay_param"]["origin"])) {
+                        $decayGeoParam->setOrigin($function["decay_function"]["decay_param"]["origin"]);
+                    }
+                    if (isset($function["decay_function"]["decay_param"]["scale"])) {
+                        $decayGeoParam->setScale($function["decay_function"]["decay_param"]["scale"]);
+                    }
+                    if (isset($function["decay_function"]["decay_param"]["offset"])) {
+                        $decayGeoParam->setOffset($function["decay_function"]["decay_param"]["offset"]);
+                    }
+                    $decayFunction->setParam($decayGeoParam->serializeToString());
+                    $decayFunction->setParamType(DecayFuncParamType::DF_GEO_PARAM);
+                    break;
+                case DecayParamTypeConst::NUMERIC:
+                    $decayNumericParam = new DecayFuncNumericParam();
+                    if (isset($function["decay_function"]["decay_param"]["origin"])) {
+                        $decayNumericParam->setOrigin($function["decay_function"]["decay_param"]["origin"]);
+                    }
+                    if (isset($function["decay_function"]["decay_param"]["scale"])) {
+                        $decayNumericParam->setScale($function["decay_function"]["decay_param"]["scale"]);
+                    }
+                    if (isset($function["decay_function"]["decay_param"]["offset"])) {
+                        $decayNumericParam->setOffset($function["decay_function"]["decay_param"]["offset"]);
+                    }
+                    $decayFunction->setParam($decayNumericParam->serializeToString());
+                    $decayFunction->setParamType(DecayFuncParamType::DF_NUMERIC_PARAM);
+                    break;
+                default:
+                    throw new \Aliyun\OTS\OTSClientException("decay_param_type must be one of DecayParamTypeConst::XXX");
+            }
+            if (isset($function["decay_function"]["field_name"])) {
+                $decayFunction->setFieldName($function["decay_function"]["field_name"]);
+            }
+            if (isset($function["decay_function"]["math_function"])) {
+                $decayFunction->setMathFunction(ConstMapStringToInt::DecayMathFunctionMap($function["decay_function"]["math_function"]));
+            }
+            if (isset($function["decay_function"]["decay"])) {
+                $decayFunction->setDecay($function["decay_function"]["decay"]);
+            }
+            if (isset($function["decay_function"]["multi_value_mode"])) {
+                $decayFunction->setMultiValueMode(ConstMapStringToInt::MultiValueModeMap($function["decay_function"]["multi_value_mode"]));
+            }
+            $PBFunction->setDecay($decayFunction);
+        }
+        if (isset($function["random_function"])) {
+            $PBFunction->setRandom(new RandomScoreFunction());
+        }
+
+        return $PBFunction;
     }
 
     private function encodeCreateIndexRequest($request)
@@ -2403,5 +2681,77 @@ class ProtoBufferEncoder
             $timeRange->setSpecificTime($table['specific_time']);
         }
         return $timeRange;
+    }
+
+    private function parseVectorOptions($options)
+    {
+        $vectorOptions = new VectorOptions();
+        if (isset($options["data_type"])) {
+            $vectorOptions->setDataType(ConstMapStringToInt::VectorDataTypeMap($options["data_type"]));
+        }
+        if (isset($options["metric_type"])) {
+            $vectorOptions->setMetricType(ConstMapStringToInt::VectorMetricTypeMap($options["metric_type"]));
+        }
+        if (isset($options["dimension"])) {
+            $vectorOptions->setDimension($options["dimension"]);
+        }
+        return $vectorOptions;
+    }
+
+    private function parseHighlight($highlight)
+    {
+        $parseHighlight = new Highlight();
+        if (isset($highlight["highlight_encoder"])) {
+            $parseHighlight->setHighlightEncoder(ConstMapStringToInt::HighlightEncoderMap($highlight["highlight_encoder"]));
+        }
+        $parseHighlightParams = array();
+        foreach ($highlight["field_highlight_params"] as $key => $value) {
+            $parseHighlightParam = new HighlightParameter();
+            if (!empty($key)) {
+                $parseHighlightParam->setFieldName($key);
+            }
+            if (empty($value)) {
+                $parseHighlightParams[] = $parseHighlightParam;
+                continue;
+            }
+            if (isset($value["highlight_fragment_order"])) {
+                $parseHighlightParam->setFragmentsOrder(ConstMapStringToInt::HighlightFragmentOrderMap($value["highlight_fragment_order"]));
+            }
+            if (isset($value["fragment_size"])) {
+                $parseHighlightParam->setFragmentSize($value["fragment_size"]);
+            }
+            if (isset($value["number_of_fragments"])) {
+                $parseHighlightParam->setNumberOfFragments($value["number_of_fragments"]);
+            }
+            if (isset($value["pre_tag"])) {
+                $parseHighlightParam->setPreTag($value["pre_tag"]);
+            }
+            if (isset($value["post_tag"])) {
+                $parseHighlightParam->setPostTag($value["post_tag"]);
+            }
+            $parseHighlightParams[] = $parseHighlightParam;
+        }
+        $parseHighlight->setHighlightParameters($parseHighlightParams);
+
+        return $parseHighlight;
+    }
+
+    private function parseInnerHits($innerHits)
+    {
+        $parseInnerHits = new InnerHits();
+        if (isset($innerHits["offset"])) {
+            $parseInnerHits->setOffset($innerHits["offset"]);
+        }
+        if (isset($innerHits["limit"])) {
+            $parseInnerHits->setLimit($innerHits["limit"]);
+        }
+        if (isset($innerHits["highlight"])) {
+            $parseInnerHits->setHighlight($this->parseHighlight($innerHits["highlight"]));
+        }
+        if (isset($innerHits["sort"])) {
+            $parseInnerHits->setSort($this->parseSort($innerHits["sort"]));
+        }
+
+        return $parseInnerHits;
     }
 }

@@ -53,6 +53,11 @@ class GroupByHistogram extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $sub_group_bys = null;
     private $has_sub_group_bys = false;
+    /**
+     * Generated from protobuf field <code>optional bytes offset = 9;</code>
+     */
+    private $offset = '';
+    private $has_offset = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -281,6 +286,34 @@ class GroupByHistogram extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasSubGroupBys()
     {
         return $this->has_sub_group_bys;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes offset = 9;</code>
+     * @return string
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional bytes offset = 9;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setOffset($var)
+    {
+        GPBUtil::checkString($var, False);
+        $this->offset = $var;
+        $this->has_offset = true;
+
+        return $this;
+    }
+
+    public function hasOffset()
+    {
+        return $this->has_offset;
     }
 
 }

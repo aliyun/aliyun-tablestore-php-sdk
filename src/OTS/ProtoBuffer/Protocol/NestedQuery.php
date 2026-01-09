@@ -33,6 +33,11 @@ class NestedQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $weight = 0.0;
     private $has_weight = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.InnerHits inner_hits = 5;</code>
+     */
+    private $inner_hits = null;
+    private $has_inner_hits = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -149,6 +154,34 @@ class NestedQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasWeight()
     {
         return $this->has_weight;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.InnerHits inner_hits = 5;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\InnerHits
+     */
+    public function getInnerHits()
+    {
+        return $this->inner_hits;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.InnerHits inner_hits = 5;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\InnerHits $var
+     * @return $this
+     */
+    public function setInnerHits($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\InnerHits::class);
+        $this->inner_hits = $var;
+        $this->has_inner_hits = true;
+
+        return $this;
+    }
+
+    public function hasInnerHits()
+    {
+        return $this->has_inner_hits;
     }
 
 }

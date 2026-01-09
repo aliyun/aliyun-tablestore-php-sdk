@@ -38,6 +38,11 @@ class IndexMeta extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $index_type = 0;
     private $has_index_type = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.IndexSyncPhase index_sync_phase = 6;</code>
+     */
+    private $index_sync_phase = 0;
+    private $has_index_sync_phase = false;
 
     public function __construct() {
         \GPBMetadata\TableStore::initOnce();
@@ -182,6 +187,34 @@ class IndexMeta extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasIndexType()
     {
         return $this->has_index_type;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.IndexSyncPhase index_sync_phase = 6;</code>
+     * @return int
+     */
+    public function getIndexSyncPhase()
+    {
+        return $this->index_sync_phase;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.IndexSyncPhase index_sync_phase = 6;</code>
+     * @param int $var
+     * @return $this
+     */
+    public function setIndexSyncPhase($var)
+    {
+        GPBUtil::checkEnum($var, \Aliyun\OTS\ProtoBuffer\Protocol\IndexSyncPhase::class);
+        $this->index_sync_phase = $var;
+        $this->has_index_sync_phase = true;
+
+        return $this;
+    }
+
+    public function hasIndexSyncPhase()
+    {
+        return $this->has_index_sync_phase;
     }
 
 }

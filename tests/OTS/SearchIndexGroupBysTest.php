@@ -3,7 +3,9 @@
 namespace Aliyun\OTS\Tests;
 
 use Aliyun\OTS\Consts\ColumnReturnTypeConst;
+use Aliyun\OTS\Consts\DateTimeUnitConst;
 use Aliyun\OTS\Consts\FieldTypeConst;
+use Aliyun\OTS\Consts\GeoHashPrecisionConst;
 use Aliyun\OTS\Consts\PrimaryKeyTypeConst;
 use Aliyun\OTS\Consts\QueryOperatorConst;
 use Aliyun\OTS\Consts\QueryTypeConst;
@@ -246,6 +248,7 @@ class SearchIndexGroupBysTest extends SDKTestBase {
                             'min' => 2,
                             'max' => 10,
                         ),
+                        'offset' => 1,
                         'sort' => array(
                             'sorters' => array(
                                 array(
@@ -268,14 +271,81 @@ class SearchIndexGroupBysTest extends SDKTestBase {
         $this->assertEquals($group_by_results[0]["type"], GroupByTypeConst::GROUP_BY_HISTOGRAM);
         $this->assertEquals(count($group_by_results[0]["group_by_result"]["items"]) , 3);
         $item0 = $group_by_results[0]["group_by_result"]["items"][0];
-        $this->assertEquals($item0["key"], 3);
+        $this->assertEquals($item0["key"], 4);
         $this->assertEquals($item0["value"], 3);
         $item1 = $group_by_results[0]["group_by_result"]["items"][1];
-        $this->assertEquals($item1["key"], 6);
+        $this->assertEquals($item1["key"], 7);
         $this->assertEquals($item1["value"], 3);
         $item2 = $group_by_results[0]["group_by_result"]["items"][2];
-        $this->assertEquals($item2["key"], 9);
+        $this->assertEquals($item2["key"], 10);
         $this->assertEquals($item2["value"], 3);
+    }
+
+    public function testGroupByDateHistogram() {
+        $request = $this->getBaseRequest();
+        $request["search_query"]["group_bys"] = array(
+            'group_bys' => array(
+                array(
+                    'name' => 'group_by_GROUP_BY_DATE_HISTOGRAM',
+                    'type' => GroupByTypeConst::GROUP_BY_DATE_HISTOGRAM,
+                    'body' => array(
+                        'field_name' => 'date',
+                        'interval' => array('value' => 2, 'unit' => DateTimeUnitConst::DAY),
+                        'missing' => '2017-05-02 00:00:01',
+                        'min_doc_count' => 0,
+                        'field_range' => array(
+                            'min' => '2017-05-01 00:00:01',
+                            'max' => '2017-05-19 00:00:01'
+                        ),
+                        'time_zone' => '+08:00',
+                        'offset' => array('value' => 1, 'unit' => DateTimeUnitConst::DAY),
+                    )
+                ),
+            ),
+        );
+        $response = $this->otsClient->search($request);
+        $group_by_results = $response["group_bys"]["group_by_results"];
+
+        print json_encode($group_by_results, JSON_PRETTY_PRINT);
+        $this->assertEquals(count($group_by_results), 1);
+        $this->assertEquals($group_by_results[0]["name"], "group_by_GROUP_BY_DATE_HISTOGRAM");
+        $this->assertEquals($group_by_results[0]["type"], GroupByTypeConst::GROUP_BY_DATE_HISTOGRAM);
+        $this->assertEquals(count($group_by_results[0]["group_by_result"]["items"]) , 9);
+        $item0 = $group_by_results[0]["group_by_result"]["items"][0];
+        $this->assertEquals($item0["timestamp"], 1493568000000);
+        $this->assertEquals($item0["row_count"], 15);
+        $item1 = $group_by_results[0]["group_by_result"]["items"][1];
+        $this->assertEquals($item1["timestamp"], 1493740800000);
+        $this->assertEquals($item1["row_count"], 15);
+    }
+
+    public function testGroupByGeoGrid() {
+        $request = $this->getBaseRequest();
+        $request["search_query"]["group_bys"] = array(
+            'group_bys' => array(
+                array(
+                    'name' => 'group_by_GROUP_BY_GEO_GRID',
+                    'type' => GroupByTypeConst::GROUP_BY_GEO_GRID,
+                    'body' => array(
+                        'field_name' => 'geo',
+                        'precision' => GeoHashPrecisionConst::GHP_5009KM_4992KM_1,
+                        'size' => 100,
+                    )
+                ),
+            ),
+        );
+        $response = $this->otsClient->search($request);
+        $group_by_results = $response["group_bys"]["group_by_results"];
+
+        print json_encode($group_by_results, JSON_PRETTY_PRINT);
+        $this->assertEquals(count($group_by_results), 1);
+        $this->assertEquals($group_by_results[0]["name"], "group_by_GROUP_BY_GEO_GRID");
+        $this->assertEquals($group_by_results[0]["type"], GroupByTypeConst::GROUP_BY_GEO_GRID);
+        $this->assertEquals(count($group_by_results[0]["group_by_result"]["items"]) , 1);
+        $item0 = $group_by_results[0]["group_by_result"]["items"][0];
+        $this->assertEquals($item0["geo_grid"]["top_left"]["lat"], 45);
+        $this->assertEquals($item0["geo_grid"]["top_left"]["lon"], 0);
+        $this->assertEquals($item0["row_count"], 100);
     }
 
     public function testGroupByWithSub() {
@@ -398,6 +468,121 @@ class SearchIndexGroupBysTest extends SDKTestBase {
         }
     }
 
+    public function testGroupByComposite() {
+        $request = $this->getBaseRequest();
+        $request["search_query"]["group_bys"] = array(
+            'group_bys' => array(
+                array(
+                    'name' => 'group_by_GROUP_BY_COMPOSITE',
+                    'type' => GroupByTypeConst::GROUP_BY_COMPOSITE,
+                    'body' => array(
+                        'sources' => array(
+                            'group_bys' => array(
+                                array(
+                                    'name' => 'group_by_GROUP_BY_FIELD',
+                                    'type' => GroupByTypeConst::GROUP_BY_FIELD,
+                                    'body' => array(
+                                        'field_name' => 'keyword_2'
+                                    )
+                                ),
+                                array(
+                                    'name' => 'group_by_GROUP_BY_HISTOGRAM',
+                                    'type' => GroupByTypeConst::GROUP_BY_HISTOGRAM,
+                                    'body' => array(
+                                        'field_name' => 'long',
+                                        'interval' => 5
+                                    )
+                                ),
+                                array(
+                                    'name' => 'group_by_GROUP_BY_DATE_HISTOGRAM',
+                                    'type' => GroupByTypeConst::GROUP_BY_DATE_HISTOGRAM,
+                                    'body' => array(
+                                        'field_name' => 'date',
+                                        'interval' => array('value' => 5, 'unit' => DateTimeUnitConst::DAY),
+                                        'time_zone'=> "+05:30"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+            ),
+        );
+
+        $response = $this->otsClient->search($request);
+        $group_by_results = $response["group_bys"]["group_by_results"];
+
+        while (true) {
+            if (empty($group_by_results)) {
+                print("groupByComposite Result is null or empty");
+                return;
+            }
+            $result = $group_by_results[0]["group_by_result"];
+            if (!empty($result["source_names"])) {
+                foreach ($result["source_names"] as $source_name) {
+                    print($source_name . "    ");
+                }
+                print("rowCount\n");
+            }
+            foreach ($result["items"] as $item) {
+                foreach ($item["keys"] as $key) {
+                    print($key . "\t\t\t\t");
+                }
+                print($item["row_count"] . "\t\n");
+            }
+            if (!empty($result["next_token"])) {
+                $request["search_query"]["group_bys"] = array(
+                    'group_bys' => array(
+                        array(
+                            'name' => 'group_by_GROUP_BY_COMPOSITE',
+                            'type' => GroupByTypeConst::GROUP_BY_COMPOSITE,
+                            'body' => array(
+                                'sources' => array(
+                                    'group_bys' => array(
+                                        array(
+                                            'name' => 'group_by_GROUP_BY_FIELD',
+                                            'type' => GroupByTypeConst::GROUP_BY_FIELD,
+                                            'body' => array(
+                                                'field_name' => 'keyword_2'
+                                            )
+                                        ),
+                                        array(
+                                            'name' => 'group_by_GROUP_BY_HISTOGRAM',
+                                            'type' => GroupByTypeConst::GROUP_BY_HISTOGRAM,
+                                            'body' => array(
+                                                'field_name' => 'long',
+                                                'interval' => 5
+                                            )
+                                        ),
+                                        array(
+                                            'name' => 'group_by_GROUP_BY_DATE_HISTOGRAM',
+                                            'type' => GroupByTypeConst::GROUP_BY_DATE_HISTOGRAM,
+                                            'body' => array(
+                                                'field_name' => 'date',
+                                                'interval' => array('value' => 5, 'unit' => DateTimeUnitConst::DAY),
+                                                'time_zone'=> "+05:30"
+                                            )
+                                        )
+                                    )
+                                ),
+                                'next_token' => $result["next_token"]
+                            )
+                        ),
+                    ),
+                );
+                $response = $this->otsClient->search($request);
+                $group_by_results = $response["group_bys"]["group_by_results"];
+            } else {
+                break;
+            }
+        }
+
+        print json_encode($group_by_results, JSON_PRETTY_PRINT);
+        $this->assertEquals(count($group_by_results), 1);
+        $this->assertEquals($group_by_results[0]["name"], "group_by_GROUP_BY_COMPOSITE");
+        $this->assertEquals($group_by_results[0]["type"], GroupByTypeConst::GROUP_BY_COMPOSITE);
+    }
+
     public static function createIndex() {
         $createIndexRequest = array(
             'table_name' => self::$tableName,
@@ -406,6 +591,14 @@ class SearchIndexGroupBysTest extends SDKTestBase {
                 'field_schemas' => array(
                     array(
                         'field_name' => 'keyword',
+                        'field_type' => FieldTypeConst::KEYWORD,
+                        'index' => true,
+                        'enable_sort_and_agg' => true,
+                        'store' => true,
+                        'is_array' => false
+                    ),
+                    array(
+                        'field_name' => 'keyword_2',
                         'field_type' => FieldTypeConst::KEYWORD,
                         'index' => true,
                         'enable_sort_and_agg' => true,
@@ -487,6 +680,15 @@ class SearchIndexGroupBysTest extends SDKTestBase {
                             ),
                         )
                     ),
+                    array(
+                        'field_name' => 'date',
+                        'field_type' => FieldTypeConst::DATE,
+                        'index' => true,
+                        'enable_sort_and_agg' => false,
+                        'store' => false,
+                        'is_array' => false,
+                        'date_formats' => array("yyyy-MM-dd HH:mm:ss"),
+                    ),
                 ),
                 'index_setting' => array(
                     'routing_fields' => array("PK0")
@@ -498,6 +700,9 @@ class SearchIndexGroupBysTest extends SDKTestBase {
     }
 
     private static function insertData() {
+        $dates = array("2017-05-02 06:00:01", "2017-05-03 00:00:01", "2017-05-10 00:00:01", "2017-05-15 00:00:01",
+            "2017-05-15 12:10:01", "2017-05-16 00:00:01", "2017-05-20 00:00:01");
+        $keywords = ["hangzhou", "beijing", "shanghai", "hangzhou shanghai", "hangzhou beijing shanghai"];
         for ($i = 0; $i < 100; $i++) {
             $request = array(
                 'table_name' => self::$tableName,
@@ -508,13 +713,15 @@ class SearchIndexGroupBysTest extends SDKTestBase {
                 ),
                 'attribute_columns' => array(
                     array('keyword', 'keyword'),
+                    array('keyword_2', $keywords[$i % 5]),
                     array('text', 'ots php search index' . $i),
                     array('geo', '5.' . $i . ',6.' . $i),
                     array('long', $i),
                     array('double', $i + 0.1),
                     array('boolean', $i % 3 == 0),
                     array('array', '["search","index' . $i . '"]'),
-                    array('nested', '[{"nested_keyword":"sub","nested_long":' . $i . '}]')
+                    array('nested', '[{"nested_keyword":"sub","nested_long":' . $i . '}]'),
+                    array('date', $dates[$i % 7])
                 )
             );
 

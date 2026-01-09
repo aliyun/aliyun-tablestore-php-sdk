@@ -29,6 +29,11 @@ class SearchResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     private $is_all_succeeded = false;
     private $has_is_all_succeeded = false;
     /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.SearchHit search_hits = 5;</code>
+     */
+    private $search_hits;
+    private $has_search_hits = false;
+    /**
      * Generated from protobuf field <code>optional bytes next_token = 6;</code>
      */
     private $next_token = '';
@@ -43,6 +48,16 @@ class SearchResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $group_bys = '';
     private $has_group_bys = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.ConsumedCapacity consumed = 9;</code>
+     */
+    private $consumed = null;
+    private $has_consumed = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.ConsumedCapacity reserved_consumed = 10;</code>
+     */
+    private $reserved_consumed = null;
+    private $has_reserved_consumed = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -134,6 +149,34 @@ class SearchResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     }
 
     /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.SearchHit search_hits = 5;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getSearchHits()
+    {
+        return $this->search_hits;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .aliyun.OTS.ProtoBuffer.Protocol.SearchHit search_hits = 5;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\SearchHit[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setSearchHits($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Aliyun\OTS\ProtoBuffer\Protocol\SearchHit::class);
+        $this->search_hits = $arr;
+        $this->has_search_hits = true;
+
+        return $this;
+    }
+
+    public function hasSearchHits()
+    {
+        return $this->has_search_hits;
+    }
+
+    /**
      * Generated from protobuf field <code>optional bytes next_token = 6;</code>
      * @return string
      */
@@ -215,6 +258,62 @@ class SearchResponse extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasGroupBys()
     {
         return $this->has_group_bys;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.ConsumedCapacity consumed = 9;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\ConsumedCapacity
+     */
+    public function getConsumed()
+    {
+        return $this->consumed;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.ConsumedCapacity consumed = 9;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\ConsumedCapacity $var
+     * @return $this
+     */
+    public function setConsumed($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\ConsumedCapacity::class);
+        $this->consumed = $var;
+        $this->has_consumed = true;
+
+        return $this;
+    }
+
+    public function hasConsumed()
+    {
+        return $this->has_consumed;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.ConsumedCapacity reserved_consumed = 10;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\ConsumedCapacity
+     */
+    public function getReservedConsumed()
+    {
+        return $this->reserved_consumed;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.ConsumedCapacity reserved_consumed = 10;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\ConsumedCapacity $var
+     * @return $this
+     */
+    public function setReservedConsumed($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\ConsumedCapacity::class);
+        $this->reserved_consumed = $var;
+        $this->has_reserved_consumed = true;
+
+        return $this;
+    }
+
+    public function hasReservedConsumed()
+    {
+        return $this->has_reserved_consumed;
     }
 
 }

@@ -41,5 +41,9 @@ class FieldType
      * Generated from protobuf enum <code>DATE = 8;</code>
      */
     const DATE = 8;
+    /**
+     * Generated from protobuf enum <code>VECTOR = 9;</code>
+     */
+    const VECTOR = 9;
 }
 

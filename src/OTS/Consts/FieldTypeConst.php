@@ -12,4 +12,5 @@ class FieldTypeConst {
     const NESTED = 'NESTED';
     const GEO_POINT = 'GEO_POINT';
     const DATE = 'DATE';
+    const VECTOR = 'VECTOR';
 }

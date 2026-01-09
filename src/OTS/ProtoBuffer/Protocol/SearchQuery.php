@@ -58,6 +58,11 @@ class SearchQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
      */
     private $group_bys = null;
     private $has_group_bys = false;
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.Highlight highlight = 12;</code>
+     */
+    private $highlight = null;
+    private $has_highlight = false;
 
     public function __construct() {
         \GPBMetadata\TableStoreSearch::initOnce();
@@ -314,6 +319,34 @@ class SearchQuery extends \Aliyun\OTS\ProtoBuffer\Protocol\Message
     public function hasGroupBys()
     {
         return $this->has_group_bys;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.Highlight highlight = 12;</code>
+     * @return \Aliyun\OTS\ProtoBuffer\Protocol\Highlight
+     */
+    public function getHighlight()
+    {
+        return $this->highlight;
+    }
+
+    /**
+     * Generated from protobuf field <code>optional .aliyun.OTS.ProtoBuffer.Protocol.Highlight highlight = 12;</code>
+     * @param \Aliyun\OTS\ProtoBuffer\Protocol\Highlight $var
+     * @return $this
+     */
+    public function setHighlight($var)
+    {
+        GPBUtil::checkMessage($var, \Aliyun\OTS\ProtoBuffer\Protocol\Highlight::class);
+        $this->highlight = $var;
+        $this->has_highlight = true;
+
+        return $this;
+    }
+
+    public function hasHighlight()
+    {
+        return $this->has_highlight;
     }
 
 }
