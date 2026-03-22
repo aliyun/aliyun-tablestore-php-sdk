@@ -22,6 +22,9 @@ class OTSClient
     /** @var OTSClientConfig */
     private $config;
 
+    /** @var \Aliyun\OTS\Handlers\OTSHandlers */
+    private $handlers;
+
     /**
      * OTSClient的构造函数
      * @api

@@ -22,7 +22,7 @@ class DefaultRetryPolicy implements RetryPolicy
 
     private $stabilityExceptionDelayFactor = 200;
      
-    public function __construct(int $maxRetryTimes = null, int $maxRetryDelay = null)
+    public function __construct(?int $maxRetryTimes = null, ?int $maxRetryDelay = null)
     {
         if ($maxRetryTimes != null) {
             $this->maxRetryTimes = $maxRetryTimes;

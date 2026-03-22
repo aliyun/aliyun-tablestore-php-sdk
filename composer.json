@@ -11,7 +11,7 @@
 	"repositories": {
 		"packagist": {
 			"type": "composer",
-			"url": "https://packagist.phpcomposer.com"
+			"url": "https://packagist.org"
 		}
 	},
 	"support" : {
@@ -22,7 +22,7 @@
 		"guzzlehttp/guzzle": "^7.10",
 		"guzzlehttp/psr7": "^1.4.1|^2.0",
 		"guzzlehttp/promises": "^1.0|^2.0",
-		"google/protobuf": "^3.5",
+		"google/protobuf": "^5.34.0",
 		"google/flatbuffers": "22.9.29"
 	},
 	"require-dev" : {
