@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE xml>
-
-<phpunit>
-	<filter>
-		<whitelist>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
+	<source>
+		<include>
 			<directory suffix=".php">./src</directory>
-		</whitelist>
-	</filter>
-	<logging>
-		<log type="coverage-clover" target="coverage.xml" />
-	</logging>
+		</include>
+	</source>
 	<testsuites>
 		<testsuite name="TableTest">
 			<file>tests/OTS/CreateTableTest.php</file>

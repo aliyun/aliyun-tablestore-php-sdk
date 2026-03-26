@@ -1,0 +1,24 @@
+# Dependencies
+vendor/
+composer.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Test & Coverage
+coverage.xml
+.phpunit.result.cache
+
+# Regression test reports (generated)
+regression/reports/

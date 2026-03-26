@@ -21,21 +21,21 @@ date_default_timezone_set ('Asia/Shanghai');
 
 abstract class SDKTestBase extends TestCase {
     protected $otsClient;
-    public function __construct() {
-        parent::__construct ();
+    public function __construct(string $name = '') {
+        parent::__construct ($name);
         $this->otsClient = SDKTestBase::createOTSClient ();
     }
     public static function createOTSClient() {
         $sdkTestConfig = array (
-                'EndPoint' => SDK_TEST_END_POINT == '' ? getenv('SDK_TEST_END_POINT') : SDK_TEST_END_POINT,
-                'AccessKeyID' => SDK_TEST_ACCESS_KEY_ID == '' ? getenv('SDK_TEST_ACCESS_KEY_ID') : SDK_TEST_ACCESS_KEY_ID,
-                'AccessKeySecret' => SDK_TEST_ACCESS_KEY_SECRET == '' ? getenv('SDK_TEST_ACCESS_KEY_SECRET') : SDK_TEST_ACCESS_KEY_SECRET,
-                'InstanceName' => SDK_TEST_INSTANCE_NAME == '' ? getenv('SDK_TEST_INSTANCE_NAME') : SDK_TEST_INSTANCE_NAME
+                'EndPoint' => SDK_TEST_END_POINT == '' ? (getenv('SDK_TEST_END_POINT') ?: '') : SDK_TEST_END_POINT,
+                'AccessKeyID' => SDK_TEST_ACCESS_KEY_ID == '' ? (getenv('SDK_TEST_ACCESS_KEY_ID') ?: '') : SDK_TEST_ACCESS_KEY_ID,
+                'AccessKeySecret' => SDK_TEST_ACCESS_KEY_SECRET == '' ? (getenv('SDK_TEST_ACCESS_KEY_SECRET') ?: '') : SDK_TEST_ACCESS_KEY_SECRET,
+                'InstanceName' => SDK_TEST_INSTANCE_NAME == '' ? (getenv('SDK_TEST_INSTANCE_NAME') ?: '') : SDK_TEST_INSTANCE_NAME
         );
         
         return new \Aliyun\OTS\OTSClient ($sdkTestConfig);
     }
-    public static function cleanUp(array $tables = null) {
+    public static function cleanUp(?array $tables = null) {
 
         if ($tables != null) {
             $otsClient = SDKTestBase::createOTSClient ();

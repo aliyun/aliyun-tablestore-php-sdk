@@ -37,8 +37,8 @@ $otsClient = new OTSClient(array(
     'InstanceName' => 'Your instance name',
 
     // 以下是可选参数
-    'ConnectionTimeout' => 2.0,                      # 与OTS建立连接的最大延时，默认 2.0秒
-    'SocketTimeout' => 2.0,                          # 每次请求响应最大延时，默认2.0秒
+    'ConnectionTimeout' => 10.0,                     # 与OTS建立连接的最大延时，默认 10.0秒
+    'SocketTimeout' => 10.0,                         # 每次请求响应最大延时，默认10.0秒
 
     // 重试策略，默认为 DefaultRetryPolicy
     // 如果要关闭重试，可以设置为： 'RetryPolicy' => new NoRetryPolicy(),

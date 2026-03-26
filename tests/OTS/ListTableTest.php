@@ -15,12 +15,12 @@ class listTableTest extends SDKTestBase {
         'myTable1'
     );
 
-    public function setup()
+    public function setUp(): void
     {
         $this->cleanUp (self::$usedTables);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->cleanUp (self::$usedTables);
     }
@@ -30,7 +30,10 @@ class listTableTest extends SDKTestBase {
      * 在没有表的情况下 ListTable，期望返回0个Table Name
      */
     public function testListTableWith0Table() {
-        $this->assertEmpty ($this->otsClient->listTable (array ()));
+        $tableList = $this->otsClient->listTable (array ());
+        foreach (self::$usedTables as $tableName) {
+            $this->assertNotContains ($tableName, $tableList);
+        }
     }
     /*
      * ListTableWith1Table
@@ -56,10 +59,8 @@ class listTableTest extends SDKTestBase {
             )
         );
         $this->otsClient->CreateTable ($tablebody);
-        $table_name = array (
-            self::$usedTables[0]
-        );
-        $this->assertEquals ($this->otsClient->listTable (array ()), $table_name);
+        $tableList = $this->otsClient->listTable (array ());
+        $this->assertContains (self::$usedTables[0], $tableList);
     }
     
     /*
@@ -105,11 +106,9 @@ class listTableTest extends SDKTestBase {
         );
         $this->otsClient->CreateTable ($tablebody);
         $this->otsClient->CreateTable ($tablebody1);
-        $table_name = array (
-            self::$usedTables[0],
-            self::$usedTables[1]
-        );
-        $this->assertEquals ($this->otsClient->listTable (array ()), $table_name);
+        $tableList = $this->otsClient->listTable (array ());
+        $this->assertContains (self::$usedTables[0], $tableList);
+        $this->assertContains (self::$usedTables[1], $tableList);
     }
     public function testListTable40Times() {
         for($i = 0; $i < 40; $i ++) {

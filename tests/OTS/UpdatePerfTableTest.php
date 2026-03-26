@@ -16,7 +16,7 @@ class UpdatePerfTableTest extends SDKTestBase {
         'myTable3'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -67,7 +67,7 @@ class UpdatePerfTableTest extends SDKTestBase {
         SDKTestBase::waitForCUAdjustmentInterval ();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }

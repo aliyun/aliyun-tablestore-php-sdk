@@ -158,9 +158,9 @@ class HttpHeaderHandler
             $this->checkOtherHeaders($context);
 
             // header 'authorization' is not neccessarily available 
-            // when HttpStatus == 403 (Forbidden).
+            // when HttpStatus == 403 (Forbidden) or 5xx errors.
             // but if it is availabe, we still have to check it
-            if ($context->responseHttpStatus != 403) {
+            if ($context->responseHttpStatus != 403 && $context->responseHttpStatus < 500) {
                 $this->checkAuthorization($context);
             }
         } catch (OTSClientException $e) {

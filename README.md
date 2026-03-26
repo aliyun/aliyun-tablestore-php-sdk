@@ -1,87 +1,149 @@
-Aliyun TableStore SDK for PHP - Version 5
-==================================
+# Aliyun Tablestore SDK for PHP
 
-# 说明
+[![Latest Stable Version](https://img.shields.io/packagist/v/aliyun/aliyun-tablestore-sdk-php.svg)](https://packagist.org/packages/aliyun/aliyun-tablestore-sdk-php)
+[![License](https://img.shields.io/packagist/l/aliyun/aliyun-tablestore-sdk-php.svg)](LICENSE.md)
 
-Aliyun OTS SDK for PHP，用来通过PHP访问阿里云OTS服务。
+Aliyun Tablestore SDK for PHP，用于通过 PHP 访问[阿里云表格存储（Tablestore）](https://www.aliyun.com/product/ots)服务。
 
-适用于PHP 5.5 及以上版本，包括7.0、7.1、7.2、8.0、8.1。只支持64位的PHP系统。推荐使用PHP7，以得到最好的性能。
+## 版本兼容性
 
-当前仅支持Linux，其他系统需要用户自己改造代码支持。
+| SDK 版本 | PHP 版本要求 | 维护状态 |
+|---------|------------|---------|
+| 6.x（当前版本） | >= 8.2（支持 8.2、8.3、8.4、8.5） | **活跃维护** |
+| 5.x | >= 5.5（支持 5.5 ~ 8.1） | 仅安全修复 |
+| 4.x | >= 5.5（支持 5.5 ~ 7.2） | 停止维护 |
+| 2.x | >= 5.3（支持 5.3 ~ 5.6） | 停止维护 |
 
-# 使用步骤
+> **升级提示**：如果你正在使用 PHP 8.2 或更高版本，建议升级到 SDK 6.x 以获得最佳兼容性和性能。如果你仍在使用 PHP 5.5 ~ 8.1，请继续使用 SDK 5.x 版本。
 
-1. 请确认你的PHP版本为 5.5 或更高。你可以通过运行 php --version 获知你当前使用的PHP版本。
+仅支持 **64 位** PHP 系统。
 
-2. 设置PHP的时区，在 php.ini（要知道你正在使用的php.ini文件的位置，请执行命令 php --ini）中添加一行：
-   
-   date.timezone = Asia/Shanghai  （请根据你当地的时区进行设置）
+## 环境要求
 
-3. 设置PHP的内存使用限制为512M或者更高。同样是在 php.ini 中修改：
-  
-   memory_limit = 512M
+- PHP >= 8.2（64 位）
+- 扩展：`curl`、`openssl`、`json`
+- [Composer](https://getcomposer.org/)
 
-4. 下载SDK并解压到本地。
+## 安装
 
-5. 安装依赖。在解压后的目录中执行命令： 
+### 通过 Composer 安装（推荐）
 
-   php tools/composer.phar install --no-dev
+```bash
+composer require aliyun/aliyun-tablestore-sdk-php
+```
 
-6. 生成 autoload。 在解压后的目录中执行命令：
+如果你需要安装旧版本以兼容低版本 PHP：
 
-   php tools/composer.phar dumpautoload --no-dev
+```bash
+# 安装 5.x 版本（支持 PHP 5.5 ~ 8.1）
+composer require aliyun/aliyun-tablestore-sdk-php:^5.0
+```
 
-   这条命令会生成 vendor/autoload.php 文件。
+### 手动安装
 
-7. 在你的PHP代码文件中引用（require）上一个步骤中生成的 vendor/autoload.php 文件。
+1. 下载 SDK 并解压到本地。
+2. 安装依赖：
 
-# 编程文档
+   ```bash
+   composer install --no-dev
+   ```
 
-我们提供了HTML格式的文档，请在浏览器中打开这些文档。
+3. 在你的 PHP 代码中引入自动加载文件：
 
-1. 文档主页：docs/index.html
+   ```php
+   require_once 'vendor/autoload.php';
+   ```
 
-2. SDK的调用入口 OTSClient：docs/classes/Aliyun.OTS.OTSClient.html
+## 快速开始
 
-   这个文档中有丰富的代码样例，详细说明了每个API的使用方法。
+```php
+<?php
+require_once 'vendor/autoload.php';
 
-3. 客户端配置：docs/classes/Aliyun.OTS.OTSClientConfig.html
+use Aliyun\OTS\OTSClient;
 
-4. 重试策略：docs/namespaces/Aliyun.OTS.Retry.html
+$client = new OTSClient([
+    'EndPoint' => 'https://your-instance.cn-hangzhou.ots.aliyuncs.com',
+    'AccessKeyID' => 'your-access-key-id',
+    'AccessKeySecret' => 'your-access-key-secret',
+    'InstanceName' => 'your-instance-name',
+]);
 
-5. 服务端返回的错误：docs/classes/Aliyun.OTS.OTSServerException.html
+// 列出所有表
+$tables = $client->listTable([]);
+print_r($tables);
+```
 
-6. 客户端返回的错误：docs/classes/Aliyun.OTS.OTSClientException.html
+## PHP 配置建议
 
-### 运行Sample程序
+在 `php.ini` 中进行以下配置（执行 `php --ini` 可查看配置文件位置）：
 
-1. 修改 `examples/ExampleConfig.php`， 补充配置信息
-2. 执行 `cd examples/`
-3. 选择需要的样例运行，例如 `php PKAutoIncrment.php`, 表格列自增功能的示例。
+```ini
+; 设置时区
+date.timezone = Asia/Shanghai
 
-### 运行单元测试
+; 建议将内存限制设置为 512M 或更高（GetRange 等接口可能占用较多内存）
+memory_limit = 512M
+```
 
-1. 执行`composer install`下载依赖的库
-2. 如果是php 7.2，还需要 `composer require --dev phpunit/phpunit "^5.7.11"`，升级下phpunit的版本，才能支持。
-3. 设置环境变量
+## 运行示例程序
 
-        export SDK_TEST_ACCESS_KEY_ID=access-key-id
-        export SDK_TEST_ACCESS_KEY_SECRET=access-key-secret
-        export SDK_TEST_END_POINT=endpoint
-        export SDK_TEST_INSTANCE_NAME=instance-name
+1. 修改 `examples/ExampleConfig.php`，填写你的 Tablestore 配置信息。
+2. 运行示例：
 
-4. 执行 `php vendor/bin/phpunit`
+   ```bash
+   php examples/PKAutoIncrment.php
+   ```
 
-## 贡献代码
- - 我们非常欢迎大家为TableStore PHP SDK以及其他阿里云SDK贡献代码
+更多示例请参考 `examples/` 目录。
 
-# 帮助和支持 FAQ
+## 运行测试
 
-- [阿里云TableStore官方网站](http://www.aliyun.com/product/ots)
-- [阿里云TableStore官方论坛](http://bbs.aliyun.com)
-- [阿里云TableStore官方文档中心](https://help.aliyun.com/product/8315004_ots.html)
-- [阿里云云栖社区](http://yq.aliyun.com)
-- [阿里云工单系统](https://workorder.console.aliyun.com/#/ticket/createIndex)
+1. 安装依赖：
 
-### 扫码加入TableStore讨论群，和我们直接交流讨论
-![tablestoregroup](https://tablestore-doc.oss-cn-hangzhou.aliyuncs.com/tablestore_dingding.jpg?x-oss-process=image/resize,m_lfit,h_400)
+   ```bash
+   composer install
+   ```
+
+2. 设置环境变量：
+
+   ```bash
+   export SDK_TEST_ACCESS_KEY_ID=your-access-key-id
+   export SDK_TEST_ACCESS_KEY_SECRET=your-access-key-secret
+   export SDK_TEST_END_POINT=https://your-instance.cn-hangzhou.ots.aliyuncs.com
+   export SDK_TEST_INSTANCE_NAME=your-instance-name
+   ```
+
+3. 执行测试：
+
+   ```bash
+   php vendor/bin/phpunit
+   ```
+
+## 文档
+
+- [Tablestore 产品文档](https://help.aliyun.com/product/8315004_ots.html)
+- [API 参考文档](docs/index.html)（HTML 格式，请在浏览器中打开）
+
+## 变更日志
+
+详见 [CHANGELOG.md](CHANGELOG.md)。
+
+## 贡献
+
+我们非常欢迎社区贡献代码。如果你发现了 Bug 或有功能建议，请提交 Issue 或 Pull Request。
+
+## 许可证
+
+本项目基于 [MIT 许可证](LICENSE.md) 开源。
+
+## 联系我们
+
+- [阿里云 Tablestore 官方网站](https://www.aliyun.com/product/ots)
+- [阿里云 Tablestore 文档中心](https://help.aliyun.com/zh/tablestore)
+- [阿里云工单系统](https://smartservice.console.aliyun.com/service/create-ticket)
+
+### 扫码加入 Tablestore 讨论群
+欢迎通过钉钉加入交流群：
+* 为互联网应用、大数据、社交应用等开发者提供的最新技术交流群 36165029092（表格存储技术交流群-3）。
+* 为物联网和时序模型开发者提供的技术交流群有44327024（物联网存储 IoTstore 开发者交流群）。

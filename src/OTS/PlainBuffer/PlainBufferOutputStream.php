@@ -45,7 +45,7 @@ class PlainBufferOutputStream
         if ($this->isFull()) {
             throw new \Aliyun\OTS\OTSClientException("The buffer is full");
         }
-        $this->buffer[$this->curPos++] = chr($value);
+        $this->buffer[$this->curPos++] = chr($value & 0xFF);
     }
 
     public function writeRawLittleEndian32($value)

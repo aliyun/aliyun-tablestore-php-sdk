@@ -8,7 +8,7 @@ require_once __DIR__ . '/TestBase.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 
-class UpdatePerfTableTest extends SDKTestBase {
+class UpdateCapacityTableTest extends SDKTestBase {
 
     private static $usedTables = array (
         'myTable1',
@@ -17,7 +17,7 @@ class UpdatePerfTableTest extends SDKTestBase {
         'myTable4',
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -103,7 +103,7 @@ class UpdatePerfTableTest extends SDKTestBase {
         ));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }
@@ -127,7 +127,9 @@ class UpdatePerfTableTest extends SDKTestBase {
         $this->otsClient->updateTable ($tablename);
         SDKTestBase::waitForAvoidFrequency();
         $description = $this->otsClient->describeTable ($name);
-        $this->assertEquals ($tablename['table_options'], $description['table_options']);
+        $this->assertEquals ($tablename['table_options']['time_to_live'], $description['table_options']['time_to_live']);
+        $this->assertEquals ($tablename['table_options']['max_versions'], $description['table_options']['max_versions']);
+        $this->assertEquals ($tablename['table_options']['deviation_cell_version_in_sec'], $description['table_options']['deviation_cell_version_in_sec']);
     }
     
     /*

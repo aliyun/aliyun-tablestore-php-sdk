@@ -17,7 +17,7 @@ class TimeRangeTest extends SDKTestBase {
         'TimeRangeTable'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -43,7 +43,7 @@ class TimeRangeTest extends SDKTestBase {
         SDKTestBase::waitForTableReady ();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
     }
