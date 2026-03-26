@@ -15,12 +15,12 @@ class TransactionTest extends SDKTestBase {
 
     private static $transactionTableName = 'TransactionTable';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
 
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
 
     }

@@ -20,12 +20,12 @@ class PKAutoIncrTest extends SDKTestBase {
         'OTSPkAutoIncrSimpleExample'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }
@@ -91,7 +91,8 @@ class PKAutoIncrTest extends SDKTestBase {
             'primary_key_schema' => array(
                 array('gid', PrimaryKeyTypeConst::CONST_INTEGER),
                 array('uid', PrimaryKeyTypeConst::CONST_INTEGER, PrimaryKeyOptionConst::CONST_PK_AUTO_INCR)
-            )
+            ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable($tablename);
         $this->assertEquals($teturn, $table_meta['table_meta']);

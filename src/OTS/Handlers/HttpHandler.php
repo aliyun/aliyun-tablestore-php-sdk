@@ -21,7 +21,12 @@ class HttpHandler
             $context->responseHeaders = array();
             $headers = $httpResponse->getHeaders();
             foreach ($headers as $key => $value) {
-                $context->responseHeaders[$key] = $value[0];
+                // Normalize header keys to lowercase for consistent matching.
+                // Guzzle 7 + PSR-7 v2 preserves original header case from the server
+                // (e.g., "X-Ots-Contentmd5"), but the SDK's HttpHeaderHandler expects
+                // lowercase keys (e.g., "x-ots-contentmd5") for signature verification
+                // and header validation. This ensures compatibility across Guzzle versions.
+                $context->responseHeaders[strtolower($key)] = $value[0];
             }
 
             $context->responseBody = (string)$httpResponse->getBody();

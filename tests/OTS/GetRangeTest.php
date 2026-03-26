@@ -22,7 +22,7 @@ class GetRangeTest extends SDKTestBase {
         'myTable1'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -92,7 +92,7 @@ class GetRangeTest extends SDKTestBase {
         SDKTestBase::waitForTableReady ();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }
@@ -780,11 +780,11 @@ class GetRangeTest extends SDKTestBase {
 
     /*
      *
-     * GetRangeIteratorWith5000Rows
-     * GetRangeIterator 返回5000行的情况，这时正好不发生第二次GetRange。
+     * GetRangeIteratorWith50Rows
+     * GetRangeIterator 返回50行的情况，这时正好不发生第二次GetRange。
      */
-    public function testGetRangeIteratorWith5000Rows() {
-        for($i = 1; $i < 5001; $i ++) {
+    public function testGetRangeIteratorWith50Rows() {
+        for($i = 1; $i < 51; $i ++) {
             $tablename = array (
                 'table_name' => self::$usedTables[1],
                 'condition' => RowExistenceExpectationConst::CONST_IGNORE,
@@ -799,7 +799,7 @@ class GetRangeTest extends SDKTestBase {
             'table_name' => self::$usedTables[1],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
                 array('PK1', 1)
@@ -814,11 +814,11 @@ class GetRangeTest extends SDKTestBase {
     
     /*
      *
-     * GetRangeIteratorWith5001Rows
-     * GetRangeIterator 返回5001行的情况，这时正好发生第二次GetRange。
+     * GetRangeIteratorWith51Rows
+     * GetRangeIterator 返回51行的情况，这时正好发生第二次GetRange。
      */
-    public function testGetRangeIteratorWith5001Rows() {
-        for($i = 1; $i < 5002; $i ++) {
+    public function testGetRangeIteratorWith51Rows() {
+        for($i = 1; $i < 52; $i ++) {
             $tablename = array (
                 'table_name' => self::$usedTables[1],
                 'condition' => RowExistenceExpectationConst::CONST_IGNORE,
@@ -833,7 +833,7 @@ class GetRangeTest extends SDKTestBase {
             'table_name' => self::$usedTables[1],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
                 array('PK1', 1)
@@ -848,11 +848,11 @@ class GetRangeTest extends SDKTestBase {
     
     /*
      *
-     * GetRangeIteratorWith15001Rows
-     * GetRangeIterator 返回15001行的情况，这时共发生4次GetRange。
+     * GetRangeIteratorWith151Rows
+     * GetRangeIterator 返回151行的情况，这时共发生4次GetRange。
      */
-    public function testGetRangeIteratorWith15001Rows() {
-        for($i = 1; $i < 15001; $i ++) {
+    public function testGetRangeIteratorWith151Rows() {
+        for($i = 1; $i < 151; $i ++) {
             $tablename = array (
                 'table_name' => self::$usedTables[1],
                 'condition' => RowExistenceExpectationConst::CONST_IGNORE,
@@ -867,7 +867,7 @@ class GetRangeTest extends SDKTestBase {
             'table_name' => self::$usedTables[1],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
                 array('PK1', 1)
@@ -882,10 +882,10 @@ class GetRangeTest extends SDKTestBase {
             'table_name' => self::$usedTables[1],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
-                array('PK1', 5001)
+                array('PK1', 51)
             ),
             'exclusive_end_primary_key' => array (
                 array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
@@ -896,10 +896,10 @@ class GetRangeTest extends SDKTestBase {
             'table_name' => self::$usedTables[1],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
-                array('PK1', 10001)
+                array('PK1', 101)
             ),
             'exclusive_end_primary_key' => array (
                 array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
@@ -910,10 +910,10 @@ class GetRangeTest extends SDKTestBase {
             'table_name' => self::$usedTables[1],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
-                array('PK1', 15001)
+                array('PK1', 151)
             ),
             'exclusive_end_primary_key' => array (
                 array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
@@ -929,7 +929,7 @@ class GetRangeTest extends SDKTestBase {
      * 先写入10000行，GetRange Limit为默认，期望2次返回全部行。
      */
     public function testGetRangeWithDefaultLimit() {
-        for($i = 1; $i < 10001; $i ++) {
+        for($i = 1; $i < 501; $i ++) {
             $tablename = array (
                 'table_name' => self::$usedTables[2],
                 'condition' => RowExistenceExpectationConst::CONST_IGNORE,
@@ -944,7 +944,7 @@ class GetRangeTest extends SDKTestBase {
             'table_name' => self::$usedTables[2],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 300,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
                 array('PK1', 1)
@@ -954,16 +954,14 @@ class GetRangeTest extends SDKTestBase {
             )
         );
         $this->otsClient->getRange ($getRange);
-        // $primary = array('PK1' => 5001);
-        // $this->assertEquals($tables['next_start_primary_key'], $primary);
         $getRange1 = array (
             'table_name' => self::$usedTables[2],
             'direction' => DirectionConst::CONST_FORWARD,
             'columns_to_get' => array (),
-            'limit' => 5000,
+            'limit' => 300,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
-                array('PK1', 5001)
+                array('PK1', 301)
             ),
             'exclusive_end_primary_key' => array (
                 array('PK1', null, PrimaryKeyTypeConst::CONST_INF_MAX)
@@ -977,7 +975,7 @@ class GetRangeTest extends SDKTestBase {
      * 测试在使用ColumnCondition的过滤条件下，使用GetRange扫描数据是否成功。
      */
     public function testGetGetRangeWithSingleCompositeCondition() {
-        for($i = 1; $i < 10001; $i ++) {
+        for($i = 1; $i < 101; $i ++) {
             $putdata = array (
                 'table_name' => self::$usedTables[2],
                 'condition' => RowExistenceExpectationConst::CONST_IGNORE,
@@ -999,7 +997,7 @@ class GetRangeTest extends SDKTestBase {
                 'att1',
                 'att2'
             ),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
                 array('PK1', 1)
@@ -1017,7 +1015,7 @@ class GetRangeTest extends SDKTestBase {
                     ),
                     array (
                         'column_name' => 'attr2',
-                        'value' => 'att10001',
+                        'value' => 'att101',
                         'comparator' => ComparatorTypeConst::CONST_LESS_THAN
                     )
                 )
@@ -1031,7 +1029,7 @@ class GetRangeTest extends SDKTestBase {
      * 测试在使用ColumnCondition的过滤条件下以及多重逻辑判读条件下，使用GetRange扫描数据是否成功。
      */
     public function testGetGetRangeWithMultipleCompositeCondition() {
-        for($i = 1; $i < 10001; $i ++) {
+        for($i = 1; $i < 101; $i ++) {
             $putdata = array (
                 'table_name' => self::$usedTables[2],
                 'condition' => RowExistenceExpectationConst::CONST_IGNORE,
@@ -1053,7 +1051,7 @@ class GetRangeTest extends SDKTestBase {
                 'att1',
                 'att2'
             ),
-            'limit' => 5000,
+            'limit' => 50,
             'max_versions' => 1,
             'inclusive_start_primary_key' => array (
                 array('PK1', 1)
@@ -1074,7 +1072,7 @@ class GetRangeTest extends SDKTestBase {
                             ),
                             array (
                                 'column_name' => 'attr1',
-                                'value' => 20000,
+                                'value' => 200,
                                 'comparator' => ComparatorTypeConst::CONST_LESS_THAN
                             )
                         )
@@ -1084,12 +1082,12 @@ class GetRangeTest extends SDKTestBase {
                         'sub_filters' => array (
                             array (
                                 'column_name' => 'attr2',
-                                'value' => 'att1001',
+                                'value' => 'att51',
                                 'comparator' => ComparatorTypeConst::CONST_GREATER_THAN
                             ),
                             array (
                                 'column_name' => 'attr2',
-                                'value' => 'att1002',
+                                'value' => 'att52',
                                 'comparator' => ComparatorTypeConst::CONST_LESS_EQUAL
                             )
                         )

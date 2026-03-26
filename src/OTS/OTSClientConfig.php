@@ -15,8 +15,8 @@ class OTSClientConfig
     public $accessKeySecret;
     public $instanceName;
     public $stsToken;
-    public $connectionTimeout = 2.0;
-    public $socketTimeout = 2.0;
+    public $connectionTimeout = 8.0;
+    public $socketTimeout = 16.0;
 
     /**
      * Error级别日志处理函数，默认处理函数为 defaultOTSErrorLogHandler，行为是打印到屏幕
@@ -40,19 +40,19 @@ class OTSClientConfig
      */
     public function __construct(array $args)
     {
-        if (!isset($args['EndPoint'])) {
+        if (empty($args['EndPoint'])) {
             throw new OTSClientException("Missing EndPoint in client config.");
         }
         
-        if (!isset($args['AccessKeyID'])) {
+        if (empty($args['AccessKeyID'])) {
             throw new OTSClientException("Missing AccessKeyID in client config.");
         }
         
-        if (!isset($args['AccessKeySecret'])) {
+        if (empty($args['AccessKeySecret'])) {
             throw new OTSClientException("Missing AccessKeySecret in client config.");
         }
         
-        if (!isset($args['InstanceName'])) {
+        if (empty($args['InstanceName'])) {
             throw new OTSClientException("Missing InstanceName in client config.");
         }
 

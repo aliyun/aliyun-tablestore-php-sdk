@@ -17,7 +17,7 @@ class DescribeTableTest extends SDKTestBase {
         'test'
     );
 
-    public function setup() {
+    public function setUp(): void {
        $this->cleanUp (self::$usedTables);
     }
     
@@ -55,6 +55,7 @@ class DescribeTableTest extends SDKTestBase {
                 array('PK1', PrimaryKeyTypeConst::CONST_INTEGER),
                 array('PK2', PrimaryKeyTypeConst::CONST_INTEGER)
             ),
+            'defined_column' => array()
         );
         $table_meta = $this->otsClient->describeTable ($tablename);
         $this->assertEquals ($teturn, $table_meta['table_meta']);
@@ -140,7 +141,7 @@ class DescribeTableTest extends SDKTestBase {
         $this->assertEquals (OTS\Consts\SyncPhaseConst::INCR, $index_sync_phase);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $table_name = self::$usedTables;
         for($i = 0; $i < count ($table_name); $i ++) {

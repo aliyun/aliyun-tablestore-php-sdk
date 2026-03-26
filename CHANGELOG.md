@@ -1,3 +1,21 @@
+# 版本 6.0.0 发布于 2026/03/26
+### Breaking Changes
+1. PHP 最低版本要求从 5.5 提升至 8.2
+2. PHPUnit 升级至 ^10.0，不再兼容 PHPUnit 5.x/9.x
+3. 依赖库版本升级：
+   - guzzlehttp/guzzle ^7.10
+   - google/protobuf ^5.34.0
+
+### 新特性与改进
+1. 支持 PHP 8.2、8.3、8.4、8.5
+
+### 兼容性修复
+1. 修复 PlainBufferBuilder 中 null 值数组偏移访问问题（PHP 8.x 兼容）
+2. 修复 PlainBufferOutputStream 中 chr() 函数对超出 0-255 范围值的 Deprecated 警告（PHP 8.5 兼容）
+3. 修复 HttpHeaderHandler 在 5xx 错误时的 Authorization 验证失败问题
+5. 修复 SDKTestBase 构造函数签名兼容性（PHPUnit 10）
+6. 修复 cleanUp 方法隐式 nullable 参数的 Deprecated 警告（PHP 8.5 兼容）
+
 # 版本5.1.4 发布于 2026/01/09
 1. 支持多元索引knnVectorQuery
 

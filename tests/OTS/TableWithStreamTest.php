@@ -15,12 +15,12 @@ class TableWithStreamTest extends SDKTestBase {
     );
 
 
-    public function setup()
+    public function setUp(): void
     {
         $this->cleanUp (self::$usedTables);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->cleanUp (self::$usedTables);
     }

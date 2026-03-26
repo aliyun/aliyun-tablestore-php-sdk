@@ -24,7 +24,7 @@ class CreateTableTest extends SDKTestBase {
         'testAllowUpdateFalse'
     );
 
-    public function setup() {
+    public function setUp(): void {
         $table_name = self::$usedTables;
         for($i = 0; $i < count ($table_name); $i ++) {
             $request = array (
@@ -40,7 +40,7 @@ class CreateTableTest extends SDKTestBase {
         }
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         $table_name = self::$usedTables;
         for($i = 0; $i < count ($table_name); $i ++) {
             $request = array (
@@ -86,12 +86,8 @@ class CreateTableTest extends SDKTestBase {
         );
         $this->otsClient->createTable ($tablebody);
         SDKTestBase::waitForAvoidFrequency();
-        $tablename = array (
-            self::$usedTables[0]
-        );
-        // $tablename['mytable'] = 111;
-        $this->assertEquals ($this->otsClient->listTable (array ()), $tablename);
-        // $this->assertContains();
+        $tableList = $this->otsClient->listTable (array ());
+        $this->assertContains (self::$usedTables[0], $tableList);
         $table_name['table_name'] = self::$usedTables[0];
         $teturn = array (
             'table_name' => self::$usedTables[0],

@@ -1,0 +1,55 @@
+version: "3.8"
+
+x-common-config: &common-config
+  volumes:
+    - ../:/app/source:ro
+    - ./reports:/app/reports
+  env_file:
+    - path: ../.env
+      required: false
+  working_dir: /app
+
+services:
+  php82:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: "8.2"
+    <<: *common-config
+    environment:
+      - PHP_VERSION=8.2
+      - TEST_MODE=${TEST_MODE:-basic}
+
+  php83:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: "8.3"
+    <<: *common-config
+    environment:
+      - PHP_VERSION=8.3
+      - TEST_MODE=${TEST_MODE:-basic}
+
+  php84:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: "8.4"
+    <<: *common-config
+    environment:
+      - PHP_VERSION=8.4
+      - TEST_MODE=${TEST_MODE:-basic}
+
+  php85:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: "8.5"
+    <<: *common-config
+    environment:
+      - PHP_VERSION=8.5
+      - TEST_MODE=${TEST_MODE:-basic}

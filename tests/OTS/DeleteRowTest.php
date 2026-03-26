@@ -17,7 +17,7 @@ class DeleteRowTest extends SDKTestBase {
         'myTable'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -43,7 +43,7 @@ class DeleteRowTest extends SDKTestBase {
         SDKTestBase::waitForTableReady ();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp ( self::$usedTables );
     }
@@ -320,7 +320,7 @@ class DeleteRowTest extends SDKTestBase {
         } catch (\Aliyun\OTS\OTSServerException $exc) {
             $a = $exc->getMessage ();
             $c = 'Condition check failed.';
-            $this->assertContains ( $c, $a );
+            $this->assertStringContainsString ( $c, $a );
         }
     }
 }

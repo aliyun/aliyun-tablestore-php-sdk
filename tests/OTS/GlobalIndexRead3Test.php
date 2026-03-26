@@ -17,7 +17,7 @@ class GlobalIndexRead2Test extends SDKTestBase {
     private static $tableName = 'testGlobalTableName';
     private static $indexName1 = 'testGlobalTableWithIndex1';
     private static $indexName2 = 'testGlobalTableWithIndex2';
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::createTable();
         self::insertData(0, 5);
@@ -26,7 +26,7 @@ class GlobalIndexRead2Test extends SDKTestBase {
         self::waitForSecondaryIndexSync();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::cleanUpGlobalIndex(self::$tableName);
         self::cleanUp(array(self::$tableName));

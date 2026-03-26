@@ -47,7 +47,7 @@ class DeleteTableTest extends SDKTestBase {
         // print_r($this->listtable->ListTable());
         $response = $this->otsClient->deleteTable ($request);
         $this->assertEquals ($response, array ());
-        $this->assertEmpty ($this->otsClient->listTable (array ()));
+        $this->assertNotContains (self::$usedTables[0], $this->otsClient->listTable (array ()));
     }
     
     /*

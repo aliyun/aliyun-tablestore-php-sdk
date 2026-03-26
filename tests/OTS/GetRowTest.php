@@ -17,7 +17,7 @@ class GetRowTest extends SDKTestBase {
         'myTable'
     );
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
         SDKTestBase::createInitialTable (array (
@@ -62,7 +62,7 @@ class GetRowTest extends SDKTestBase {
         ));
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         SDKTestBase::cleanUp (self::$usedTables);
     }
@@ -280,7 +280,7 @@ class GetRowTest extends SDKTestBase {
             $this->fail ( 'An expected exception has not been raised.' );
         } catch ( \Aliyun\OTS\OTSServerException $exc ) {
             $c = 'The number of columns from the request exceeds the limit';
-            $this->assertContains ( $c, $exc->getOTSErrorMessage () );
+            $this->assertStringContainsString ( $c, $exc->getOTSErrorMessage () );
         }
     }
     
