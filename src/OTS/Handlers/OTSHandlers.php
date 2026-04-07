@@ -44,6 +44,7 @@ class OTSHandlers
         $this->httpClient = new \GuzzleHttp\Client(array(
             'base_uri' => $config->getEndPoint(),
             'timeout' => $config->connectionTimeout,
+            'handler' => $config->getHttpClientHandler(),
         ));
     }
 
