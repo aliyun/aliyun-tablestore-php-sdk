@@ -544,5 +544,42 @@ class OTSClient
     {
         return $this->handlers->doHandle("SQLQuery", $request);
     }
+
+    /**
+     * 异步执行指定API操作。返回AsyncResponse对象，可调用wait()等待结果，或直接当数组访问自动等待。
+     * @api
+     * @param string $apiName API名称
+     * @param [] $request 请求参数
+     * @return AsyncResponse
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     */
+    public function asyncDoHandle($apiName, array $request): AsyncResponse
+    {
+        return $this->handlers->asyncDoHandle($apiName, $request);
+    }
+
+    /**
+     * 异步多元索引查询。返回AsyncResponse对象，可调用wait()等待结果，或直接当数组访问自动等待。
+     * @api
+     * @param [] $request 请求参数
+     * @return AsyncResponse
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     */
+    public function asyncSearch(array $request): AsyncResponse
+    {
+        return $this->handlers->asyncDoHandle("Search", $request);
+    }
+
+    /**
+     * 异步SQL查询。返回AsyncResponse对象，可调用wait()等待结果，或直接当数组访问自动等待。
+     * @api
+     * @param [] $request 请求参数
+     * @return AsyncResponse
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     */
+    public function asyncSqlQuery(array $request): AsyncResponse
+    {
+        return $this->handlers->asyncDoHandle("SQLQuery", $request);
+    }
 }
 
