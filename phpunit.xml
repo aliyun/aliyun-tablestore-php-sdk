@@ -30,5 +30,8 @@
 			<file>tests/OTS/BatchWriteRowTest.php</file>
 			<file>tests/OTS/GetRangeTest.php</file>
 		</testsuite>
+		<testsuite name="UnitTest">
+			<file>tests/OTS/OTSClientUnitTest.php</file>
+		</testsuite>
 	</testsuites>
 </phpunit>

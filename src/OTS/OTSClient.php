@@ -49,6 +49,15 @@ class OTSClient
     }
 
     /**
+     * 返回 OTSHandlers 对象
+     * @return \Aliyun\OTS\Handlers\OTSHandlers
+     */
+    public function getHandlers()
+    {
+        return $this->handlers;
+    }
+
+    /**
      * 创建表，并设定主键的个数、名称、顺序和类型，以及预留读写吞吐量。
      * API说明：https://help.aliyun.com/document_detail/27312.html
      * @api
