@@ -34,6 +34,8 @@ class OTSClientConfig
      */
     public $retryPolicy;
 
+    protected $httpClientHnadler;
+
     /**
      * OTSClientConfig的构造函数。
      * 它的参数从 OTSClient 的构造函数中传入。具体参数说明请见 OTSClient 的构造函数。
@@ -90,6 +92,12 @@ class OTSClientConfig
             $this->debugLogHandler = $args['DebugLogHandler'];
         }
 
+        if (!isset($args['httpClientHnadler'])) {
+            $this->httpClientHnadler = null;
+        } else {
+            $this->httpClientHnadler = $args['httpClientHnadler'];
+        }
+
     }
 
     public function getEndPoint()
@@ -117,5 +125,9 @@ class OTSClientConfig
         return $this->instanceName;
     }
 
+    public function getHttpClientHandler()
+    {
+        return $this->httpClientHnadler;
+    }
 }
 
