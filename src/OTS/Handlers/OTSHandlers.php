@@ -3,6 +3,7 @@
 namespace Aliyun\OTS\Handlers;
 
 use Aliyun\OTS;
+use Aliyun\OTS\AsyncResponse;
 
 
 class OTSHandlers
@@ -77,6 +78,38 @@ class OTSHandlers
             } else {
                 break;
             }
+        }
+
+        return $context->response;
+    }
+
+    public function asyncDoHandle($apiName, array $request): AsyncResponse
+    {
+        $context = new RequestContext($this->clientConfig, $this->httpClient, $apiName, $request);
+
+        $this->retryHandler->handleBefore($context);
+        $this->protoBufferDecoder->handleBefore($context);
+        $this->protoBufferEncoder->handleBefore($context);
+        $this->errorHandler->handleBefore($context);
+        $this->httpHeaderHandler->handleBefore($context);
+        $this->httpHandler->handleBeforeAsync($context);
+
+        return new AsyncResponse($context, $this);
+    }
+
+    public function resolveAsyncResponse(RequestContext $context)
+    {
+        $this->httpHandler->handleWait($context);
+
+        $this->httpHandler->handleAfter($context);
+        $this->httpHeaderHandler->handleAfter($context);
+        $this->errorHandler->handleAfter($context);
+        $this->protoBufferEncoder->handleAfter($context);
+        $this->protoBufferDecoder->handleAfter($context);
+        $this->retryHandler->handleAfter($context);
+
+        if ($context->otsServerException != null) {
+            throw $context->otsServerException;
         }
 
         return $context->response;

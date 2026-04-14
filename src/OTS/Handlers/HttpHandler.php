@@ -51,6 +51,40 @@ class HttpHandler
     }
 
 
+    public function handleBeforeAsync($context)
+    {
+        $uri = "/" . $context->apiName;
+
+        $context->httpPromise = $context->httpClient->requestAsync('POST', $uri, array(
+            'body' => $context->requestBody,
+            'headers' => $context->requestHeaders,
+            'timeout' => $context->clientConfig->socketTimeout,
+            'http_errors' => false,
+        ));
+    }
+
+    public function handleWait($context)
+    {
+        try {
+            $httpResponse = $context->httpPromise->wait();
+            $context->responseHeaders = array();
+            $headers = $httpResponse->getHeaders();
+            foreach ($headers as $key => $value) {
+                $context->responseHeaders[strtolower($key)] = $value[0];
+            }
+
+            $context->responseBody = (string)$httpResponse->getBody();
+            $context->responseHttpStatus = $httpResponse->getStatusCode();
+            $context->responseReasonPhrase = $httpResponse->getReasonPhrase();
+        }
+        catch (TransferException $e)
+        {
+            $otsClientException = new OTSClientException($e->getMessage());
+            $this->logOTSClientException($context, $otsClientException);
+            throw $otsClientException;
+        }
+    }
+
     public function handleAfter($context)
     {
         // empty

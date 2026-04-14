@@ -25,6 +25,9 @@ class RequestContext
     public $retryDelayInMilliSeconds;
     public $retryTimes;
 
+    /** @var \GuzzleHttp\Promise\PromiseInterface|null */
+    public $httpPromise;
+
     public function __construct(
         \Aliyun\OTS\OTSClientConfig $clientConfig, 
         $httpClient, 
