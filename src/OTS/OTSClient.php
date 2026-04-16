@@ -487,6 +487,32 @@ class OTSClient
         return $this->handlers->doHandle("DropIndex", $request);
     }
 
+    /**
+     * 为已存在的表新增预定义列。
+     * @api
+     * @param [] $request 请求参数，table_name + columns（每项为 [name, DefinedColumnTypeConst]）
+     * @return [] 请求返回（空 array）
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     */
+    public function addDefinedColumn(array $request)
+    {
+        return $this->handlers->doHandle("AddDefinedColumn", $request);
+    }
+
+    /**
+     * 删除表上的预定义列。
+     * @api
+     * @param [] $request 请求参数，table_name + columns（要删除的列名数组）
+     * @return [] 请求返回（空 array）
+     * @throws OTSClientException 当参数检查出错或服务端返回校验出错时
+     * @throws OTSServerException 当OTS服务端返回错误时
+     */
+    public function deleteDefinedColumn(array $request)
+    {
+        return $this->handlers->doHandle("DeleteDefinedColumn", $request);
+    }
+
 
     /**
      * 开始事务，获取事务ID。

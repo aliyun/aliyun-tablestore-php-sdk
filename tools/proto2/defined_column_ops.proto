@@ -1,0 +1,27 @@
+syntax = "proto3";
+package aliyun.OTS.ProtoBuffer.Protocol;
+
+// Standalone proto3 for AddDefinedColumn / DeleteDefinedColumn API.
+//
+// columns in AddDefinedColumnRequest is declared as `repeated bytes` instead
+// of `repeated DefinedColumnSchema` to avoid duplicating the existing
+// DefinedColumnSchema/DefinedColumnType definitions from table_store.proto
+// (which would cause descriptor pool collisions). Each entry is the wire
+// format of a serialized DefinedColumnSchema message — identical wire format
+// because both `repeated bytes` and `repeated message` use wire type 2.
+
+message AddDefinedColumnRequest {
+    string table_name = 1;
+    repeated bytes columns = 2;
+}
+
+message AddDefinedColumnResponse {
+}
+
+message DeleteDefinedColumnRequest {
+    string table_name = 1;
+    repeated string columns = 2;
+}
+
+message DeleteDefinedColumnResponse {
+}

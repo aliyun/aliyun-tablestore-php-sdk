@@ -133,6 +133,8 @@ use Aliyun\OTS\ProtoBuffer\Protocol\IndexType;
 use Aliyun\OTS\ProtoBuffer\Protocol\IndexUpdateMode;
 use Aliyun\OTS\ProtoBuffer\Protocol\CreateIndexRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\DropIndexRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\AddDefinedColumnRequest;
+use Aliyun\OTS\ProtoBuffer\Protocol\DeleteDefinedColumnRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\StartLocalTransactionRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\CommitTransactionRequest;
 use Aliyun\OTS\ProtoBuffer\Protocol\AbortTransactionRequest;
@@ -2589,6 +2591,37 @@ class ProtoBufferEncoder
         $pbMessage = new DropIndexRequest();
         $pbMessage->setMainTableName($request["table_name"]);
         $pbMessage->setIndexName($request["index_name"]);
+
+        return $pbMessage->serializeToString();
+    }
+
+    private function encodeAddDefinedColumnRequest($request)
+    {
+        $pbMessage = new AddDefinedColumnRequest();
+        $pbMessage->setTableName($request["table_name"]);
+
+        if (!empty($request["columns"])) {
+            $columnBytes = array();
+            foreach ($request["columns"] as $column) {
+                $schema = new DefinedColumnSchema();
+                $schema->setName($column[0]);
+                $schema->setType(ConstMapStringToInt::DefinedColumnTypeMap($column[1]));
+                $columnBytes[] = $schema->serializeToString();
+            }
+            $pbMessage->setColumns($columnBytes);
+        }
+
+        return $pbMessage->serializeToString();
+    }
+
+    private function encodeDeleteDefinedColumnRequest($request)
+    {
+        $pbMessage = new DeleteDefinedColumnRequest();
+        $pbMessage->setTableName($request["table_name"]);
+
+        if (!empty($request["columns"])) {
+            $pbMessage->setColumns($request["columns"]);
+        }
 
         return $pbMessage->serializeToString();
     }
