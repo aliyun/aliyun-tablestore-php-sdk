@@ -1420,6 +1420,16 @@ class ProtoBufferDecoder
         return array();
     }
 
+    public function decodeAddDefinedColumnResponse($body)
+    {
+        return array();
+    }
+
+    public function decodeDeleteDefinedColumnResponse($body)
+    {
+        return array();
+    }
+
     public function decodeStartLocalTransactionResponse($body)
     {
         $pbMessage = new StartLocalTransactionResponse();

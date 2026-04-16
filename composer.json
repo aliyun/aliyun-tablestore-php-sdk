@@ -47,7 +47,8 @@
 			"src/functions.php",
 			"src/OTS/ProtoBuffer/GPBMetadata/TableStore.php",
 			"src/OTS/ProtoBuffer/GPBMetadata/TableStoreFilter.php",
-			"src/OTS/ProtoBuffer/GPBMetadata/TableStoreSearch.php"
+			"src/OTS/ProtoBuffer/GPBMetadata/TableStoreSearch.php",
+			"src/OTS/ProtoBuffer/GPBMetadata/DefinedColumnOps.php"
 		]
 	},
 	"autoload-dev" : {
